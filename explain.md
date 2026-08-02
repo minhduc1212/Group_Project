@@ -1,6 +1,6 @@
 # Hướng Dẫn Vận Hành & Luồng Hoạt Động (Project Explanation)
 
-Tài liệu này giải thích chi tiết luồng hoạt động (flows), cách thức phối hợp làm việc song song (workways), kiến trúc hệ thống và cách các AI Agents sử dụng DeepSeek API kết nối với hệ thống Core.
+Tài liệu này giải thích chi tiết luồng hoạt động (flows), cách thức phối hợp làm việc song song (workways), kiến trúc hệ thống Python FastAPI và cách các AI Agents (LangGraph Python) sử dụng DeepSeek API kết nối với hệ thống Core.
 
 Hệ thống hỗ trợ **mọi hoạt động nhóm** — không chỉ du lịch mà còn đi ăn, chọn quán, chỗ chơi, tham quan, cafe/hangout và các sự kiện tùy chỉnh.
 
@@ -10,10 +10,10 @@ Hệ thống hỗ trợ **mọi hoạt động nhóm** — không chỉ du lịc
 Để xem chi tiết từng phần, thành viên có thể truy cập các tài liệu tương ứng:
 - **Quy trình làm việc song song:** [contract-first-workflow.md](docs/01-workflow/contract-first-workflow.md) (Quyết định cách 6 người code cùng lúc không bị block).
 - **Phân vai trò thành viên:** [team-roles.md](docs/00-overview/team-roles.md) (RACI matrix và phân rã task cụ thể).
-- **Tổng quan công nghệ:** [tech-stack.md](docs/00-overview/tech-stack.md) (React, NestJS, Postgres, Redis, DeepSeek API).
+- **Tổng quan công nghệ:** [tech-stack.md](docs/00-overview/tech-stack.md) (React, Python FastAPI, SQLAlchemy/SQLModel, Redis, DeepSeek API).
 - **Kiến trúc hệ thống:** [system-architecture.md](docs/03-architecture/system-architecture.md) (Sơ đồ tổng quát BE-FE-DB-AI).
-- **Kiến trúc AI Agent:** [ai-agent-architecture.md](docs/03-architecture/ai-agent-architecture.md) (LangGraph, state machine, các sub-agents).
-- **Bảo mật hệ thống:** [security-guidelines.md](docs/05-security/security-guidelines.md) (Sanitize input, validate Zod output, chống prompt injection).
+- **Kiến trúc AI Agent:** [ai-agent-architecture.md](docs/03-architecture/ai-agent-architecture.md) (LangGraph Python, state machine, các sub-agents).
+- **Bảo mật hệ thống:** [security-guidelines.md](docs/05-security/security-guidelines.md) (Sanitize input, validate Pydantic output, chống prompt injection).
 - **Kế hoạch sprint & task:** [task-board.md](docs/04-tasks/task-board.md) (Lộ trình 4 sprint song song).
 
 ---
@@ -24,9 +24,9 @@ Dự án áp dụng mô hình **Contract-First Development** để 6 người (2
 ```mermaid
 graph TD
     A[Sprint 0: Chốt DB Schema & OpenAPI Spec] --> B[Push Contract lên main/develop]
-    B --> C1[BE Dev A & B: Code logic API thật theo spec]
+    B --> C1[BE Dev A & B: Code logic FastAPI API thật theo spec]
     B --> C2[FE Dev A & B: Code UI + Mock API bằng MSW]
-    B --> C3[AI Engineer: Code LangGraph Agent + Mock data JSON]
+    B --> C3[AI Engineer: Code LangGraph Python Agent + Mock data JSON]
     B --> C4[Security/DevOps: Dựng CI/CD, Docker Compose, Threat Model]
     C1 --> D[Integration Day: Ghép nối Backend thật - Frontend thật - AI thật]
     C2 --> D
@@ -36,11 +36,11 @@ graph TD
 ```
 
 ### Các bước hoạt động cụ thể:
-1. **Sprint 0 (1-2 ngày đầu):** Cả nhóm thảo luận chốt DB Schema (Prisma) và OpenAPI/Swagger Spec.
+1. **Sprint 0 (1-2 ngày đầu):** Cả nhóm thảo luận chốt DB Schema (SQLAlchemy/SQLModel) và OpenAPI Spec (FastAPI tự động sinh ra ở `/docs`).
 2. **Thiết lập Mock:** 
-   - Backend Dev A dựng bộ khung Controller rỗng chỉ có Signature (trả về status code `501 Not Implemented` hoặc mock JSON tạm).
+   - Backend Dev A dựng bộ khung APIRouter rỗng chỉ có Signature (trả về status code `501 Not Implemented` hoặc mock JSON tạm).
    - Frontend Dev dùng **Mock Service Worker (MSW)** giả lập API response đúng cấu trúc đã chốt để dựng UI.
-   - AI Engineer định nghĩa định dạng JSON của các Agent dựa trên DB schema và sử dụng dữ liệu giả lập (`fixtures/mock-places.json`) để test đồ thị LangGraph.
+   - AI Engineer định nghĩa định dạng Pydantic schema của các Agent và sử dụng dữ liệu giả lập (`fixtures/mock_places.json`) để test đồ thị LangGraph Python.
 3. **Integration Day (Cuối mỗi Sprint):** Tắt toàn bộ mock, trỏ URL API Frontend về Backend Staging, kết nối AI Agent với database thật để kiểm thử toàn diện luồng nghiệp vụ.
 
 ---
@@ -58,17 +58,17 @@ graph TD
    - `HANGOUT` — Cafe/gặp mặt (ví dụ: *"Cafe chiều thứ 7"*)
    - `CUSTOM` — Tùy chỉnh (ví dụ: *"Teambuilding công ty"*, *"Sinh nhật Hùng"*)
 2. Owner lấy link mời thành viên và gửi cho **User B, C (Members)**. Hệ thống tạo `Invitation` (Pending → Accepted/Declined).
-3. Các thành viên truy cập link, join vào Event. Lúc này DB tạo các bản ghi tương ứng trong bảng `EventMember` với role tương ứng.
+3. Các thành viên truy cập link, join vào Event. Lúc này DB tạo các bản ghi tương ứng trong bảng `event_members` với role tương ứng.
 
 ---
 
 ### Ví dụ 1: Luồng Du Lịch (TRAVEL Event)
 1. Owner hoặc Member gửi yêu cầu vào màn hình chat: *"Thiết kế lịch trình nghỉ dưỡng nhẹ nhàng cho nhóm 3 người ở Đà Lạt, thích ngắm cảnh, ăn uống, ngân sách khoảng 5 triệu/người."*
-2. **AI Orchestrator** nhận `eventType = TRAVEL` -> kích hoạt luồng TRAVEL:
+2. **AI Orchestrator** nhận `eventType = TRAVEL` -> kích hoạt luồng TRAVEL trong LangGraph Python:
    - **Location Agent (9.2)** tìm các điểm phù hợp -> gọi Google Places API (category: `ATTRACTION`, `RESTAURANT`, `HOTEL`). Kết quả cache qua Redis.
    - **Research Agent (9.5)** tổng hợp thông tin, review chi tiết.
    - **Plan Agent (9.3)** (dùng `deepseek-reasoner`) sắp xếp lịch trình tối ưu theo ngày.
-   - **Cost Agent (9.9)** tính toán chi phí dự kiến.
+   - **Cost Agent (9.9)** tính toán chi phí dự kiến bằng Python code.
    - **Booking Agent (9.1)** gợi ý link đặt phòng khách sạn, vé xe.
 3. Kết quả gửi về dạng **Draft Plan** → cả nhóm xem, vote, confirm.
 
@@ -137,9 +137,9 @@ Plan tạo thủ công ────┘
 
 ---
 
-## 4. Tích Hợp DeepSeek API Trong Kiến Trúc AI Agent
+## 4. Tích Hợp DeepSeek API Trong Kiến Trúc AI Agent (Python Native)
 
-Để tối ưu chi phí và tăng hiệu suất suy luận cho Multi-Agent, hệ thống tích hợp DeepSeek API thông qua hai model chuyên biệt:
+Vì Backend sử dụng Python FastAPI, hệ thống tích hợp trực tiếp **LangGraph Python (`langgraph`)** và DeepSeek API trong cùng một codebase Python mượt mà:
 
 ```
                            ┌──────────────────────────────────┐
@@ -148,12 +148,12 @@ Plan tạo thủ công ────┘
                                             │
                                             ▼
                            ┌──────────────────────────────────┐
-                           │    NestJS Backend (Auth/Guard)   │
+                           │   FastAPI Backend (Security/JWT) │
                            └────────────────┬─────────────────┘
                                             │
                                             ▼
                            ┌──────────────────────────────────┐
-                           │     LangGraph Orchestrator       │
+                           │  LangGraph Python Orchestrator   │
                            │  (nhận eventType → route agent)  │
                            └────────┬───────────────────┬─────┘
                                     │                   │
@@ -169,7 +169,7 @@ Plan tạo thủ công ────┘
 
 - **`deepseek-chat` (DeepSeek-V3):**
   - **Tác vụ:** Chat tự do với người dùng, **phân loại EventType** và intent, gọi công cụ (Function Calling) để lấy thông tin thời tiết, địa điểm, nhà hàng, chỗ chơi, trích xuất dữ liệu thô.
-  - **Ưu điểm:** Tốc độ phản hồi cực nhanh, hỗ trợ streaming mượt mà, giá thành siêu rẻ.
+  - **Ưu điểm:** Tốc độ phản hồi cực nhanh, hỗ trợ SSE/WebSocket streaming mượt mà, giá thành siêu rẻ.
 - **`deepseek-reasoner` (DeepSeek-R1):**
   - **Tác vụ:** Lên lịch trình tối ưu (sắp xếp thứ tự đi, thời gian giữa các điểm dừng), cân đối ngân sách, **gợi ý menu/món ăn phù hợp nhóm** (DINING), **chọn hoạt động phù hợp số người** (ENTERTAINMENT), phân tích và giải quyết xung đột ý kiến (Conflict Resolver).
   - **Ưu điểm:** Khả năng suy nghĩ sâu (reasoning tokens), tư duy logic chặt chẽ giúp giải quyết các bài toán tối ưu lộ trình và dung hòa ý kiến nhóm tốt hơn hẳn LLM thông thường.
@@ -178,6 +178,6 @@ Plan tạo thủ công ────┘
 
 ## 5. Quy Tắc Bảo Mật Và Chi Phí Trong Doanh Nghiệp (Enterprise Standards)
 
-1. **Bảo Mật Đầu Vào:** Mọi câu lệnh chat từ user đều được validate độ dài và lọc mã độc (Sanitization) qua Interceptor trước khi truyền vào prompt của DeepSeek để tránh tấn công Prompt Injection.
-2. **Bảo Mật Đầu Out:** Dữ liệu trả về từ DeepSeek (như danh sách địa điểm dạng JSON) bắt buộc phải đi qua một parser sử dụng thư viện **Zod** để xác thực kiểu dữ liệu. Nếu JSON lỗi cấu trúc, hệ thống sẽ tự động bắt lỗi thay vì hiển thị trực tiếp lên UI làm crash ứng dụng.
-3. **Quản Lý Token & Chi Phí:** Mọi lượt gọi DeepSeek API đều được Logger ghi lại (số input/output token, thời gian xử lý, ID người dùng) và lưu vào bảng `AgentLog`. Admin Dashboard sẽ dựa vào đây để cảnh báo hoặc thiết lập Rate Limit/giới hạn quota theo ngày cho từng user.
+1. **Bảo Mật Đầu Vào:** Mọi câu lệnh chat từ user đều được validate độ dài và lọc mã độc (Sanitization) qua Pydantic & bleach trước khi truyền vào prompt của DeepSeek để tránh tấn công Prompt Injection.
+2. **Bảo Mật Đầu Out:** Dữ liệu trả về từ DeepSeek (như danh sách địa điểm dạng JSON) bắt buộc phải đi qua parser sử dụng **Pydantic v2** để xác thực kiểu dữ liệu. Nếu JSON lỗi cấu trúc, hệ thống sẽ tự động bắt lỗi thay vì hiển thị trực tiếp lên UI làm crash ứng dụng.
+3. **Quản Lý Token & Chi Phí:** Mọi lượt gọi DeepSeek API đều được Logger ghi lại (số input/output token, thời gian xử lý, ID người dùng) và lưu vào bảng `agent_logs`. Admin Dashboard sẽ dựa vào đây để cảnh báo hoặc thiết lập Rate Limit/giới hạn quota theo ngày cho từng user.

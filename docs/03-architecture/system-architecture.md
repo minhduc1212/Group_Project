@@ -3,36 +3,35 @@
 ## 1. Sơ đồ tổng thể (high-level)
 
 ```
-┌─────────────┐      HTTPS       ┌───────────────────────┐
-│   Frontend    │ ───────────────▶ │   Backend API (NestJS)  │
-│  (React/Vite)  │ ◀─────────────── │   /api/v1/...            │
-└─────────────┘                   └───────────┬───────────┘
-                                               │
-              ┌────────────────────────────────┼────────────────────────────┐
-              │                                │                            │
-              ▼                                ▼                            ▼
-     ┌─────────────────┐             ┌──────────────────┐        ┌──────────────────┐
-     │  PostgreSQL       │             │   Redis Cache     │        │  AI Agent Module   │
-     │  (Prisma ORM)      │             │  (session, API      │        │  (LangGraph)         │
-     │  users/events/plans │             │   cache, rate-limit) │        │  → xem ai-agent-       │
-     │  /votes/members/    │             └──────────────────┘        │     architecture.md   │
-     │  invitations     │                                         └────────┬───────────┘
-     └─────────────────┘                                              │
-                                                                   ┌──┴────────┬────────────────┐
-                                                                   ▼           ▼                ▼
-                                                         ┌──────────────────┐┌───────────────┐┌───────────────┐
-                                                         │ External APIs    ││ DeepSeek API  ││ Email/PDF     │
-                                                         │ Google Places,   ││ (V3 & R1)     ││ Service (N5)  │
-                                                         │ Mapbox, Weather  │└───────────────┘└───────────────┘
-                                                         └──────────────────┘
+┌─────────────┐      HTTPS       ┌─────────────────────────────────┐
+│   Frontend    │ ───────────────▶ │   Backend API (Python FastAPI)  │
+│  (React/Vite)  │ ◀─────────────── │   /api/v1/...                   │
+└─────────────┘                   └────────────────┬────────────────┘
+                                                   │
+              ┌────────────────────────────────────┼────────────────────────────┐
+              │                                    │                            │
+              ▼                                    ▼                            ▼
+     ┌─────────────────┐                 ┌──────────────────┐        ┌──────────────────────┐
+     │  PostgreSQL       │                 │   Redis Cache     │        │  AI Agent Module     │
+     │  (SQLAlchemy/     │                 │  (session, API      │        │  (LangGraph Python)  │
+     │   SQLModel)       │                 │   cache, rate-limit) │        │  trực tiếp trong app │
+     │  users/events/    │                 └──────────────────┘        └──────────┬───────────┘
+     │  plans/votes...   │                                                     │
+     └─────────────────┘                                         ┌─────────────┴──────────┬───────────────┐
+                                                                 ▼                        ▼               ▼
+                                                       ┌──────────────────┐     ┌──────────────────┐    ┌───────────────┐
+                                                       │ External APIs    │     │ DeepSeek API     │    │ Email/PDF     │
+                                                       │ Google Places,   │     │ (V3 & R1)        │    │ Service (N5)  │
+                                                       │ Mapbox, Weather  │     └──────────────────┘    └───────────────┘
+                                                       └──────────────────┘
 ```
 
 ## 2. Nguyên tắc kiến trúc
-- **Backend duy nhất (monolith module hoá)** cho MVP — không tách microservice ngay từ đầu để tránh overhead vận hành không cần thiết cho quy mô đồ án. Có thể tách AI Agent thành service riêng (xem ADR nếu team quyết định).
-- **Hỗ trợ đa dạng EventType (TRAVEL, DINING, HANGOUT, ENTERTAINMENT, SIGHTSEEING, CUSTOM)** — Backend và AI Agent linh hoạt xử lý mọi loại sự kiện nhóm.
-- **Nhóm 2 (Event/Plan/Vote) là nguồn sự thật duy nhất (single source of truth)** về dữ liệu sự kiện — AI Agent (Nhóm 4) đọc/ghi thông qua Service layer của Nhóm 2, không thao tác DB trực tiếp song song để tránh lệch dữ liệu.
+- **Backend duy nhất (Python FastAPI)** — Tốc độ cao, hỗ trợ `async/await` native. Vì LangGraph cũng viết bằng Python, AI Agent và Backend API nằm cùng một mã nguồn Python (monorepo), không cần giao tiếp IPC/gRPC qua 2 ngôn ngữ khác nhau.
+- **Hỗ trợ đa dạng EventType (TRAVEL, DINING, HANGOUT, ENTERTAINMENT, SIGHTSEEING, CUSTOM)** — Backend FastAPI routers linh hoạt xử lý mọi loại sự kiện nhóm.
+- **Nhóm 2 (Event/Plan/Vote) là nguồn sự thật duy nhất (single source of truth)** về dữ liệu sự kiện — AI Agent (Nhóm 4) thao tác dữ liệu thông qua SQLAlchemy Async Session layer của Nhóm 2.
 - **Plan thủ công và Plan AI đối xử bình đẳng** — Cả hai đều lưu trạng thái `DRAFT`, đi qua luồng `VOTING`, và chỉ Owner mới `CONFIRMED`.
-- **Nhóm 3 (External API) luôn đi qua lớp cache Redis** trước khi gọi ra ngoài — TTL đề xuất: địa điểm/nhà hàng/chỗ chơi 6–24h, thời tiết 1–3h, tỷ giá 12h.
+- **Nhóm 3 (External API) sử dụng `httpx` async và luôn đi qua lớp cache Redis** trước khi gọi ra ngoài — TTL đề xuất: địa điểm/nhà hàng 6–24h, thời tiết 1–3h, tỷ giá 12h.
 - **AI Agent không có quyền ghi trực tiếp** vào DB những hành động ảnh hưởng người dùng khác (VD chốt plan cuối) mà không qua xác nhận/vote — xem `ai-agent-architecture.md` mục Human-in-the-loop.
 
 ## 3. Luồng dữ liệu chính (happy path)
@@ -56,21 +55,39 @@
 ## 4. Môi trường (Environments)
 | Env | Mục đích | Domain |
 |---|---|---|
-| `local` | Máy dev cá nhân, Docker Compose | `localhost` |
+| `local` | Máy dev cá nhân, Docker Compose | `localhost:8000` |
 | `staging` | Test tích hợp trước release, dữ liệu giả | `staging.*` |
 | `production` | Bản demo/nộp đồ án chính thức | domain chính |
 
-## 5. Sơ đồ thư mục monorepo đề xuất
+## 5. Sơ đồ thư mục backend FastAPI đề xuất
 ```
 travel-ai/
-├── apps/
-│   ├── backend/         # NestJS
-│   ├── frontend/        # React
-│   └── ai-service/       # (tuỳ chọn, nếu tách AI riêng bằng Python)
-├── packages/
-│   └── shared-types/      # Zod schema/DTO dùng chung FE-BE
-├── docs/                    # thư mục này
-├── docker-compose.yml
-└── .github/workflows/
+├── backend/                  # FastAPI Application
+│   ├── app/
+│   │   ├── main.py           # FastAPI entrypoint, middlewares, CORS
+│   │   ├── config.py         # Pydantic BaseSettings (.env loader)
+│   │   ├── core/             # Security, JWT, DB session setup
+│   │   │   ├── database.py   # SQLAlchemy async engine & session
+│   │   │   └── security.py   # Password hashing & JWT tokens
+│   │   ├── models/           # SQLAlchemy DB Models (User, Event, Plan, Vote...)
+│   │   ├── schemas/          # Pydantic Schemas for Request/Response DTOs
+│   │   ├── api/              # API Routers
+│   │   │   ├── v1/
+│   │   │   │   ├── auth.py
+│   │   │   │   ├── events.py
+│   │   │   │   ├── plans.py
+│   │   │   │   ├── votes.py
+│   │   │   │   ├── places.py
+│   │   │   │   └── ai.py
+│   │   ├── services/         # Business logic
+│   │   └── ai_agents/        # LangGraph Multi-Agent system
+│   │       ├── orchestrator.py
+│   │       ├── agents/       # Location, Plan, Research, Conflict...
+│   │       └── state.py      # LangGraph state schema
+│   ├── alembic/              # Database migration scripts
+│   ├── pyproject.toml        # Dependencies (Poetry / uv)
+│   └── tests/                # Pytest unit & integration tests
+├── frontend/                 # React Application
+├── docs/                     # Tài liệu dự án
+└── docker-compose.yml
 ```
-- Dùng **pnpm workspaces** hoặc **Turborepo** để quản lý monorepo nếu team quen; nếu không, dùng 2 repo riêng (`backend`, `frontend`) + repo `docs` liên kết — đơn giản hơn cho team lần đầu làm monorepo.

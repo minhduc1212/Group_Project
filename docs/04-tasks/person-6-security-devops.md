@@ -2,30 +2,30 @@
 
 **Sở hữu**: Hạ tầng CI/CD, Docker, bảo mật xuyên suốt toàn dự án. Có backlog riêng chạy song song từ ngày 1 — **không ngồi chờ có code mới bắt đầu việc**.
 
-## Sprint 0 — Contract & hạ tầng nền
-- [ ] Dựng `docker-compose.yml` (Postgres, Redis) — mọi người cần dùng ngay ngày 1
-- [ ] Setup GitHub Actions CI: lint → test → build, branch protection rule cho `main`
-- [ ] Setup Husky + lint-staged (pre-commit hook chạy lint/format)
+## Sprint 0 — Contract & hạ tầng nền (Python FastAPI + Docker)
+- [ ] Dựng `docker-compose.yml` (FastAPI / Uvicorn, Postgres, Redis) — mọi người cần dùng ngay ngày 1
+- [ ] Setup GitHub Actions CI: Ruff (lint) → Pytest → Docker build, branch protection rule cho `main`
+- [ ] Setup Husky + pre-commit hook (chạy Ruff, Black, Mypy)
 - [ ] Viết threat model sơ bộ cho hệ thống (đặc biệt luồng AI Agent) dựa trên kiến trúc đã chốt ở Sprint 0
-- [ ] Review & góp ý OpenAPI contract dưới góc độ bảo mật (endpoint nào cần rate limit, cần Guard gì)
+- [ ] Review & góp ý FastAPI OpenAPI contract dưới góc độ bảo mật (endpoint nào cần rate limit, cần Dependency Security gì)
 
 ## Sprint 1 — Review Auth + siết bảo mật nền tảng
 - [ ] Review toàn bộ PR Auth (Backend Dev A) theo checklist `05-security/security-guidelines.md` mục 6
-- [ ] Cấu hình Helmet, CORS domain cụ thể (không `*`)
-- [ ] Setup rate limiting (NestJS Throttler) cho endpoint auth
-- [ ] Setup quản lý secrets: GitHub Actions Secrets, kiểm tra `.gitignore` chặn `.env` từ commit đầu tiên
-- [ ] Setup Dependabot / `npm audit` tự động trong CI
+- [ ] Cấu hình FastAPI `CORSMiddleware` với domain cụ thể (không `*`), `TrustedHostMiddleware`
+- [ ] Setup rate limiting (FastAPI Limiter / Slowapi / Redis) cho endpoint auth
+- [ ] Setup quản lý secrets: GitHub Actions Secrets, Pydantic `BaseSettings`, kiểm tra `.gitignore` chặn `.env` từ commit đầu tiên
+- [ ] Setup Dependabot / `pip audit` tự động trong CI
 
 ## Sprint 2 — Review Integration & chuẩn bị AI
-- [ ] Review PR External API (Backend Dev B): kiểm tra timeout/retry, không lộ secret key phía Frontend
+- [ ] Review PR External API (Backend Dev B): kiểm tra timeout/retry (`httpx`), không lộ secret key phía Frontend
 - [ ] Viết chi tiết checklist chống prompt injection cụ thể cho AI Engineer áp dụng (dựa trên threat model Sprint 0)
-- [ ] Setup Sentry (theo dõi lỗi runtime)
+- [ ] Setup Sentry Python SDK (theo dõi lỗi runtime)
 
 ## Sprint 3 — Review AI Agent (trọng tâm bảo mật)
-- [ ] Review kỹ input validation/sanitize trước khi vào prompt (AI Engineer)
-- [ ] Review Zod schema validate output LLM trước khi lưu DB
+- [ ] Review kỹ input validation/sanitize bằng Pydantic & bleach trước khi vào prompt (AI Engineer)
+- [ ] Review Pydantic schema validate output LLM trước khi lưu DB
 - [ ] Test thử các kịch bản prompt injection cơ bản trên môi trường dev (không phá hệ thống thật)
-- [ ] Kiểm tra rate limit `/ai/*` hoạt động đúng
+- [ ] Kiểm tra rate limit `/api/v1/ai/*` hoạt động đúng
 
 ## Sprint 4 — Pentest & hoàn thiện
 - [ ] Pentest toàn hệ thống trước demo: thử các lỗi OWASP Top 10 cơ bản (injection, broken auth, broken access control, XSS)
