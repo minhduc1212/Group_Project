@@ -1,54 +1,43 @@
-# Task Board & Sprint Plan — 6 người chạy song song
+# Task Board & Master Sprint Plan — 6 Track Run Parallel
 
-> Theo dõi thực tế bằng **GitHub Projects (Kanban)**, file này là bản tóm tắt. Board có **6 cột dọc theo người** (không phải theo nhóm tính năng) để nhìn rõ ai đang làm gì, ai đang rảnh.
+> Xem bảng chia nhỏ micro-task chi tiết đến từng file & acceptance criteria ở **[TASKS.md](../TASKS.md)**.
+> Board này theo dõi tiến độ tổng thể với **6 cột dọc theo người** (BE-A, BE-B, AI, FE-A, FE-B, Security/DevOps).
 
 ## 1. Sprint 0 — Contract Session (ngày 1–2, bắt buộc cả 6 người)
-Xem chi tiết quy trình ở [contract-first-workflow.md](../01-workflow/contract-first-workflow.md).
-- [ ] Chốt DB schema khởi điểm
-- [ ] Chốt OpenAPI spec toàn bộ endpoint
-- [ ] Backend Dev A tạo controller skeleton + chạy migration
-- [ ] Security dựng CI/CD + Docker Compose
-- [ ] Frontend + AI Engineer setup mock (MSW / fixture data)
+Xem quy trình chi tiết ở [contract-first-workflow.md](../01-workflow/contract-first-workflow.md) và micro-tasks ở [TASKS.md](../TASKS.md) (TASK-001 đến TASK-008).
+- [ ] TASK-001 `[BE-A]`: Chốt SQLAlchemy & Pydantic DB Schemas
+- [ ] TASK-002 `[BE-A]`: FastAPI Controller Skeleton
+- [ ] TASK-003 `[AI]`: LangGraph State & Fixture Data
+- [ ] TASK-004 `[FE-A]`: MSW Mock Handlers Core APIs
+- [ ] TASK-005 `[FE-B]`: MSW Mock Handlers Streaming AI
+- [ ] TASK-006 `[SEC/DEVOPS]`: Docker Compose & Environment
+- [ ] TASK-007 `[SEC/DEVOPS]`: CI/CD GitHub Actions Pipeline
+- [ ] TASK-008 `[SEC/DEVOPS]`: Pre-commit Hooks & Ruff setup
 
 **Mốc ra khỏi Sprint 0**: contract đã push lên `main`, mọi người có thể code song song từ đây.
 
-## 2. Sprint 1–4 — 6 track chạy song song
+## 2. Sprint 1–4 — 6 Track Chạy Song Song
 
 | Track | Sprint 1 | Sprint 2 | Sprint 3 | Sprint 4 |
 |---|---|---|---|---|
-| **BE-A (Core)** | Auth hoàn chỉnh | Event/Plan CRUD + phân quyền | Vote + Plan Stop | Hardening + test coverage |
-| **BE-B (Platform)** | Setup External API + cache | Hoàn thiện Places/Weather/Currency | Notification + Export PDF | Admin Dashboard |
-| **AI Engineer** | Orchestrator skeleton + mock data | Location Agent, Note Agent | Plan Agent, Cost Agent, Conflict Resolver | Chat Agent + hoàn thiện, nối DB thật |
-| **FE-A (Core)** | UI Auth (mock API) | UI Event/Plan/Vote (mock API) | Nối API thật (Integration Day) + Checklist UI | Polish + test |
-| **FE-B (Growth)** | Landing page + i18n khung | UI AI Chat (mock) | Nối AI Chat thật + chia chi phí UI | Admin Dashboard UI |
-| **Security/DevOps** | CI/CD + Docker + threat model | Review PR Auth (BE-A) | Review PR AI Agent (prompt injection) | Pentest toàn hệ thống trước demo |
+| **BE-A (Core)** | Auth API (OAuth2, JWT, Pydantic) | Event/Plan/Invitation CRUD + RolesGuard | Vote Engine + Plan Status (DRAFT→VOTING→CONFIRMED) | Hardening + Pytest coverage ≥ 70% |
+| **BE-B (Platform)** | HTTPX Async + Redis Cache | Places API (Category Filter) + Weather/Currency | Email Notifications (SMTP) + PDF Export (WeasyPrint) | Admin Dashboard APIs + Token usage |
+| **AI Engineer** | LangGraph Python Orchestrator + DeepSeek Wrapper | Location Agent + Research Agent + Note Agent | Plan Agent (DeepSeek-R1) + Cost + Conflict Resolver | Realtime Chat Agent + SSE/WebSocket Streaming |
+| **FE-A (Core)** | Auth UI (Login, Register, Profile, MSW) | Event Dashboard + EventType Selector + Mapbox | Manual Plan Builder + Vote & Confirmation UI | Component Testing + Polish Responsive UI |
+| **FE-B (Growth)** | Landing Page + i18n Setup (VI/EN) | UI AI Chat Mock + Category Cards | Checklist UI + PDF Download Preview | Streaming AI Chat UI + Shared Expenses + Admin UI |
+| **Security/DevOps** | FastAPI Security Middlewares + Ruff/CI | External API Security & Retry Review | Prompt Injection & Pydantic Output Defense Audit | Pentest OWASP Top 10 + Staging & Production Deploy |
 
-> Mỗi ô là backlog riêng của người đó trong sprint — không có ô nào phụ thuộc phải "chờ" ô khác xong mới bắt đầu, nhờ contract đã chốt ở Sprint 0. Chi tiết từng dòng, xem file task riêng của từng người.
+> Chi tiết từng task (mã task `TASK-xxx`, file cần sửa, acceptance criteria), xem tại **[TASKS.md](../TASKS.md)**.
 
-## 3. Bảng theo dõi (cập nhật hàng tuần bởi từng người)
+## 3. Bảng Theo Dõi Cá Nhân
 
-| Người | File task chi tiết | Trạng thái tuần này | Blocker |
-|---|---|---|---|
-| Backend Dev A | [person-1-backend-core.md](person-1-backend-core.md) | 🔲 To Do | — |
-| Backend Dev B | [person-2-backend-platform.md](person-2-backend-platform.md) | 🔲 To Do | — |
-| AI Engineer | [person-3-ai-engineer.md](person-3-ai-engineer.md) | 🔲 To Do | — |
-| Frontend Dev A | [person-4-frontend-core.md](person-4-frontend-core.md) | 🔲 To Do | — |
-| Frontend Dev B | [person-5-frontend-growth.md](person-5-frontend-growth.md) | 🔲 To Do | — |
-| Security/DevOps | [person-6-security-devops.md](person-6-security-devops.md) | 🔲 To Do | — |
+| Người | Task file chi tiết | Micro-tasks | Trạng thái | Blocker |
+|---|---|---|---|---|
+| Backend Dev A | [person-1-backend-core.md](person-1-backend-core.md) | TASK-001, TASK-101..106, TASK-201..204, TASK-301..306, TASK-404 | 🔲 To Do | — |
+| Backend Dev B | [person-2-backend-platform.md](person-2-backend-platform.md) | TASK-107..108, TASK-205..208, TASK-311..313, TASK-405 | 🔲 To Do | — |
+| AI Engineer | [person-3-ai-engineer.md](person-3-ai-engineer.md) | TASK-003, TASK-109..110, TASK-209..211, TASK-307..310, TASK-401..403 | 🔲 To Do | — |
+| Frontend Dev A | [person-4-frontend-core.md](person-4-frontend-core.md) | TASK-004, TASK-111..113, TASK-212..215, TASK-314..317 | 🔲 To Do | — |
+| Frontend Dev B | [person-5-frontend-growth.md](person-5-frontend-growth.md) | TASK-005, TASK-114..115, TASK-406..410 | 🔲 To Do | — |
+| Security/DevOps | [person-6-security-devops.md](person-6-security-devops.md) | TASK-006..008, TASK-116..117, TASK-411..414 | 🔲 To Do | — |
 
 Chú thích: 🔲 To Do · 🟡 In Progress · 🔵 In Review · ✅ Done · 🔴 Blocked
-
-## 4. Điểm đồng bộ bắt buộc giữa các track (không thể tránh phụ thuộc 100%, nhưng giảm tối đa)
-| Thời điểm | Ai gặp nhau | Vì sao |
-|---|---|---|
-| Cuối Sprint 1 | BE-A ↔ AI Engineer | Đối chiếu schema Event/Plan thật vs mock đã dùng |
-| Cuối Sprint 1 | BE-A ↔ FE-A | Integration Day đầu tiên — Auth thật |
-| Cuối Sprint 2 | BE-B ↔ AI Engineer | Location/Note Agent nối API thật của Nhóm 3 |
-| Cuối Sprint 3 | AI Engineer ↔ FE-B | Chat Agent nối UI thật (streaming) |
-| Xuyên suốt | Security ↔ tất cả | Review PR nhạy cảm (Auth, AI, Admin) trong 24h, không chặn tiến độ |
-
-## 5. Quy tắc quản lý task (giữ nguyên)
-- 1 Issue = 1 task cụ thể, có **Acceptance Criteria** rõ ràng.
-- Task > 3 ngày công → tách sub-task.
-- Task `Blocked` → ghi rõ đang chờ gì/chờ ai trong comment Issue, báo ngay ở daily update, đừng để tự "im lặng chờ".
-- Cuối mỗi sprint: mỗi người demo phần mình (kể cả AI Engineer demo trên mock nếu Backend chưa xong thật) — không đợi đủ mọi thứ mới demo.

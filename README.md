@@ -32,6 +32,7 @@
 - [AI Agent Architecture](docs/03-architecture/ai-agent-architecture.md) — Kiến trúc Multi-Agent (LangGraph Python, EventType routing, DeepSeek API)
 
 ### 04 — Phân chia công việc (Tasks) — chia theo **người**, chạy song song
+- [Master Task Breakdown (TASKS.md)](docs/TASKS.md) — **Toàn bộ micro-tasks chi tiết cho từng file & acceptance criteria**
 - [Task Board tổng](docs/04-tasks/task-board.md) — Bảng theo dõi tiến độ + Sprint plan 6 track song song
 - [Person 1 — Backend Dev A (Core Domain: Auth + Event/Plan/Vote/Invitation - FastAPI)](docs/04-tasks/person-1-backend-core.md)
 - [Person 2 — Backend Dev B (Platform: External API + Notification/Export + Admin - FastAPI)](docs/04-tasks/person-2-backend-platform.md)
