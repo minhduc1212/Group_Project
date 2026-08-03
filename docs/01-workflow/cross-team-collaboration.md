@@ -1,8 +1,9 @@
 # Thêm Tính Năng Giữa Chừng & Nhảy Vào Code Của Nhau Không Conflict
 
-> Tài liệu này giải quyết 2 vấn đề thực tế khi team 6 người làm việc song song:
+> Tài liệu này giải quyết 3 vấn đề thực tế khi team 6 người làm việc song song:
 > 1. Muốn thêm/sửa tính năng khi dự án đang chạy → làm thế nào?
 > 2. Muốn 1 người nhảy vào giúp phần của người khác → tổ chức code/task ra sao?
+> 3. Quy trình bàn giao công việc (Handover) khi xong task, khi bị block, hoặc khi chuyển giao task cho nhau.
 
 ---
 
@@ -92,65 +93,45 @@ Là [ai], tôi muốn [làm gì], để [đạt được gì].
 
 ```
 ❌ SAI: 2 người cùng sửa 1 file lớn
-   Person A sửa dòng 50-80 của EventService.ts
-   Person B sửa dòng 60-90 của EventService.ts
+   Person A sửa dòng 50-80 của EventService.py
+   Person B sửa dòng 60-90 của EventService.py
    → CONFLICT khi merge
 
 ✅ ĐÚNG: mỗi người sửa file/module riêng, giao tiếp qua interface
-   Person A code PlanService.ts (tạo plan)
-   Person B code VoteService.ts (tạo vote)
+   Person A code plan_service.py (tạo plan)
+   Person B code vote_service.py (tạo vote)
    Cả 2 chỉ import interface, không sửa chung 1 file
    → KHÔNG CONFLICT
 ```
 
 ### 2.2. Cấu trúc code theo Module — chìa khóa chống conflict
 
-NestJS đã hỗ trợ module hóa sẵn. Tổ chức thư mục theo **domain module**, mỗi module là lãnh thổ của 1-2 người:
+FastAPI hỗ trợ APIRouter & Services rõ ràng. Tổ chức thư mục theo **domain module**, mỗi module là lãnh thổ của 1-2 người:
 
 ```
-backend/src/
-├── auth/                    ← Person 1 sở hữu
-│   ├── auth.module.ts
-│   ├── auth.service.ts      ← Logic đăng nhập/đăng ký
-│   ├── auth.controller.ts   ← Endpoint /auth/*
-│   ├── guards/              ← AuthGuard, RolesGuard
-│   └── dto/                 ← LoginDto, RegisterDto
-│
-├── event/                   ← Person 1 sở hữu, Person 2 có thể đóng góp
-│   ├── event.module.ts
-│   ├── event.service.ts     ← Logic CRUD event
-│   ├── event.controller.ts
-│   ├── plan/                ← Sub-module cho Plan
-│   │   ├── plan.service.ts
-│   │   └── plan.controller.ts
-│   └── vote/                ← Sub-module cho Vote
-│       ├── vote.service.ts
-│       └── vote.controller.ts
-│
-├── places/                  ← Person 2 sở hữu
-│   ├── places.module.ts
-│   ├── places.service.ts    ← Gọi Google Places API + cache
-│   └── places.controller.ts
-│
-├── ai/                      ← Person 3 (AI Engineer) sở hữu
-│   ├── ai.module.ts
-│   ├── orchestrator/
-│   │   └── orchestrator.service.ts
-│   ├── agents/
-│   │   ├── location.agent.ts    ← Mỗi agent 1 file riêng
-│   │   ├── plan.agent.ts
-│   │   ├── research.agent.ts
-│   │   ├── conflict.agent.ts
-│   │   └── ...
-│   └── ai.controller.ts
-│
-└── notification/            ← Person 2 sở hữu
-    ├── notification.module.ts
-    ├── notification.service.ts
-    └── email.service.ts
+backend/app/
+├── core/                    ← Config, security, DB engine
+├── models/                  ← SQLAlchemy DB Models
+├── schemas/                 ← Pydantic v2 DTOs
+├── api/v1/                  ← FastAPI APIRouters
+│   ├── auth.py              ← Person 1 sở hữu
+│   ├── events.py            ← Person 1 sở hữu
+│   ├── plans.py             ← Person 1 sở hữu
+│   ├── votes.py             ← Person 1 sở hữu
+│   ├── places.py            ← Person 2 sở hữu
+│   ├── utils.py             ← Person 2 sở hữu
+│   ├── export.py            ← Person 2 sở hữu
+│   └── ai.py                ← Person 3 sở hữu
+├── services/                ← Service layer (auth_service, event_service, places_service...)
+└── ai_agents/               ← Person 3 (AI Engineer) sở hữu
+    ├── orchestrator.py
+    └── agents/
+        ├── location_agent.py
+        ├── plan_agent.py
+        └── ...
 ```
 
-**Quy tắc vàng**: Mỗi module expose ra **Service interface** (public methods). Người khác muốn dùng → `import { PlanService } from '../event/plan/plan.service'`, gọi method công khai. **Không bao giờ sửa code bên trong module của người khác** mà không báo trước.
+**Quy tắc vàng**: Mỗi module expose ra **Service class / function** (public methods). Người khác muốn dùng → `from app.services.plan_service import plan_service`, gọi method công khai. **Không bao giờ sửa code bên trong module của người khác** mà không báo trước.
 
 ### 2.3. Cách chia task để người khác nhảy vào giúp được
 
@@ -163,85 +144,119 @@ backend/src/
 
 ✅ CHIỀU DỌC (dễ nhảy vào giúp):
    Task 1: "API tạo event mới (POST /events)" — 1 endpoint, 1 service method, 1 test
-   Task 2: "API mời thành viên (POST /events/:id/invite)" — 1 endpoint riêng
+   Task 2: "API mời thành viên (POST /events/:id/invitations)" — 1 endpoint riêng
    Task 3: "API lấy danh sách member (GET /events/:id/members)" — 1 endpoint riêng
-   → Mỗi task độc lập, ai rảnh nhặt task nào cũng được
+   → Mỗi task độc lập, ai rảnh nhặt task nào cũng được (theo đúng mã TASK-xxx trong docs/TASKS.md)
 ```
-
-**Mỗi task (Issue) nên có đủ 4 phần:**
-```markdown
-## Task: API tạo event mới
-
-### Input (request)
-POST /api/v1/events
-Body: { name: string, type: EventType, startDate: string, endDate: string }
-
-### Output (response)
-201: { success: true, data: { id: string, name: string, ... } }
-400: { success: false, error: { code: "VALIDATION_ERROR", ... } }
-
-### Acceptance Criteria
-- [ ] Chỉ user đã đăng nhập mới tạo được (AuthGuard)
-- [ ] Người tạo tự động thành Owner trong EventMember
-- [ ] Validate: name không rỗng, startDate < endDate
-- [ ] Test: happy path + validation fail + unauthorized
-
-### File cần tạo/sửa
-- `event/event.service.ts` → method `createEvent()`
-- `event/event.controller.ts` → handler `POST /events`
-- `event/dto/create-event.dto.ts` → Zod/class-validator schema
-- `event/event.service.spec.ts` → unit test
-```
-
-> Với format này, **bất kỳ ai** đọc xong đều biết: cần code gì, ở file nào, kết quả đúng trông ra sao. Không cần hỏi lại người phụ trách.
 
 ### 2.4. Quy trình nhảy vào giúp người khác
 
 Khi Person B muốn giúp Person A (VD: BE Dev B giúp BE Dev A làm Vote module vì A đang bị quá tải):
 
 ```
-1. Nhặt task     → Vào board, chọn task chưa ai làm trong module của A
-2. Báo trước     → Message kênh #dev: "Mình nhặt task Vote API nhé @A"
-3. Đọc context   → Đọc file task của A (person-1-backend-core.md) + schema liên quan
-4. Code đúng chỗ → Code trong đúng thư mục module, theo đúng convention
+1. Nhặt task     → Vào board/TASKS.md, chọn task chưa ai làm trong module của A (VD: TASK-304)
+2. Báo trước     → Message kênh #dev: "Mình nhặt TASK-304 Vote API nhé @A"
+3. Đọc context   → Đọc file TASKS.md & file task của A (person-1-backend-core.md)
+4. Code đúng chỗ → Code trong đúng thư mục module, theo đúng convention Pydantic/SQLAlchemy
 5. PR tag owner  → Mở PR, tag A làm reviewer (A hiểu context nhất)
 6. A review      → A approve hoặc góp ý → merge
 ```
 
-**Điều kiện để nhảy vào mượt:**
-- Task đã được chia nhỏ kiểu vertical slice (mục 2.3)
-- Task có Acceptance Criteria rõ ràng
-- Code theo convention chung (xem [coding-conventions.md](../02-standards/coding-conventions.md))
-- Chủ module review PR → đảm bảo code mới khớp với kiến trúc module
-
 ### 2.5. Buddy System — mỗi người có 1 backup
-
-Để bất kỳ ai cũng có thể nhảy vào giúp bất kỳ ai, team nên áp dụng **Buddy System**:
 
 | Người | Buddy (backup) | Lý do |
 |---|---|---|
-| BE Dev A (Core) | BE Dev B (Platform) | Cùng backend, hiểu NestJS/Prisma |
+| BE Dev A (Core) | BE Dev B (Platform) | Cùng backend Python FastAPI, hiểu SQLAlchemy |
 | BE Dev B (Platform) | BE Dev A (Core) | Ngược lại |
 | AI Engineer | BE Dev A (Core) | AI cần hiểu schema, BE-A hiểu schema rõ nhất |
 | FE Dev A (Core) | FE Dev B (Growth) | Cùng frontend, cùng React |
 | FE Dev B (Growth) | FE Dev A (Core) | Ngược lại |
 | Security/DevOps | Ai cũng được | Review PR cross-team là việc thường ngày |
 
-**Buddy làm gì:**
-- Review **mọi PR** của người mình backup → luôn hiểu code của họ
-- Khi buddy bận/nghỉ → nhặt task thay, không bị tắc tiến độ
-- Weekly: dành 15 phút sync nhanh những thay đổi kiến trúc trong module
+---
 
-### 2.6. Tránh conflict Git — mẹo thực tế
+## Phần 3: Quy Trình Bàn Giao Công Việc (Task Handover Workflow)
 
-| Mẹo | Chi tiết |
-|---|---|
-| **1 PR ≤ 400 dòng diff** | PR càng nhỏ, càng ít chance conflict với PR khác |
-| **Rebase thường xuyên** | Mỗi sáng: `git fetch origin && git rebase origin/develop` trước khi code tiếp |
-| **Không sửa file dùng chung** nếu không cần | File như `app.module.ts`, `prisma/schema.prisma` — chỉ sửa khi thật sự cần, và merge nhanh |
-| **Tách file thay vì nhét chung** | Nếu 2 người cùng cần thêm route → tách thành 2 file module riêng, import vào `app.module.ts` 1 dòng thay vì sửa chung 1 file routes lớn |
-| **Lock file (package-lock.json)** | Nếu conflict ở lock file → xóa lock, chạy `npm install` lại, commit lock mới |
-| **Schema Prisma** | Người sở hữu schema (BE Dev A) nên merge PR đổi schema **trước**, rồi mọi người rebase lên. Không để 2 PR đổi schema cùng lúc |
+Để việc theo dõi tiến độ công việc giữa các thành viên diễn ra minh bạch, rõ ràng, dự án quy định 4 kịch bản bàn giao công việc cụ thể:
+
+### 3.1. Bàn Giao Khi Hoàn Thành Task (Task Completion Handover)
+
+Khi hoàn thành một micro-task (Ví dụ: `TASK-102`):
+
+1. **Tự kiểm tra (Self-Check)**:
+   - Chạy linter & test local pass clean: `ruff check backend` và `pytest backend` (hoặc `npm run test` phía FE).
+   - Kiểm tra code đáp ứng đủ các tiêu chí trong **Acceptance Criteria** của task trong `docs/TASKS.md`.
+2. **Cập nhật trạng thái Task**:
+   - Mở file task cá nhân (`person-x-*.md`) và file `docs/TASKS.md`, đổi ô tick từ `[ ]` thành `[x]`.
+3. **Mở Pull Request & Tag Reviewer**:
+   - Đặt tên branch: `feature/TASK-102-user-registration`.
+   - Mở PR dựa trên template `.github/PULL_REQUEST_TEMPLATE.md`.
+   - Tag **Buddy / Chủ module** làm reviewer.
+4. **Báo tin bàn giao trên kênh `#dev`**:
+   ```
+   ✅ [DONE] TASK-102: User Registration & Password Hashing
+   PR: #12 (https://github.com/.../pull/12)
+   Reviewer: @BE-B (Buddy)
+   ```
+
+---
+
+### 3.2. Bàn Giao Khi Nhờ Người Khác Làm Hộ / Nhảy Vào Giúp (Cross-Person Handover)
+
+Khi Person A chuyển giao task đang dở cho Person B (hoặc Person B nhảy vào giúp):
+
+1. **Push trạng thái code hiện tại**:
+   - Push toàn bộ code lên branch `feature/TASK-xxx-wip` (kể cả chưa xong hoàn toàn).
+   - Đảm bảo không để code dở dang trên máy cá nhân mà người khác không truy cập được.
+2. **Để lại Ghi chú Bàn giao (Handover Note)** trên Issue/PR dở:
+   ```markdown
+   ### 🔄 Ghi chú Bàn giao Task: TASK-304
+   - **Người bàn giao**: @BE-A → **Người nhận**: @BE-B
+   - **Đã làm xong**:
+     - [x] Tạo SQLAlchemy Model `PlanVote`
+     - [x] Endpoint `POST /events/:id/plans/:planId/votes` nhận vote UP/DOWN
+   - **Còn lại cần làm tiếp**:
+     - [ ] Kiểm tra constraint unique `(plan_id, user_id)`
+     - [ ] Tổng hợp kết quả vote trả về cho FE
+   - **Lưu ý kỹ thuật**: Cần chú ý role `VIEWER` không được vote.
+   ```
+3. **Chuyển Assignee**:
+   - Đổi Assignee trên GitHub Projects sang Person B.
+   - Báo tin trên kênh `#dev`: `🔄 [HANDOVER] TASK-304 đã chuyển giao cho @BE-B tiếp quản. Branch: feature/TASK-304-wip`.
+
+---
+
+### 3.3. Bàn Giao Khi Bị Block / Tắc Tiến Độ (Blocked Task Handover)
+
+Khi một task bị block quá 2 tiếng (ví dụ: chờ API spec từ BE, chờ UI design từ FE, v.v.):
+
+1. **Cập nhật trạng thái Blocked**:
+   - Đổi trạng thái trên Task Board thành `🔴 Blocked`.
+2. **Báo tin chi tiết lên kênh `#contract-changes` hoặc `#dev`**:
+   ```
+   🔴 [BLOCKED] TASK-209: Location Agent implementation
+   Đang chờ: API GET /places/search filter theo category từ @BE-B (TASK-205)
+   Ảnh hưởng: Không thể hoàn thiện agent tìm địa điểm trong Sprint 2
+   Tag: @BE-B @Security
+   ```
+3. **Chuyển tạm sang Task khác**:
+   - Trong thời gian chờ giải quyết blocker, nhặt một task độc lập khác trong backlog để không bị phí thời gian.
+
+---
+
+### 3.4. Bàn Giao Mốc Cuối Sprint (Integration Day Handover)
+
+Vào ngày cuối cùng của Sprint (Integration Day):
+
+1. **Chuyển chế độ Mock → Thật**:
+   - Frontend tắt MSW mock mode (`VITE_USE_MOCK=false`), trỏ URL API về môi trường Staging/Dev server.
+   - AI Engineer trỏ LangGraph Agent sang đọc/ghi DB PostgreSQL thật thay cho fixture JSON.
+2. **Chạy E2E Sanity Checklist**:
+   - Kiểm tra các luồng đi qua đúng Happy Path.
+3. **Demo ngắn 15 phút**:
+   - Mỗi người demo 2-3 phút phần mình phụ trách trước team.
+4. **Sign-off**:
+   - Security & DevOps quét kiểm tra bảo mật lần cuối trước khi merge nhánh Sprint vào `main`.
 
 ---
 
@@ -256,9 +271,9 @@ Lớn (tính năng hoàn toàn mới) → Mở Issue Feature Proposal → weekly
 
 ### Muốn nhảy vào giúp người khác?
 ```
-1. Nhặt task nhỏ (vertical slice) từ board
+1. Nhặt task nhỏ (vertical slice) từ board / docs/TASKS.md
 2. Báo người phụ trách trên kênh #dev
-3. Đọc file task + schema liên quan
+3. Đọc file TASKS.md + schema liên quan
 4. Code trong đúng module, đúng convention
 5. PR tag chủ module làm reviewer
 ```

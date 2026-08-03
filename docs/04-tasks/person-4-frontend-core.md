@@ -1,38 +1,83 @@
-# Person 4 — Frontend Dev A (Core Flows UI)
+# 👤 Person 4 — Frontend Dev A (Core Flows UI)
 
-**Sở hữu**: UI cho Auth, Event, Plan, Vote, Checklist. Code song song với Backend Dev A qua mock (MSW), nối thật ở Integration Day.
+> **Sở hữu**: UI cho Auth, Event, Plan, Vote, Checklist. Code song song với Backend Dev A qua mock (MSW), nối thật ở Integration Day.
 
-## Sprint 0 — Contract
-- [ ] Tham gia chốt OpenAPI spec — góp ý shape response cần cho UI (VD cần field nào để hiển thị list, metadata cho từng category)
-- [ ] Setup MSW (`frontend/src/mocks/`), viết handler mock cho `/auth/*`, `/events/*`, `/invitations/*`, `/plans/*`, `/votes/*` đúng theo contract
+---
 
-## Sprint 1 — UI Auth (mock API)
-- [ ] Màn hình Login (Google/Facebook button), Register, Forgot Password *(#1, #2, #3)*
-- [ ] Màn hình Profile (xem/sửa) *(#4)*
-- [ ] Xử lý lưu token đúng chuẩn bảo mật (không lưu access token nhạy cảm ở `localStorage`, dùng cookie httpOnly do BE set) *(#5)*
-- **Mốc cuối sprint**: Integration Day — tắt mock `/auth/*`, nối API thật của Backend Dev A.
+## 📊 Progress Tracker
 
-## Sprint 2 — UI Event/Plan/Vote (mock API)
-- [ ] Màn hình tạo Event (chọn EventType: TRAVEL, DINING, HANGOUT, ENTERTAINMENT, SIGHTSEEING, CUSTOM), xem/sửa Event *(#6, #9)*
-- [ ] UI Mời thành viên & Quản lý lời mời (gửi link/email, danh sách lời mời Pending/Accepted/Declined) *(#7)*
-- [ ] Màn hình danh sách Plan trong Event (phân biệt Plan AI vs Plan Thủ công) *(#10)*
-- [ ] UI hiển thị theo Role (Owner / Member / Viewer thấy nút hành động khác nhau) *(#8)*
-- [ ] Tích hợp bản đồ hiển thị (dùng token public từ Backend Dev B) *(#19)*
+| Sprint | Task Count | Done | Status |
+|---|---|---|---|
+| **Sprint 0** | 1 Task | 0/1 | 🔲 To Do |
+| **Sprint 1** | 3 Tasks | 0/3 | 🔲 To Do |
+| **Sprint 2** | 4 Tasks | 0/4 | 🔲 To Do |
+| **Sprint 3** | 4 Tasks | 0/4 | 🔲 To Do |
+| **Sprint 4** | 0 Tasks (Support Testing & Polish) | 0/0 | 🔲 To Do |
 
-## Sprint 3 — Nối API thật + Manual Plan + Vote UI
-- [ ] Tắt toàn bộ mock Event/Plan/Vote, nối API thật (Integration Day)
-- [ ] UI Tạo & Chỉnh sửa Plan thủ công (thêm stop với Google Places autocomplete, sửa thứ tự drag & drop) *(#11, #12)*
-- [ ] UI Vote + hiển thị kết quả tổng hợp + chuyển trạng thái Plan (Gửi vote → Confirm) *(#13, #14)*
-- [ ] UI Checklist chuẩn bị đồ *(#35)*
+---
 
-## Sprint 4 — Polish & test
-- [ ] Component test (Vitest + RTL) cho các flow chính: login, tạo event, vote, manual plan
-- [ ] Responsive mobile, xử lý loading/error state đầy đủ (TanStack Query)
-- [ ] Fix bug từ Integration Day + Pentest (Security)
+## 🛠️ Detailed Sprint Backlog
 
-## Định nghĩa Done chung
-- Không gọi `fetch`/`axios` trực tiếp trong component — qua custom hook TanStack Query
-- Test coverage các flow chính có RTL test
+### Sprint 0 — MSW Mock Setup
+- [ ] **`TASK-004`** **MSW Mock Handlers Setup for Core APIs**
+  - **Feature**: N/A
+  - **Target Files**: `frontend/src/mocks/handlers/` (`auth.ts`, `events.ts`, `plans.ts`)
+  - **Acceptance Criteria**: MSW intercepts `/api/v1/auth/*` and `/api/v1/events/*`, returning mock JSON adhering to OpenAPI contract.
 
-## Không được tự ý làm khi chưa báo
-- Nếu phát hiện contract API thiếu field cần cho UI → báo `#contract-changes`, không tự chế field phía FE rồi Backend phải chạy theo sau.
+### Sprint 1 — UI System & Auth Screens
+- [ ] **`TASK-111`** **Project Skeleton & Design System (Tailwind + shadcn)**
+  - **Feature**: #42
+  - **Target Files**: `frontend/src/`, `frontend/tailwind.config.js`
+  - **Acceptance Criteria**: Vite app builds cleanly with Tailwind CSS, shadcn components, responsive design.
+- [ ] **`TASK-112`** **Login & Register UI Screens**
+  - **Feature**: #1, #2
+  - **Target Files**: `frontend/src/features/auth/pages/LoginPage.tsx`, `RegisterPage.tsx`
+  - **Acceptance Criteria**: Form validation with React Hook Form + Zod, Google/Facebook login buttons, submit calls Auth API / MSW.
+- [ ] **`TASK-113`** **Forgot Password & Profile Management UI**
+  - **Feature**: #3, #4
+  - **Target Files**: `frontend/src/features/auth/pages/ForgotPasswordPage.tsx`, `ProfilePage.tsx`
+  - **Acceptance Criteria**: Profile page allows avatar upload and name edit, updates Zustand auth store.
+
+### Sprint 2 — Event Dashboard & Invitation UI
+- [ ] **`TASK-212`** **Event Creation Dialog & EventType Selector**
+  - **Feature**: #6
+  - **Target Files**: `frontend/src/features/event/components/CreateEventModal.tsx`
+  - **Acceptance Criteria**: Form allows selecting `EventType` (TRAVEL, DINING, HANGOUT, ENTERTAINMENT, SIGHTSEEING, CUSTOM), dates, location.
+- [ ] **`TASK-213`** **Event List & Event Detail Dashboard UI**
+  - **Feature**: #9
+  - **Target Files**: `frontend/src/features/event/pages/EventListPage.tsx`, `EventDetailPage.tsx`
+  - **Acceptance Criteria**: Displays event cards, status badges, member list, navigation tabs (Plans, Members, Chat, Settings).
+- [ ] **`TASK-214`** **Member Invitation Modal & Pending List UI**
+  - **Feature**: #7
+  - **Target Files**: `frontend/src/features/event/components/InviteMemberModal.tsx`
+  - **Acceptance Criteria**: Allows sending email/link invites, displays pending invitations list with status (Pending/Accepted/Declined).
+- [ ] **`TASK-215`** **Interactive Map Component (Mapbox Integration)**
+  - **Feature**: #19
+  - **Target Files**: `frontend/src/components/map/MapView.tsx`
+  - **Acceptance Criteria**: Renders markers for plan stops, centers camera dynamically, shows popup details on marker click.
+
+### Sprint 3 — Plan Builder, Voting Dashboard & Checklist UI
+- [ ] **`TASK-314`** **Manual Plan Builder Component (Drag & Drop)**
+  - **Feature**: #11, #12
+  - **Target Files**: `frontend/src/features/plan/components/PlanBuilder.tsx`
+  - **Acceptance Criteria**: Allows adding stops with Google Places autocomplete, reordering stops via drag & drop, editing cost/notes.
+- [ ] **`TASK-315`** **Voting Dashboard & Comment Thread UI**
+  - **Feature**: #13
+  - **Target Files**: `frontend/src/features/plan/components/PlanVotingCard.tsx`
+  - **Acceptance Criteria**: Displays UP/DOWN/NEUTRAL buttons, vote count progress bar, comment thread, "Send for Vote" button.
+- [ ] **`TASK-316`** **Plan Confirmation & Status Badge UI**
+  - **Feature**: #14
+  - **Target Files**: `frontend/src/features/plan/components/PlanHeader.tsx`
+  - **Acceptance Criteria**: Shows status badge (Draft, Voting, Confirmed). Renders "Confirm Plan" button only for Event Owner.
+- [ ] **`TASK-317`** **Packing Checklist UI Screen**
+  - **Feature**: #35
+  - **Target Files**: `frontend/src/features/checklist/pages/ChecklistPage.tsx`
+  - **Acceptance Criteria**: Interactive checklist with item check/uncheck, custom item add/delete, progress bar.
+
+---
+
+## 🤝 Handover & Review Guidelines (Person 4)
+
+1. **Buddy / Backup**: `Person 5` (Frontend Dev B)
+2. **Task Completion**: Run `npm run lint` and `npm run test`. Push branch `feature/TASK-xxx` and tag `@FE-B` on PR.
+3. **Task Handover**: Follow 4 scenarios in [cross-team-collaboration.md](../01-workflow/cross-team-collaboration.md) Section 3.

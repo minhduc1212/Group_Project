@@ -2,28 +2,26 @@
 
 ## 1. Sơ đồ tổng thể (high-level)
 
-```
-┌─────────────┐      HTTPS       ┌─────────────────────────────────┐
-│   Frontend    │ ───────────────▶ │   Backend API (Python FastAPI)  │
-│  (React/Vite)  │ ◀─────────────── │   /api/v1/...                   │
-└─────────────┘                   └────────────────┬────────────────┘
-                                                   │
-              ┌────────────────────────────────────┼────────────────────────────┐
-              │                                    │                            │
-              ▼                                    ▼                            ▼
-     ┌─────────────────┐                 ┌──────────────────┐        ┌──────────────────────┐
-     │  PostgreSQL       │                 │   Redis Cache     │        │  AI Agent Module     │
-     │  (SQLAlchemy/     │                 │  (session, API      │        │  (LangGraph Python)  │
-     │   SQLModel)       │                 │   cache, rate-limit) │        │  trực tiếp trong app │
-     │  users/events/    │                 └──────────────────┘        └──────────┬───────────┘
-     │  plans/votes...   │                                                     │
-     └─────────────────┘                                         ┌─────────────┴──────────┬───────────────┐
-                                                                 ▼                        ▼               ▼
-                                                       ┌──────────────────┐     ┌──────────────────┐    ┌───────────────┐
-                                                       │ External APIs    │     │ DeepSeek API     │    │ Email/PDF     │
-                                                       │ Google Places,   │     │ (V3 & R1)        │    │ Service (N5)  │
-                                                       │ Mapbox, Weather  │     └──────────────────┘    └───────────────┘
-                                                       └──────────────────┘
+```mermaid
+graph TD
+    FE[Client Frontend React 18 + Vite] <-->|HTTPS REST / WSS| BE[Backend API Python FastAPI]
+
+    subgraph Backend_Infrastructure [FastAPI Async Infrastructure]
+        BE <--> DB[(PostgreSQL + SQLAlchemy 2.0)]
+        BE <--> Cache[(Redis Cache / Rate Limit)]
+        BE <--> AI[AI Agent Module - LangGraph Python]
+    end
+
+    subgraph External_Services [External Integrations]
+        AI <--> LLM[DeepSeek API V3 & R1]
+        BE <--> Places[Google Places API / Mapbox / OpenWeather]
+        BE <--> Mail[Email SMTP / PDF Export Service]
+    end
+
+    style FE fill:#e1f5fe,stroke:#0288d1,stroke-width:2px;
+    style BE fill:#e8f5e9,stroke:#388e3c,stroke-width:2px;
+    style AI fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px;
+    style LLM fill:#fff3e0,stroke:#f57c00,stroke-width:2px;
 ```
 
 ## 2. Nguyên tắc kiến trúc
@@ -48,7 +46,7 @@
 
 ### Luồng Plan Thủ Công (Không Dùng AI):
 1. Thành viên bấm **"Tạo plan mới"** trong Event → tự thêm từng điểm dừng (stop) bằng tay (hỗ trợ autocomplete từ Google Places API).
-2. Lưu nháp (`status = DRAFT`, `isAiGenerated = false`).
+2. Lưu nháp (`status = DRAFT`, `is_ai_generated = false`).
 3. Người tạo bấm **"Gửi vote"** → `status = VOTING` → cả nhóm vào vote & comment.
 4. Owner xác nhận (`CONFIRMED`) → dùng chung đầy đủ các tính năng export PDF, xem bản đồ, chia chi phí.
 

@@ -3,22 +3,28 @@
 ## 1. Tổng quan
 Hệ thống dùng mô hình **Orchestrator–Worker** trên nền **LangGraph Python (`langgraph`)**: 1 agent điều phối (orchestrator) nhận yêu cầu, quyết định gọi sub-agent nào, tổng hợp kết quả trả về. Vì Backend viết bằng **Python FastAPI**, AI Agent chạy trực tiếp trong cùng môi trường Python, gọi `deepseek-chat` (V3) và `deepseek-reasoner` (R1) thông qua SDK chính thức.
 
-```
-                     ┌─────────────────────┐
-         user/UI ────▶│   Orchestrator Agent  │
-                      │   (LangGraph State)    │
-                      └──────────┬────────────┘
-                                 │ điều phối theo EventType & intent
-        ┌──────────┬───────────┼───────────┬───────────┬──────────┐
-        ▼          ▼           ▼           ▼           ▼          ▼
-   ┌─────────┐┌─────────┐┌───────────┐┌─────────┐┌──────────┐┌───────────┐
-   │Location ││Research ││ Plan      ││Booking  ││Cost      ││Conflict   │
-   │Agent    ││Agent    ││ Agent     ││Agent    ││Agent     ││Resolver   │
-   └─────────┘└─────────┘└───────────┘└─────────┘└──────────┘└───────────┘
-        │          │           │           │           │          │
-        └──────────┴───────────┴─────┬─────┴───────────┴──────────┘
-                                      ▼
-                          Ghi kết quả/đề xuất → DB (SQLAlchemy Async Session)
+```mermaid
+graph TD
+    User[User Request / UI Chat] --> Orchestrator[Orchestrator Agent<br/>LangGraph Python State]
+
+    Orchestrator -->|Route by EventType & Intent| Location[Location Agent]
+    Orchestrator -->|Route by EventType & Intent| Research[Research Agent]
+    Orchestrator -->|Route by EventType & Intent| Plan[Plan Agent - DeepSeek R1]
+    Orchestrator -->|Route by EventType & Intent| Booking[Booking Agent]
+    Orchestrator -->|Route by EventType & Intent| Cost[Cost Agent]
+    Orchestrator -->|Route by EventType & Intent| Conflict[Conflict Resolver Agent]
+
+    Location --> DB[(PostgreSQL Session)]
+    Research --> DB
+    Plan --> DB
+    Booking --> DB
+    Cost --> DB
+    Conflict --> DB
+
+    style User fill:#e1f5fe,stroke:#0288d1,stroke-width:2px;
+    style Orchestrator fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px;
+    style Plan fill:#fff3e0,stroke:#f57c00,stroke-width:2px;
+    style Conflict fill:#fbe9e7,stroke:#d84315,stroke-width:2px;
 ```
 
 `Note Agent` và `Chat Agent` hoạt động song song, Chat Agent sử dụng FastAPI WebSockets hoặc SSE (`EventSourceResponse`) để streaming câu trả lời.
@@ -69,10 +75,17 @@ Orchestrator nhận `eventType` từ context event và điều chỉnh chiến l
 
 Luồng Vote → Confirm **áp dụng bình đẳng** cho cả Plan do AI tạo lẫn Plan tạo thủ công (#11):
 
-```
-Plan tạo bởi AI ─────┐
-                      ├──▶ status = DRAFT ──▶ VOTING ──▶ CONFIRMED / ARCHIVED
-Plan tạo thủ công ────┘
+```mermaid
+flowchart LR
+    AI[AI Plan Generator] --> Draft[status = DRAFT]
+    Manual[Manual Plan Builder] --> Draft
+    Draft --> Voting[status = VOTING]
+    Voting --> Confirmed[status = CONFIRMED]
+    Voting --> Archived[status = ARCHIVED]
+
+    style Draft fill:#fff3e0,stroke:#f57c00,stroke-width:2px;
+    style Voting fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px;
+    style Confirmed fill:#e8f5e9,stroke:#388e3c,stroke-width:2px;
 ```
 
 ### Quy tắc:

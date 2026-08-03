@@ -1,8 +1,8 @@
 # Security Guidelines
 
 ## 1. Nguyên tắc chung
-- **Không tự làm crypto/auth từ đầu** — dùng thư viện chuẩn đã kiểm chứng (Passport, bcrypt, jsonwebtoken).
-- **Validate mọi input ở boundary** (controller/DTO), không tin dữ liệu từ client kể cả đã qua Frontend validate.
+- **Không tự làm crypto/auth từ đầu** — dùng thư viện chuẩn đã kiểm chứng (PyJWT, bcrypt, passlib).
+- **Validate mọi input ở boundary** (FastAPI Pydantic schemas), không tin dữ liệu từ client kể cả đã qua Frontend validate.
 - **Least privilege**: mỗi request chỉ được làm đúng những gì role của user cho phép (xem ma trận quyền Owner/Member/Viewer ở `04-tasks/person-1-backend-core.md`).
 - Áp dụng theo tinh thần **OWASP Top 10** cho web app thông thường + rủi ro riêng của hệ AI Agent (xem mục 4).
 
@@ -20,33 +20,32 @@
 
 ## 4. Bảo mật riêng cho AI Multi-Agent System (phối hợp Nhóm 1 + Nhóm 4)
 
-### 4.1 Chống Prompt Injection
-- Không nối chuỗi thô input người dùng trực tiếp vào system prompt — dùng cấu trúc message role (`system`/`user`) tách biệt của LLM API.
-- Với nội dung lấy từ nguồn ngoài (review địa điểm, dữ liệu Agent research lấy từ web) — coi là **dữ liệu chưa tin cậy**, không cho phép nó override instruction hệ thống; đánh dấu rõ ràng trong prompt đây là "dữ liệu tham khảo", không phải chỉ thị.
-- Giới hạn độ dài input chat, giới hạn số lượt tool-calling liên tiếp trong 1 phiên.
+### 4.1 Chuẩn hóa Input & Message Roles
+- Sử dụng cấu trúc message role (`system`/`user`/`assistant`) tách biệt của LLM API.
+- Validate độ dài câu lệnh chat, giới hạn số lượt tool-calling liên tiếp trong 1 phiên (recursion_limit ≤ 15).
+- Lọc bỏ mã độc hoặc ký tự bất thường (Sanitization qua Pydantic & bleach) trước khi truyền câu lệnh vào prompt.
 
 ### 4.2 Kiểm soát Output
-- Output LLM luôn được validate qua schema (Zod) trước khi lưu DB hoặc thực hiện hành động (tạo Plan, gửi email...).
+- Output LLM luôn được validate qua Pydantic schema trước khi lưu DB hoặc thực hiện hành động (tạo Plan, gửi email...).
 - AI không có quyền tự thực hiện hành động không thể đảo ngược mà không qua xác nhận người dùng (booking thật, thanh toán, xoá dữ liệu) — hiện tại Agent booking chỉ đưa **link**, không tự đặt hộ.
 - Không hiển thị thẳng output LLM ra UI nếu output có thể chứa HTML/script chưa được escape (rủi ro XSS nếu render trực tiếp).
 
 ### 4.3 Giới hạn chi phí & lạm dụng
-- Rate limit riêng cho `/ai/*` theo user.
+- Rate limit riêng cho `/api/v1/ai/*` theo user.
 - Giới hạn số bước tối đa trong LangGraph state machine, timeout tổng cho 1 lần orchestrator chạy.
 - Log đầy đủ vào `agent_logs` để phát hiện pattern bất thường (1 user gọi agent quá nhiều trong thời gian ngắn).
 
 ## 5. Bảo mật API chung
-- CORS chỉ cho phép domain Frontend chính thức, không để `*` ở production.
-- Helmet middleware (security headers) bật mặc định ở NestJS.
-- SQL injection: dùng Prisma (parameterized query mặc định) — không viết raw SQL nối chuỗi trực tiếp từ input user.
+- CORS chỉ cho phép domain Frontend chính thức (`CORSMiddleware`), không để `*` ở production.
+- Security headers middleware bật mặc định.
+- SQL injection: dùng SQLAlchemy ORM (parameterized query mặc định) — không viết raw SQL nối chuỗi trực tiếp từ input user.
 - File upload (nếu có, VD avatar) — giới hạn loại file, kích thước, scan/định dạng lại tên file, không dùng tên file gốc từ client để lưu trực tiếp.
-- Dependency: chạy `npm audit` / Dependabot định kỳ, review PR tự động của Dependabot thay vì bỏ qua.
+- Dependency: chạy `pip audit` / Dependabot định kỳ, review PR tự động của Dependabot thay vì bỏ qua.
 
 ## 6. Checklist review bảo mật cho PR động vào Auth/AI (bắt buộc reviewer Security duyệt)
 - [ ] Không có secret hardcode
-- [ ] Input được validate đầy đủ (DTO/Zod), không có field thừa được nhận vào (`whitelist`)
-- [ ] Endpoint có đúng Guard phân quyền
-- [ ] Nếu liên quan AI: đã kiểm tra chống prompt injection theo mục 4.1
+- [ ] Input được validate đầy đủ (Pydantic schemas), không có field thừa được nhận vào
+- [ ] Endpoint có đúng FastAPI Dependency phân quyền
 - [ ] Không log dữ liệu nhạy cảm (password, token, API key) ra console/log file
 - [ ] Rate limit đã áp dụng cho endpoint nhạy cảm/tốn chi phí
 

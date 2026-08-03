@@ -1,43 +1,90 @@
-# Person 3 — AI Engineer (Multi-Agent System)
+# 👤 Person 3 — AI Engineer (Multi-Agent System)
 
-**Sở hữu**: Toàn bộ N4 — trọng tâm đồ án. Chạy song song từ Sprint 1 bằng **mock data**, không chờ Backend code logic thật.
-Xem kiến trúc chi tiết ở [ai-agent-architecture.md](../03-architecture/ai-agent-architecture.md) trước khi bắt đầu.
+> **Sở hữu**: Toàn bộ N4 — trọng tâm đồ án. Chạy song song từ Sprint 1 bằng **mock data**, không chờ Backend code logic thật.
+> Xem kiến trúc chi tiết ở [ai-agent-architecture.md](../03-architecture/ai-agent-architecture.md).
 
-## Sprint 0 — Contract
-- [ ] Tham gia chốt SQLAlchemy/Pydantic schemas (đặc biệt `Event`, `Plan`, `PlanStop`, `PlanVote`, `AgentLog`) — góp ý field `category` và `metadata` JSON cho Agent
-- [ ] Tạo `fixtures/mock_events.json`, `fixtures/mock_places.json` đúng theo contract đã chốt, dùng để dev/test Agent không cần chờ Backend
-- [ ] Setup LangGraph Python (`langgraph`) & SDK DeepSeek (`langchain-deepseek` / `openai` SDK): `deepseek-chat` (intent, tool calling) vs `deepseek-reasoner` (planning, conflict resolution, menu suggestion)
+---
 
-## Sprint 1 — Orchestrator + EventType Routing (LangGraph Python)
-- [ ] Orchestrator Agent *(#23)*: Pydantic State schema, **routing theo EventType** (TRAVEL, DINING, HANGOUT, ENTERTAINMENT, SIGHTSEEING, CUSTOM), `recursion_limit` giới hạn số bước
-- [ ] Test logic orchestrator với Pytest + mock LLM response (chưa cần gọi API thật liên tục — tiết kiệm chi phí lúc dev)
-- **Đồng bộ cuối sprint**: đối chiếu schema mock đã dùng với schema thật của Backend Dev A, chỉnh nếu lệch.
+## 📊 Progress Tracker
 
-## Sprint 2 — Location & Note Agent
-- [ ] Agent tìm địa điểm *(#24)* — gọi API thật của Backend Dev B (Places với category filter: RESTAURANT, CAFE, ENTERTAINMENT, ATTRACTION) ngay khi có
-- [ ] Agent lưu ý khi đi chơi *(#28)* — dùng data thời tiết Backend Dev B
-- [ ] Agent research *(#25)* — gợi ý menu/món ăn (DINING), giá vé & tips (ENTERTAINMENT, SIGHTSEEING)
+| Sprint | Task Count | Done | Status |
+|---|---|---|---|
+| **Sprint 0** | 1 Task | 0/1 | 🔲 To Do |
+| **Sprint 1** | 2 Tasks | 0/2 | 🔲 To Do |
+| **Sprint 2** | 3 Tasks | 0/3 | 🔲 To Do |
+| **Sprint 3** | 4 Tasks | 0/4 | 🔲 To Do |
+| **Sprint 4** | 3 Tasks | 0/3 | 🔲 To Do |
 
-## Sprint 3 — Plan, Cost, Conflict Resolver
-- [ ] Agent tạo plan + quản lý ngân sách *(#26)* — tạo lịch trình (TRAVEL), chọn quán + món (DINING), hoạt động (ENTERTAINMENT)
-- [ ] Agent tính chi phí *(#29)* — ưu tiên tính bằng Python code thuần, LLM chỉ trích giá từ text
-- [ ] Agent phân giải xung đột *(#30)* — đọc kết quả vote, dùng `deepseek-reasoner` đề xuất phương án dung hòa (Human-in-the-loop)
-- [ ] Agent booking *(#27)* — chỉ trả link đặt phòng/đặt bàn/đặt vé, không tự đặt hộ
+---
 
-## Sprint 4 — Chat Agent + Nối thật (FastAPI WebSockets / SSE)
-- [ ] AI Agent chat *(#31)*, hỗ trợ streaming (FastAPI WebSockets hoặc `EventSourceResponse` SSE)
-- [ ] Nối toàn bộ Agent với DB thật qua SQLAlchemy AsyncSession (thay mock hoàn toàn)
-- [ ] Ghi log đầy đủ vào `AgentLog` (tokens, duration_ms, agent_name) cho Admin Dashboard
-- [ ] Demo full flow: tạo event → AI đề xuất plan → vote → conflict resolver → confirm
+## 🛠️ Detailed Sprint Backlog
 
-## Bảo mật bắt buộc (phối hợp Security/DevOps — Person 6)
-- [ ] Validate/sanitize input trước khi vào prompt qua Pydantic & bleach (không nối chuỗi thô)
-- [ ] Output LLM validate qua Pydantic schema trước khi lưu DB
-- [ ] Rate limit `/api/v1/ai/*`, giới hạn recursion_limit trong graph
+### Sprint 0 — State & Fixture Data
+- [ ] **`TASK-003`** **LangGraph State & Fixture Fixtures Definition**
+  - **Feature**: #23
+  - **Target Files**: `backend/app/ai_agents/state.py`, `backend/app/ai_agents/fixtures/` (`mock_places.json`, `mock_plans.json`)
+  - **Acceptance Criteria**: Define Pydantic `AgentState`. Mock fixtures validate cleanly against DB schemas.
 
-## Định nghĩa Done chung
-- Mỗi agent có Pytest unit test với mock LLM (không phụ thuộc gọi API thật trong CI)
-- Đã qua review Security cho input/output validation
+### Sprint 1 — Orchestrator & DeepSeek Provider Setup
+- [ ] **`TASK-109`** **LangGraph Orchestrator Skeleton**
+  - **Feature**: #23
+  - **Target Files**: `backend/app/ai_agents/orchestrator.py`
+  - **Acceptance Criteria**: Graph builds state, routes intent to dummy sub-agents based on `EventType`, respects `recursion_limit=15`.
+- [ ] **`TASK-110`** **DeepSeek API Provider Wrapper**
+  - **Feature**: #23, #31
+  - **Target Files**: `backend/app/ai_agents/llm_provider.py`
+  - **Acceptance Criteria**: Wraps `deepseek-chat` and `deepseek-reasoner` with retry logic, rate limiting, and token logging.
 
-## Không được tự ý làm khi chưa báo
-- Đổi Pydantic state schema Orchestrator ảnh hưởng Chat Agent (Person 5 build UI dựa trên đó) → báo `#contract-changes`.
+### Sprint 2 — Location, Research & Note Agents
+- [ ] **`TASK-209`** **Location Agent Implementation**
+  - **Feature**: #24
+  - **Target Files**: `backend/app/ai_agents/agents/location_agent.py`
+  - **Acceptance Criteria**: Receives category filter and preferences, queries `PlacesService`, returns top 5 structured place suggestions.
+- [ ] **`TASK-210`** **Research Agent Implementation**
+  - **Feature**: #25
+  - **Target Files**: `backend/app/ai_agents/agents/research_agent.py`
+  - **Acceptance Criteria**: Fetches place reviews, generates menu suggestions for DINING, activity ticket prices for ENTERTAINMENT, opening hours for SIGHTSEEING.
+- [ ] **`TASK-211`** **Note Agent Implementation**
+  - **Feature**: #28
+  - **Target Files**: `backend/app/ai_agents/agents/note_agent.py`
+  - **Acceptance Criteria**: Combines weather forecast with destination type to generate smart travel/hangout tips.
+
+### Sprint 3 — Plan, Cost, Conflict & Booking Agents
+- [ ] **`TASK-307`** **Plan Agent Implementation (DeepSeek-R1)**
+  - **Feature**: #26
+  - **Target Files**: `backend/app/ai_agents/agents/plan_agent.py`
+  - **Acceptance Criteria**: Uses `deepseek-reasoner` to build optimal stop sequence, time allocation, and daily budget based on event type.
+- [ ] **`TASK-308`** **Cost Agent Implementation**
+  - **Feature**: #29
+  - **Target Files**: `backend/app/ai_agents/agents/cost_agent.py`
+  - **Acceptance Criteria**: Calculates total budget, per-person split, and per-item breakdown using Python code.
+- [ ] **`TASK-309`** **Conflict Resolver Agent Implementation (DeepSeek-R1)**
+  - **Feature**: #30
+  - **Target Files**: `backend/app/ai_agents/agents/conflict_agent.py`
+  - **Acceptance Criteria**: Analyzes vote comments and negative votes, generates a compromised draft plan resolving objections.
+- [ ] **`TASK-310`** **Booking Agent Implementation**
+  - **Feature**: #27
+  - **Target Files**: `backend/app/ai_agents/agents/booking_agent.py`
+  - **Acceptance Criteria**: Returns direct booking URLs for hotels (Booking.com / Agoda), restaurant reservations, or activity tickets.
+
+### Sprint 4 — Realtime AI Chat Engine & Token Logging
+- [ ] **`TASK-401`** **Chat Agent & Function Calling Setup**
+  - **Feature**: #31
+  - **Target Files**: `backend/app/ai_agents/agents/chat_agent.py`
+  - **Acceptance Criteria**: Chat Agent routes user queries, calls sub-agent tools dynamically, maintains conversation state.
+- [ ] **`TASK-402`** **FastAPI WebSocket & SSE Endpoints for Streaming**
+  - **Feature**: #31
+  - **Target Files**: `backend/app/api/v1/ai.py`
+  - **Acceptance Criteria**: `/api/v1/ai/chat/stream` streams LLM output tokens in real-time using `EventSourceResponse` (SSE) or WebSockets.
+- [ ] **`TASK-403`** **Agent Token Logging Service**
+  - **Feature**: #36
+  - **Target Files**: `backend/app/services/agent_logger.py`
+  - **Acceptance Criteria**: Every LLM call logs `input_tokens`, `output_tokens`, `duration_ms`, `agent_name`, `user_id` to `agent_logs` table.
+
+---
+
+## 🤝 Handover & Review Guidelines (Person 3)
+
+1. **Buddy / Backup**: `Person 1` (Backend Dev A)
+2. **Task Completion**: Run `pytest backend/tests/test_agents.py` with mock LLM responses. Push branch `feature/TASK-xxx` and tag `@BE-A` on PR.
+3. **Task Handover**: Follow 4 scenarios in [cross-team-collaboration.md](../01-workflow/cross-team-collaboration.md) Section 3.

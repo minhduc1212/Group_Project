@@ -5,6 +5,7 @@
 ## Mục lục
 
 ### 00 — Tổng quan
+- [🚀 Hướng Dẫn Bắt Đầu & Lộ Trình Đọc Docs (guides.md)](guides.md) — **ĐỌC ĐẦU TIÊN: Lộ trình đọc docs 15 phút theo đúng vai trò của bạn**
 - [Project Overview](docs/00-overview/project-overview.md) — Mục tiêu, phạm vi, đối tượng người dùng
 - [Danh Sách Tính Năng (42 features)](feature.md) — **Toàn bộ 42 tính năng được đánh số theo 7 nhóm**
 - [Hướng Dẫn Vận Hành & Luồng (Explanation)](explain.md) — **Giải thích luồng hoạt động, ví dụ từng EventType (Travel, Dining, Entertainment...), DeepSeek API**
@@ -42,7 +43,7 @@
 - [Person 6 — Cyber Security & DevOps (FastAPI Security, Docker, Ruff, Pytest)](docs/04-tasks/person-6-security-devops.md)
 
 ### 05 — Bảo mật (Security)
-- [Security Guidelines](docs/05-security/security-guidelines.md) — Checklist bảo mật, prompt injection defense, Pydantic validation, secrets management
+- [Security Guidelines](docs/05-security/security-guidelines.md) — Checklist bảo mật, Pydantic input sanitization, rate limiting, secrets management
 
 ### Khác
 - [CONTRIBUTING.md](CONTRIBUTING.md) — Hướng dẫn đóng góp code (tóm tắt nhanh cho người mới)
@@ -53,7 +54,7 @@
 
 ## Cách sử dụng bộ docs này
 
-1. Người mới vào team → đọc `CONTRIBUTING.md` (5 phút) → đọc `feature.md` & `explain.md` → đọc file task nhóm mình phụ trách trong `04-tasks`.
+1. Người mới vào team hoặc người xem repo → mở ngay [guides.md](guides.md) (15 phút) để xem lộ trình đọc theo đúng vai trò.
 2. Trước khi code → đọc `02-standards` liên quan (coding convention Python FastAPI / React).
 3. Trước khi mở PR → check `docs/01-workflow/code-review-checklist.md`.
 4. Khi thêm tính năng mới ảnh hưởng kiến trúc → cập nhật `docs/03-architecture` trong cùng PR (docs-as-code, không để lệch thực tế).

@@ -1,6 +1,6 @@
 # Contributing Guide
 
-Chào mừng vào team! Đọc file này (5 phút) trước khi mở PR đầu tiên.
+Chào mừng vào team! Đọc [guides.md](guides.md) (15 phút) để xem lộ trình đọc tài liệu theo vai trò của bạn trước khi mở PR đầu tiên.
 
 ## Bắt đầu nhanh
 ```bash
@@ -43,6 +43,13 @@ Xem hướng dẫn chi tiết ở [cross-team-collaboration.md](docs/01-workflow
 3. Đọc file task + schema liên quan.
 4. Code trong đúng module, đúng convention.
 5. PR tag chủ module làm reviewer.
+
+## Quy trình bàn giao công việc (Handover Workflow)
+Xem hướng dẫn chi tiết ở [cross-team-collaboration.md](docs/01-workflow/cross-team-collaboration.md#phần-3-quy-trình-bàn-giao-công-việc-task-handover-workflow), gồm 4 trường hợp:
+1. **Bàn giao khi xong task**: Self-check, cập nhật tick `[x]` trên file task & `docs/TASKS.md`, mở PR & báo kênh `#dev`.
+2. **Bàn giao khi nhờ người khác làm hộ**: Push branch `feature/TASK-xxx-wip`, để lại Handover Note trên PR/Issue, đổi Assignee.
+3. **Bàn giao khi bị Blocked**: Đổi trạng thái `🔴 Blocked` trên board, báo chi tiết trên `#contract-changes` kèm tag người phụ trách.
+4. **Bàn giao mốc Sprint (Integration Day)**: Tắt mock, test luồng thật, demo 15p, Security sign-off.
 
 ## Việc tuyệt đối không làm
 - ❌ Push trực tiếp lên `main`

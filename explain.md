@@ -7,13 +7,13 @@ Hệ thống hỗ trợ **mọi hoạt động nhóm** — không chỉ du lịc
 ---
 
 ## 1. Bản Đồ Tài Liệu (Documentation Directory Map)
-Để xem chi tiết từng phần, thành viên có thể truy cập các tài liệu tương ứng:
+
 - **Quy trình làm việc song song:** [contract-first-workflow.md](docs/01-workflow/contract-first-workflow.md) (Quyết định cách 6 người code cùng lúc không bị block).
 - **Phân vai trò thành viên:** [team-roles.md](docs/00-overview/team-roles.md) (RACI matrix và phân rã task cụ thể).
 - **Tổng quan công nghệ:** [tech-stack.md](docs/00-overview/tech-stack.md) (React, Python FastAPI, SQLAlchemy/SQLModel, Redis, DeepSeek API).
 - **Kiến trúc hệ thống:** [system-architecture.md](docs/03-architecture/system-architecture.md) (Sơ đồ tổng quát BE-FE-DB-AI).
 - **Kiến trúc AI Agent:** [ai-agent-architecture.md](docs/03-architecture/ai-agent-architecture.md) (LangGraph Python, state machine, các sub-agents).
-- **Bảo mật hệ thống:** [security-guidelines.md](docs/05-security/security-guidelines.md) (Sanitize input, validate Pydantic output, chống prompt injection).
+- **Bảo mật hệ thống:** [security-guidelines.md](docs/05-security/security-guidelines.md) (Sanitize input, validate Pydantic output, rate limiting).
 - **Kế hoạch sprint & task:** [task-board.md](docs/04-tasks/task-board.md) (Lộ trình 4 sprint song song).
 
 ---
@@ -33,6 +33,10 @@ graph TD
     C3 --> D
     C4 --> D
     D --> E[Demo & Release]
+
+    style A fill:#e3f2fd,stroke:#1565c0,stroke-width:2px;
+    style B fill:#fff3e0,stroke:#ef6c00,stroke-width:2px;
+    style D fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
 ```
 
 ### Các bước hoạt động cụ thể:
@@ -111,29 +115,28 @@ graph TD
 
 ## 3.5. Luồng Plan Thủ Công (Không Dùng AI)
 
-Ngoài việc nhờ AI đề xuất, **bất kỳ member nào** cũng có thể tự tạo plan thủ công:
+> [!NOTE]
+> **Bất kỳ member nào** cũng có thể tự tạo plan thủ công mà không cần qua AI. Plan thủ công được đối xử **hoàn toàn bình đẳng** với plan AI — có thể export PDF, xem trên bản đồ, chia chi phí, nhận nhắc nhở.
 
-1. Vào Event → bấm **"Tạo plan mới"** (không qua AI).
-2. Tự thêm từng điểm dừng (stop) bằng tay — có autocomplete từ Google Places.
-3. Sắp xếp thứ tự, ghi chú, ước tính chi phí.
-4. Bấm **"Gửi cho nhóm vote"** → Plan chuyển sang trạng thái `VOTING`.
-5. Tất cả member nhận notification, vào xem và vote (UP/DOWN/NEUTRAL) + comment.
-6. Owner xác nhận → `CONFIRMED`.
+```mermaid
+flowchart LR
+    A[AI Plan Generator] --> C[status = DRAFT]
+    B[Manual Plan Builder] --> C
+    C --> D[status = VOTING]
+    D --> E[status = CONFIRMED]
+    D --> F[status = ARCHIVED]
 
-> **Quan trọng**: Plan thủ công được đối xử **hoàn toàn bình đẳng** với plan AI — có thể export PDF, xem trên bản đồ, chia chi phí, nhận nhắc nhở. Một event có thể có nhiều plan DRAFT cùng lúc (1 do AI, 1 do member tạo tay) để nhóm so sánh và vote chọn plan tốt nhất.
-
-```
-Plan tạo bởi AI ─────┐
-                      ├──▶ status = DRAFT ──▶ VOTING ──▶ CONFIRMED / ARCHIVED
-Plan tạo thủ công ────┘
+    style C fill:#fff3e0,stroke:#f57c00,stroke-width:2px;
+    style D fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px;
+    style E fill:#e8f5e9,stroke:#388e3c,stroke-width:2px;
 ```
 
 ### Quy tắc Vote chung:
-- **Mọi Plan** (dù AI hay thủ công) khi tạo đều có `status = DRAFT`.
-- Người tạo bấm "Gửi cho nhóm vote" → `VOTING` → notification tới tất cả member.
-- Member vote + comment góp ý.
-- **Chỉ Owner** mới có quyền xác nhận → `CONFIRMED`.
-- Event chỉ có **1 người** → cho phép skip voting, confirm trực tiếp.
+1. **Mọi Plan** (dù AI hay thủ công) khi tạo đều có `status = DRAFT`.
+2. Người tạo bấm "Gửi cho nhóm vote" → `VOTING` → notification tới tất cả member.
+3. Member vote + comment góp ý.
+4. **Chỉ Owner** mới có quyền xác nhận → `CONFIRMED`.
+5. Event chỉ có **1 người** → cho phép skip voting, confirm trực tiếp.
 
 ---
 
@@ -141,30 +144,19 @@ Plan tạo thủ công ────┘
 
 Vì Backend sử dụng Python FastAPI, hệ thống tích hợp trực tiếp **LangGraph Python (`langgraph`)** và DeepSeek API trong cùng một codebase Python mượt mà:
 
-```
-                           ┌──────────────────────────────────┐
-                           │      Yêu cầu từ Frontend         │
-                           └────────────────┬─────────────────┘
-                                            │
-                                            ▼
-                           ┌──────────────────────────────────┐
-                           │   FastAPI Backend (Security/JWT) │
-                           └────────────────┬─────────────────┘
-                                            │
-                                            ▼
-                           ┌──────────────────────────────────┐
-                           │  LangGraph Python Orchestrator   │
-                           │  (nhận eventType → route agent)  │
-                           └────────┬───────────────────┬─────┘
-                                    │                   │
-                     (Intent/Chat/Actions)         (Reasoning/Planning/Conflict)
-                     (EventType Classification)
-                                    │                   │
-                                    ▼                   ▼
-                           ┌──────────────────┐┌──────────────────┐
-                           │  deepseek-chat   ││deepseek-reasoner │
-                           │  (DeepSeek-V3)   ││  (DeepSeek-R1)   │
-                           └──────────────────┘└──────────────────┘
+```mermaid
+graph TD
+    UI[Client Frontend React] -->|HTTPS / WSS| FastAPI[FastAPI Backend / Security / JWT]
+    FastAPI --> Orchestrator[LangGraph Python Orchestrator]
+    
+    Orchestrator -->|Intent / Chat / Tool Calling| V3[deepseek-chat V3]
+    Orchestrator -->|Reasoning / Planning / Conflict| R1[deepseek-reasoner R1]
+
+    style UI fill:#e1f5fe,stroke:#0288d1,stroke-width:2px;
+    style FastAPI fill:#e8f5e9,stroke:#388e3c,stroke-width:2px;
+    style Orchestrator fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px;
+    style V3 fill:#fff3e0,stroke:#f57c00,stroke-width:2px;
+    style R1 fill:#fbe9e7,stroke:#d84315,stroke-width:2px;
 ```
 
 - **`deepseek-chat` (DeepSeek-V3):**
@@ -178,6 +170,6 @@ Vì Backend sử dụng Python FastAPI, hệ thống tích hợp trực tiếp *
 
 ## 5. Quy Tắc Bảo Mật Và Chi Phí Trong Doanh Nghiệp (Enterprise Standards)
 
-1. **Bảo Mật Đầu Vào:** Mọi câu lệnh chat từ user đều được validate độ dài và lọc mã độc (Sanitization) qua Pydantic & bleach trước khi truyền vào prompt của DeepSeek để tránh tấn công Prompt Injection.
+1. **Bảo Mật Đầu Vào:** Mọi câu lệnh chat từ user đều được validate độ dài và lọc mã độc (Sanitization) qua Pydantic & bleach trước khi truyền vào prompt của DeepSeek.
 2. **Bảo Mật Đầu Out:** Dữ liệu trả về từ DeepSeek (như danh sách địa điểm dạng JSON) bắt buộc phải đi qua parser sử dụng **Pydantic v2** để xác thực kiểu dữ liệu. Nếu JSON lỗi cấu trúc, hệ thống sẽ tự động bắt lỗi thay vì hiển thị trực tiếp lên UI làm crash ứng dụng.
 3. **Quản Lý Token & Chi Phí:** Mọi lượt gọi DeepSeek API đều được Logger ghi lại (số input/output token, thời gian xử lý, ID người dùng) và lưu vào bảng `agent_logs`. Admin Dashboard sẽ dựa vào đây để cảnh báo hoặc thiết lập Rate Limit/giới hạn quota theo ngày cho từng user.

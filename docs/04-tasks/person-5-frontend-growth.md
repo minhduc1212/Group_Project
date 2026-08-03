@@ -1,31 +1,65 @@
-# Person 5 — Frontend Dev B (AI Experience & Growth)
+# 👤 Person 5 — Frontend Dev B (AI Experience & Growth)
 
-**Sở hữu**: UI Chat AI, Landing page, i18n, chia chi phí, Admin Dashboard UI.
+> **Sở hữu**: UI Chat AI, Landing page, i18n, chia chi phí, Admin Dashboard UI.
 
-## Sprint 0 — Contract
-- [ ] Tham gia chốt OpenAPI spec `/ai/chat`, `/ai/orchestrator/run`, `/admin/*`
-- [ ] Setup MSW mock cho `/ai/chat` (giả lập streaming response và đề xuất plan dạng card)
+---
 
-## Sprint 1 — Landing page + i18n khung
-- [ ] Landing page giới thiệu *(#39)*, responsive, giới thiệu đầy đủ các loại sự kiện (du lịch, đi ăn, đi chơi, tham quan, cafe)
-- [ ] Setup `react-i18next`, 2 ngôn ngữ VI/EN, key hoá toàn bộ text UI *(#40)*
+## 📊 Progress Tracker
 
-## Sprint 2 — UI AI Chat (mock)
-- [ ] Màn hình chat với AI *(#31, #32)* — dùng mock streaming response từ AI Engineer's state schema (đã có từ Sprint 0/1)
-- [ ] UI hiển thị đề xuất Plan do AI tạo (dạng thẻ/card linh hoạt theo `StopCategory`: hiển thị menu cho quán ăn, giá vé cho chỗ chơi, hours/tips cho tham quan)
+| Sprint | Task Count | Done | Status |
+|---|---|---|---|
+| **Sprint 0** | 1 Task | 0/1 | 🔲 To Do |
+| **Sprint 1** | 2 Tasks | 0/2 | 🔲 To Do |
+| **Sprint 2** | 0 Tasks (Support AI Chat Mock) | 0/0 | 🔲 To Do |
+| **Sprint 3** | 0 Tasks (Support PDF Preview) | 0/0 | 🔲 To Do |
+| **Sprint 4** | 5 Tasks | 0/5 | 🔲 To Do |
 
-## Sprint 3 — Nối AI Chat thật + chia chi phí
-- [ ] Tắt mock, nối `/ai/chat` thật (Integration Day với AI Engineer) — xử lý streaming SSE/WebSocket theo ADR đã chốt
-- [ ] UI chia đều chi phí giữa thành viên event, chia theo hạng mục / món ăn *(#41)*
+---
 
-## Sprint 4 — Admin Dashboard UI
-- [ ] UI hiển thị số liệu từ `/admin/dashboard/overview`, `/admin/usage/tokens` (Backend Dev B) *(#36, #37)*
-- [ ] Biểu đồ token usage theo ngày/agent (dùng Recharts)
-- [ ] Polish toàn bộ, test responsive, fix bug Integration Day *(#42)*
+## 🛠️ Detailed Sprint Backlog
 
-## Định nghĩa Done chung
-- Chat UI xử lý đúng trạng thái: đang gõ, lỗi mạng, timeout — không đứng hình khi AI xử lý lâu
-- i18n áp dụng cho toàn bộ text mới thêm, không hardcode string
+### Sprint 0 — MSW Streaming Mock Setup
+- [ ] **`TASK-005`** **MSW Streaming Mock Setup for AI Chat**
+  - **Feature**: #31, #32
+  - **Target Files**: `frontend/src/mocks/handlers/ai.ts`
+  - **Acceptance Criteria**: Simulates SSE / WebSocket chunked responses for chat UI testing without calling real backend.
 
-## Không được tự ý làm khi chưa báo
-- Đổi format message trong luồng chat (thêm field mới) → báo `#contract-changes`, AI Engineer đang code Chat Agent theo schema đã chốt.
+### Sprint 1 — Landing Page & i18n
+- [ ] **`TASK-114`** **Landing Page & Hero Section**
+  - **Feature**: #39
+  - **Target Files**: `frontend/src/features/landing/pages/LandingPage.tsx`
+  - **Acceptance Criteria**: Showcases 6 event types (Travel, Dining, Hangout, Entertainment, Sightseeing, Custom) with CTA buttons.
+- [ ] **`TASK-115`** **i18n Setup (react-i18next)**
+  - **Feature**: #40
+  - **Target Files**: `frontend/src/i18n/`, `frontend/src/locales/` (`vi.json`, `en.json`)
+  - **Acceptance Criteria**: Header language toggle switches entire UI seamlessly between Vietnamese and English.
+
+### Sprint 4 — Realtime Chat UI, Shared Expenses & Admin Dashboard
+- [ ] **`TASK-406`** **AI Chat Interface with Streaming Output**
+  - **Feature**: #31, #32
+  - **Target Files**: `frontend/src/features/ai-chat/pages/ChatPage.tsx`
+  - **Acceptance Criteria**: Chat interface renders streaming response, user typing indicator, suggestion quick-chips.
+- [ ] **`TASK-407`** **Interactive Draft Plan Card Renderer**
+  - **Feature**: #32
+  - **Target Files**: `frontend/src/features/ai-chat/components/PlanCardPreview.tsx`
+  - **Acceptance Criteria**: Renders AI proposal inside chat as structured card with "Accept as Draft" or "Modify" buttons.
+- [ ] **`TASK-408`** **Category-Specific Stop Cards Rendering**
+  - **Feature**: #25, #32
+  - **Target Files**: `frontend/src/features/plan/components/StopCategoryCard.tsx`
+  - **Acceptance Criteria**: Custom card designs: displays menu items for RESTAURANT, activity ticket prices for ENTERTAINMENT, opening hours/tips for SIGHTSEEING.
+- [ ] **`TASK-409`** **Shared Expense Calculator UI**
+  - **Feature**: #41
+  - **Target Files**: `frontend/src/features/expense/pages/ExpensePage.tsx`
+  - **Acceptance Criteria**: Displays total cost, per-person debt matrix, settled status toggle.
+- [ ] **`TASK-410`** **Admin Dashboard UI Screen**
+  - **Feature**: #36, #37
+  - **Target Files**: `frontend/src/features/admin/pages/AdminDashboardPage.tsx`
+  - **Acceptance Criteria**: Renders token cost charts (Recharts), active user stats, API usage breakdown, user table.
+
+---
+
+## 🤝 Handover & Review Guidelines (Person 5)
+
+1. **Buddy / Backup**: `Person 4` (Frontend Dev A)
+2. **Task Completion**: Run `npm run lint` and `npm run test`. Push branch `feature/TASK-xxx` and tag `@FE-A` on PR.
+3. **Task Handover**: Follow 4 scenarios in [cross-team-collaboration.md](../01-workflow/cross-team-collaboration.md) Section 3.

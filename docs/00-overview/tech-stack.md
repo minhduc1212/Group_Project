@@ -74,6 +74,6 @@ Lựa chọn công nghệ ưu tiên: **Python FastAPI cho Backend & AI Agent (đ
 | Backend dev (Auth, Core CRUD) | Python 3.11+, FastAPI, SQLAlchemy/SQLModel, Pydantic, PyJWT, Alembic |
 | AI Engineer | Python 3.11+, LangGraph Python, DeepSeek API, langchain-deepseek |
 | Frontend dev | React 18, TypeScript, TanStack Query, Tailwind CSS, WebSocket |
-| Cyber Security | FastAPI Security, OWASP Top 10, Pydantic sanitization, prompt injection defense |
+| Cyber Security | FastAPI Security, OWASP Top 10, Pydantic sanitization, rate limiting, secrets management |
 | Integration dev (Nhóm 3) | HTTPX async, Google Places API, Redis async (redis-py) |
 | DevOps kiêm nhiệm | Docker, GitHub Actions, Ruff, Poetry/uv |

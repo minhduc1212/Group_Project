@@ -341,10 +341,10 @@
   - **Acceptance Criteria**: Renders token cost charts (Recharts), active user stats, API usage breakdown, user table.
 
 ### 4.5 Security Hardening & Pentest
-- [ ] **TASK-411** `[SEC/DEVOPS]` **Prompt Injection Vulnerability Audit**
+- [ ] **TASK-411** `[SEC/DEVOPS]` **Input Sanitization & Boundary Validation Audit**
   - **Feature**: Security
-  - **Target Files**: `backend/app/ai_agents/`
-  - **Acceptance Criteria**: Tests injection payloads; verifies user input is sanitized and framed inside system/user roles without overriding instructions.
+  - **Target Files**: `backend/app/ai_agents/`, `backend/app/schemas/`
+  - **Acceptance Criteria**: Verifies all user inputs are sanitized (Pydantic & bleach); checks system/user/assistant message roles framing without raw string concatenation.
 - [ ] **TASK-412** `[SEC/DEVOPS]` **Pydantic Output Validation Audit**
   - **Feature**: Security
   - **Target Files**: `backend/app/ai_agents/llm_provider.py`

@@ -17,7 +17,7 @@
 - [ ] Có race condition khi nhiều user cùng vote/sửa event không?
 
 ### Bảo mật
-- [ ] Input từ user có được validate trước khi vào DB/AI Agent không? (chống injection/prompt injection)
+- [ ] Input từ user có được validate trước khi vào DB/AI Agent không? (chống SQL/Input injection & data corruption)
 - [ ] Endpoint có đúng middleware Auth + kiểm tra phân quyền (Owner/Member/Viewer) không?
 - [ ] Không có thông tin nhạy cảm bị log ra console/log file?
 

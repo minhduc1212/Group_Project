@@ -4,13 +4,16 @@
 
 ## 1. Sơ đồ quan hệ chính
 
-```
-User ──< EventMember >── Event ──< Plan ──< PlanStop
-  │                        │          │
-  │                        │          └──< PlanVote
-  │                        └──< Invitation
-  ├──< SavedPlace
-  └──< Plan (createdBy)
+```mermaid
+erDiagram
+    User ||--o{ EventMember : joins
+    User ||--o{ SavedPlace : saves
+    User ||--o{ Plan : creates
+    Event ||--o{ EventMember : contains
+    Event ||--o{ Plan : has
+    Event ||--o{ Invitation : sends
+    Plan ||--o{ PlanStop : includes
+    Plan ||--o{ PlanVote : receives
 ```
 
 ## 2. Prisma schema (rút gọn, khởi điểm)

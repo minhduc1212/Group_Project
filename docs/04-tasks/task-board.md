@@ -25,7 +25,7 @@ Xem quy trình chi tiết ở [contract-first-workflow.md](../01-workflow/contra
 | **AI Engineer** | LangGraph Python Orchestrator + DeepSeek Wrapper | Location Agent + Research Agent + Note Agent | Plan Agent (DeepSeek-R1) + Cost + Conflict Resolver | Realtime Chat Agent + SSE/WebSocket Streaming |
 | **FE-A (Core)** | Auth UI (Login, Register, Profile, MSW) | Event Dashboard + EventType Selector + Mapbox | Manual Plan Builder + Vote & Confirmation UI | Component Testing + Polish Responsive UI |
 | **FE-B (Growth)** | Landing Page + i18n Setup (VI/EN) | UI AI Chat Mock + Category Cards | Checklist UI + PDF Download Preview | Streaming AI Chat UI + Shared Expenses + Admin UI |
-| **Security/DevOps** | FastAPI Security Middlewares + Ruff/CI | External API Security & Retry Review | Prompt Injection & Pydantic Output Defense Audit | Pentest OWASP Top 10 + Staging & Production Deploy |
+| **Security/DevOps** | FastAPI Security Middlewares + Ruff/CI | External API Security & Retry Review | Input Validation & Pydantic Output Defense Audit | Pentest OWASP Top 10 + Staging & Production Deploy |
 
 > Chi tiết từng task (mã task `TASK-xxx`, file cần sửa, acceptance criteria), xem tại **[TASKS.md](../TASKS.md)**.
 

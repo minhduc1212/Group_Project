@@ -36,7 +36,7 @@ R = Responsible · A = Accountable · C = Consulted · I = Informed
 | Auth (login/JWT) | **R/A** | I | I | C (gọi API) | I | **R** (review) |
 | Event/Plan/Vote CRUD | **R/A** | I | C (đọc schema) | C (gọi API) | I | C |
 | External API + cache | I | **R/A** | C (dùng data) | I | I | I |
-| AI Multi-Agent | C (schema) | I | **R/A** | I | C (gọi API chat) | **R** (prompt injection review) |
+| AI Multi-Agent | C (schema) | I | **R/A** | I | C (gọi API chat) | **R** (input validation review) |
 | Notification/Export/Admin BE | I | **R/A** | C (log token) | I | C (UI admin) | C |
 | UI Core Flows | C | I | I | **R/A** | C | I |
 | UI AI Chat/Landing/i18n | I | I | C | C | **R/A** | I |
