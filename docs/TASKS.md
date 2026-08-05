@@ -16,6 +16,20 @@
 
 ---
 
+## 👥 Team & Task Mapping Legend
+
+| Tag Code | Domain / Vai trò | Thành viên phụ trách | File task chi tiết |
+|---|---|---|---|
+| `[BE-A]` / `[BE-Core]` | Backend Core Domain & DB Schema | **Tạ Quang Huy** | [person-1-backend-core.md](04-tasks/person-1-backend-core.md) |
+| `[BE-B]` / `[BE-Platform]` | External APIs (Places/Weather) & Redis Cache | **Hà Đăng Huy** | [person-2-backend-platform.md](04-tasks/person-2-backend-platform.md) |
+| `[BE-Services]` | Email, PDF Export, Realtime WS/SSE & Admin | **Phạm Đình Ánh Dương** | [person-2-backend-platform.md](04-tasks/person-2-backend-platform.md) |
+| `[FE-A]` / `[FE-Core]` | Frontend Core Flows UI (Auth, Event, Plan, Map) | **Hà Đăng Huy** | [person-4-frontend-core.md](04-tasks/person-4-frontend-core.md) |
+| `[FE-B]` / `[FE-Growth]` | Frontend AI Chat UI, Shared Expenses & Admin | **Nguyễn Minh Đức** | [person-5-frontend-growth.md](04-tasks/person-5-frontend-growth.md) |
+| `[AI]` | AI Multi-Agent Architecture & Integration | **Nguyễn Tùng Dương** (Lead) & **Tạ Quang Huy** (Tooling) | [person-3-ai-engineer.md](04-tasks/person-3-ai-engineer.md) |
+| `[SEC/DEVOPS]` | Cyber Security & DevOps (CI/CD, Docker, Pentest) | **Đinh Tiến Luân** | [person-6-security-devops.md](04-tasks/person-6-security-devops.md) |
+
+---
+
 ## 🛠️ Sprint 0 — Contract Session & Infrastructure Setup
 
 ### 0.1 Architecture & Contract Definition

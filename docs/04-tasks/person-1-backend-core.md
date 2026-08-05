@@ -1,6 +1,7 @@
-# 👤 Person 1 — Backend Dev A (Core Domain)
+# 👤 Person 1 — Tạ Quang Huy (Backend Dev A: Core Domain & AI Integration)
 
-> **Sở hữu**: Auth (N1) + Event/Plan/Vote/Invitation (N2) — người thiết kế DB schema & FastAPI models gốc dùng chung toàn hệ thống.
+> **Người phụ trách**: **Tạ Quang Huy**
+> **Sở hữu**: Auth (N1) + Event/Plan/Vote/Invitation (N2) — người thiết kế DB schema & FastAPI models gốc dùng chung toàn hệ thống + Kiêm nhiệm AI Agent Integration (Tool Calling & Data Bridge).
 > **Tham gia bắt buộc**: Contract Session (Sprint 0), Integration Day cuối mỗi Sprint.
 
 ---

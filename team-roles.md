@@ -1,51 +1,55 @@
-# Team & Roles — Mô hình 6 người làm song song
+# Team & Roles — Mô hình Phân Công 6 Thành Viên Theo Vai Trò
 
-## 1. Nguyên tắc phân công (khác với "chia theo nhóm tính năng")
-Cách chia theo Nhóm 1–7 tính năng (feature.md gốc) khiến người làm Nhóm 4 (AI) phải **chờ** Nhóm 2 xong mới có dữ liệu thật để code — không tối ưu cho 6 người có sẵn, muốn chạy song song ngay tuần 1.
+## 1. Nguyên tắc phân công (chia theo Role & Nhân sự thực tế)
+Dự án được phân chia theo **vai trò kỹ thuật (role)** với 6 thành viên phụ trách các mảng công việc chuyên biệt và kiêm nhiệm phù hợp:
 
-Cách chia đúng kiểu công ty chuyên nghiệp: **chia theo vai trò (role)**, mỗi người sở hữu 1 mảng kỹ thuật **xuyên suốt toàn bộ dự án** (từ đầu đến cuối), làm việc song song với người khác thông qua **hợp đồng giao diện (contract)** chốt trước — không phải chờ nhau theo trình tự. Xem cơ chế chi tiết ở [contract-first-workflow.md](docs/01-workflow/contract-first-workflow.md).
+- **Backend (3 người)**: Tạ Quang Huy, Hà Đăng Huy, Phạm Đình Ánh Dương
+- **Frontend (2 người)**: Hà Đăng Huy, Nguyễn Minh Đức
+- **Ai Agent (2 người)**: Nguyễn Tùng Dương, Tạ Quang Huy
+- **DevOps & Security (1 người)**: Đinh Tiến Luân
 
-## 2. 6 vai trò & người phụ trách
+Mỗi thành viên làm việc song song từ tuần 1 thông qua **hợp đồng giao diện (contract)** chốt trước — không phải chờ nhau theo trình tự. Xem cơ chế chi tiết ở [contract-first-workflow.md](docs/01-workflow/contract-first-workflow.md).
 
-| # | Vai trò | Sở hữu mảng nào (theo tính năng gốc) | File task chi tiết |
-|---|---|---|---|
-| 1 | **Backend Dev A — Core Domain** | N1 (Auth) + N2 (Event/Plan/Vote) — schema DB gốc do người này thiết kế | [person-1-backend-core.md](docs/04-tasks/person-1-backend-core.md) |
-| 2 | **Backend Dev B — Platform & Integration** | N3 (External API) + N5 (Notification/Export) + N6 (Admin) | [person-2-backend-platform.md](docs/04-tasks/person-2-backend-platform.md) |
-| 3 | **AI Engineer** | N4 (toàn bộ Multi-Agent System) — làm song song từ tuần 1, dùng schema mock | [person-3-ai-engineer.md](docs/04-tasks/person-3-ai-engineer.md) |
-| 4 | **Frontend Dev A — Core Flows** | UI cho Auth, Event, Plan, Vote, Checklist (N1, N2, N5 phần UI) | [person-4-frontend-core.md](docs/04-tasks/person-4-frontend-core.md) |
-| 5 | **Frontend Dev B — AI Experience & Growth** | UI Chat AI, Landing, i18n, chia chi phí, Admin Dashboard UI (N4, N7, N6 phần UI) | [person-5-frontend-growth.md](docs/04-tasks/person-5-frontend-growth.md) |
-| 6 | **Cyber Security & DevOps** | CI/CD, Docker, bảo mật xuyên suốt (review mọi PR nhạy cảm), pentest trước demo | [person-6-security-devops.md](docs/04-tasks/person-6-security-devops.md) |
+## 2. 6 thành viên & phân công chi tiết
 
-> Nếu team thực tế nghiêng nhiều AI hơn, có thể đổi tỉ lệ thành 2 AI Engineer + gộp Backend Dev B làm kiêm Admin+Platform 1 mình — cấu trúc file vẫn giữ nguyên, chỉ đổi người gán.
+| # | Thành viên | Vai trò chính & kiêm nhiệm | Sở hữu mảng kỹ thuật | File task chi tiết |
+|---|---|---|---|---|
+| 1 | **Tạ Quang Huy** | **Backend Dev A (Core Domain)** & **AI Agent Integration** | N1 (Auth) + N2 (Event/Plan/Vote/Invitation) — Thiết kế Schema DB gốc + Bridge Tool Calling cho AI Agent | [person-1-backend-core.md](docs/04-tasks/person-1-backend-core.md) |
+| 2 | **Hà Đăng Huy** | **Backend Dev B (Platform)** & **Frontend Dev A (Core UI)** | N3 (External API Google Places/Weather/Currency) + UI Auth, Event Dashboard, Plan Builder, Vote UI & Mapbox | [person-2-backend-platform.md](docs/04-tasks/person-2-backend-platform.md) / [person-4-frontend-core.md](docs/04-tasks/person-4-frontend-core.md) |
+| 3 | **Phạm Đình Ánh Dương** | **Backend Dev C (Services & Realtime)** | N5 (Notification Email SMTP + PDF Export WeasyPrint) + Realtime WebSockets/SSE Server + N6 (Admin APIs) | [person-2-backend-platform.md](docs/04-tasks/person-2-backend-platform.md) |
+| 4 | **Nguyễn Minh Đức** | **Frontend Dev B (AI Experience & Growth UI)** | UI Realtime Chat AI, Landing Page, i18n (VI/EN), Checklist UI, Shared Expenses Calculator, Admin Dashboard UI | [person-5-frontend-growth.md](docs/04-tasks/person-5-frontend-growth.md) |
+| 5 | **Nguyễn Tùng Dương** | **AI Agent Lead (LangGraph & Multi-Agent)** | N4 (Toàn bộ Multi-Agent System: Orchestrator, Location, Research, Plan Agent DeepSeek-R1, Cost & Conflict Resolver) | [person-3-ai-engineer.md](docs/04-tasks/person-3-ai-engineer.md) |
+| 6 | **Đinh Tiến Luân** | **DevOps & Cyber Security Engineer** | CI/CD GitHub Actions, Docker Compose, FastAPI Security Middlewares, Input Sanitization, Ruff/Black, Pentest OWASP Top 10 | [person-6-security-devops.md](docs/04-tasks/person-6-security-devops.md) |
 
 ## 3. Vì sao chia thế này chạy song song được?
 | Vấn đề khi chia theo Nhóm cũ | Cách giải quyết khi chia theo Người |
 |---|---|
-| AI Engineer (N4) phải chờ Backend (N2) xong schema | Tuần 1 cả team chốt chung **1 buổi contract session**: schema Prisma + OpenAPI spec. AI Engineer code thẳng lên **mock server** dựng từ contract đó, không chờ Backend Dev A code xong thật |
-| Frontend chờ Backend xong API mới code UI | Frontend dùng **MSW (Mock Service Worker)** mock response theo đúng OpenAPI contract, code UI song song, chỉ cần đổi `baseURL` khi Backend deploy thật |
-| Security chỉ "review sau cùng" — dồn việc cuối dự án | Security có việc **riêng, chạy song song từ đầu**: dựng CI/CD, viết rule lint bảo mật, threat-model hệ AI Agent — không ngồi chờ có code mới bắt đầu |
-| 1 người rảnh trong khi người khác bận vì phụ thuộc | Mỗi người có **backlog riêng đủ dùng cho cả dự án** trong file task của mình, không có giai đoạn "ngồi chờ" |
+| AI Agent (N4) phải chờ Backend (N2) xong schema | Tuần 1 cả team chốt chung **1 buổi contract session**: schema SQLAlchemy + OpenAPI spec. AI Agent (Nguyễn Tùng Dương & Tạ Quang Huy) code thẳng lên **mock server / fixtures** dựng từ contract đó |
+| Frontend chờ Backend xong API mới code UI | Frontend (Hà Đăng Huy & Nguyễn Minh Đức) dùng **MSW (Mock Service Worker)** mock response theo đúng OpenAPI contract, code UI song song |
+| Security chỉ "review sau cùng" | Security & DevOps (Đinh Tiến Luân) dựng CI/CD, Docker, viết rule lint bảo mật, threat-model hệ AI Agent chạy song song từ Sprint 0 |
+| Phụ thuộc tiến độ giữa các mảng | Mỗi người có **backlog riêng rõ ràng**, không bị nghẽn hay gián đoạn công việc |
 
-## 4. Ma trận phối hợp (RACI) — theo người thay vì theo nhóm
+## 4. Ma trận phối hợp (RACI) — Theo thành viên thực tế
 
-R = Responsible · A = Accountable · C = Consulted · I = Informed
+R = Responsible (Người thực hiện) · A = Accountable (Người chịu trách nhiệm) · C = Consulted (Người tham vấn) · I = Informed (Người nhận thông tin)
 
-| Đầu việc | BE-A (Core) | BE-B (Platform) | AI Engineer | FE-A (Core) | FE-B (Growth) | Security/DevOps |
+| Đầu việc | Tạ Quang Huy (BE Core/AI) | Hà Đăng Huy (BE Plat/FE Core) | Phạm Đình Ánh Dương (BE Serv) | Nguyễn Minh Đức (FE Growth) | Nguyễn Tùng Dương (AI Lead) | Đinh Tiến Luân (DevOps/Sec) |
 |---|---|---|---|---|---|---|
-| Contract API + Schema (tuần 1) | **R/A** | C | C | C | C | C |
-| Auth (login/JWT) | **R/A** | I | I | C (gọi API) | I | **R** (review) |
-| Event/Plan/Vote CRUD | **R/A** | I | C (đọc schema) | C (gọi API) | I | C |
-| External API + cache | I | **R/A** | C (dùng data) | I | I | I |
-| AI Multi-Agent | C (schema) | I | **R/A** | I | C (gọi API chat) | **R** (input validation review) |
-| Notification/Export/Admin BE | I | **R/A** | C (log token) | I | C (UI admin) | C |
-| UI Core Flows | C | I | I | **R/A** | C | I |
-| UI AI Chat/Landing/i18n | I | I | C | C | **R/A** | I |
-| CI/CD, Docker, Security | I | I | I | I | I | **R/A** |
+| Contract API + DB Schema (Sprint 0) | **R/A** | C | C | C | C | C |
+| Auth (login/OAuth/JWT) | **R/A** | **R** (UI) | I | I | I | **R** (review sec) |
+| Event/Plan/Vote CRUD API | **R/A** | **R** (UI) | C | I | C (schema) | C |
+| External API (Places/Weather) + Cache | I | **R/A** | C | I | C (dùng data) | I |
+| Realtime SSE/WS, Email & PDF Export | I | I | **R/A** | C (UI Download) | C | C |
+| AI Multi-Agent Architecture & Graphs | C (tools) | I | I | I | **R/A** | **R** (sec review) |
+| AI Tool Calling & Data Bridge | **R/A** | C | I | I | C | I |
+| UI Core Flows (Event/Plan/Vote/Map) | C | **R/A** | I | C | I | I |
+| UI AI Chat / Landing / Expenses / Admin | I | C | C | **R/A** | C | I |
+| CI/CD, Docker, Pentest & Security | I | I | I | I | I | **R/A** |
 
-## 5. Đồng bộ giữa 6 người
+## 5. Đồng bộ giữa 6 thành viên
 | Việc | Tần suất |
 |---|---|
 | Contract sync (đổi API/schema) | Bất cứ khi nào đổi — báo ngay kênh `#contract-changes`, không chờ họp |
 | Daily update async | Mỗi ngày, 3 dòng: hôm qua/hôm nay/blocker |
-| Weekly demo + đồng bộ contract | 1 buổi/tuần — mỗi người demo phần mình, đối chiếu contract có bị lệch không |
-| Integration day | Cuối mỗi sprint — nối Frontend thật với Backend thật (thay mock), AI Engineer nối với DB thật |
+| Weekly demo + đồng bộ contract | 1 buổi/tuần — mỗi người demo phần mình, đối chiếu contract |
+| Integration day | Cuối mỗi sprint — nối Frontend thật với Backend thật (thay mock), AI Agent nối với DB thật |

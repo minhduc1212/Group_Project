@@ -1,6 +1,7 @@
-# 👤 Person 5 — Frontend Dev B (AI Experience & Growth)
+# 👤 Person 5 — Nguyễn Minh Đức (Frontend Dev B: AI Experience & Growth UI)
 
-> **Sở hữu**: UI Chat AI, Landing page, i18n, chia chi phí, Admin Dashboard UI.
+> **Người phụ trách**: **Nguyễn Minh Đức**
+> **Sở hữu**: UI Realtime Chat AI streaming, Landing Page, i18n đa ngôn ngữ (VI/EN), Checklist UI, Shared Expenses Calculator & Admin Dashboard UI.
 
 ---
 

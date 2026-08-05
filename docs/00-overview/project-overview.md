@@ -97,16 +97,16 @@ Tối ưu hóa chi phí và tốc độ suy luận bằng cách phân công 2 m�
 
 ---
 
-## 👥 5. Mô Hình Phân Công 6 Vai Trò Chạy Song Song (6-Track Execution)
+## 👥 5. Mô Hình Phân Công 6 Thành Viên (6-Track Execution)
 
-| Track | Vai trò | Trách nhiệm chính | File task chi tiết |
+| Track | Thành viên | Vai trò & Trách nhiệm | File task chi tiết |
 |---|---|---|---|
-| **BE-A** | Backend Dev A (Core Domain) | Schema DB gốc, Auth, Event, Plan, Vote, Invitations | [person-1-backend-core.md](../04-tasks/person-1-backend-core.md) |
-| **BE-B** | Backend Dev B (Platform) | Places API, Weather, Redis Cache, Email, PDF Export, Admin BE | [person-2-backend-platform.md](../04-tasks/person-2-backend-platform.md) |
-| **AI** | AI Engineer | LangGraph Python, 9 Sub-Agents, DeepSeek V3/R1 integration | [person-3-ai-engineer.md](../04-tasks/person-3-ai-engineer.md) |
-| **FE-A** | Frontend Dev A (Core UI) | Setup UI Kit, Auth UI, Event Dashboard, Plan Builder, Vote UI | [person-4-frontend-core.md](../04-tasks/person-4-frontend-core.md) |
-| **FE-B** | Frontend Dev B (Growth UI) | Landing Page, i18n, Realtime AI Chat UI, Shared Expenses, Admin UI | [person-5-frontend-growth.md](../04-tasks/person-5-frontend-growth.md) |
-| **SEC** | Cyber Security & DevOps | Docker Compose, CI/CD Actions, FastAPI Security, Pentest | [person-6-security-devops.md](../04-tasks/person-6-security-devops.md) |
+| **BE-Core / AI Tooling** | **Tạ Quang Huy** | Backend Dev A (Core Domain: Schema DB gốc, Auth, Event, Plan, Vote, Invitations) & AI Agent Tooling Integration | [person-1-backend-core.md](../04-tasks/person-1-backend-core.md) |
+| **BE-Platform / FE-Core** | **Hà Đăng Huy** | Backend Dev B (Places/Weather API, Redis Cache) & Frontend Dev A (UI Auth, Event Dashboard, Plan Builder, Vote UI) | [person-2-backend-platform.md](../04-tasks/person-2-backend-platform.md) / [person-4-frontend-core.md](../04-tasks/person-4-frontend-core.md) |
+| **BE-Services** | **Phạm Đình Ánh Dương** | Backend Dev C (Email Notifications SMTP, PDF Export WeasyPrint, Realtime WS/SSE Server, Admin APIs) | [person-2-backend-platform.md](../04-tasks/person-2-backend-platform.md) |
+| **FE-Growth** | **Nguyễn Minh Đức** | Frontend Dev B (Realtime AI Chat UI, Landing Page, i18n, Shared Expenses UI, Admin UI) | [person-5-frontend-growth.md](../04-tasks/person-5-frontend-growth.md) |
+| **AI Lead** | **Nguyễn Tùng Dương** | AI Agent Lead (LangGraph Architecture, 9 Sub-Agents, DeepSeek V3/R1 integration, Reasoning Engine) | [person-3-ai-engineer.md](../04-tasks/person-3-ai-engineer.md) |
+| **DevOps & Security** | **Đinh Tiến Luân** | Cyber Security & DevOps (Docker Compose, CI/CD GitHub Actions, FastAPI Security, Pentest OWASP) | [person-6-security-devops.md](../04-tasks/person-6-security-devops.md) |
 
 ---
 

@@ -1,6 +1,7 @@
-# 👤 Person 6 — Cyber Security & DevOps
+# 👤 Person 6 — Đinh Tiến Luân (Cyber Security & DevOps Engineer)
 
-> **Sở hữu**: Hạ tầng CI/CD, Docker, bảo mật xuyên suốt toàn dự án. Có backlog riêng chạy song song từ ngày 1 — **không ngồi chờ có code mới bắt đầu việc**.
+> **Người phụ trách**: **Đinh Tiến Luân**
+> **Sở hữu**: Hạ tầng CI/CD GitHub Actions, Docker Compose, bảo mật FastAPI, Pydantic Input/Output Validation Audit, Rate Limiting & Pentest OWASP Top 10 xuyên suốt toàn dự án.
 
 ---
 

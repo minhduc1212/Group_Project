@@ -1,6 +1,6 @@
 # 📚 Web Lên Kế Hoạch Nhóm Tích Hợp AI Multi-Agent
 
-Đây là bộ tài liệu chuẩn hóa cho dự án, dùng chung cho toàn team (6 người: Backend FastAPI, Frontend React, AI Engineer LangGraph Python, Cyber Security, cùng các vai trò kiêm nhiệm). Mọi thành viên **bắt buộc đọc** các mục `01-workflow` và `02-standards` trước khi push code đầu tiên.
+Đây là bộ tài liệu chuẩn hóa cho dự án, dùng chung cho 6 thành viên (Tạ Quang Huy, Hà Đăng Huy, Phạm Đình Ánh Dương, Nguyễn Minh Đức, Nguyễn Tùng Dương, Đinh Tiến Luân). Mọi thành viên **bắt buộc đọc** các mục `01-workflow` và `02-standards` trước khi push code đầu tiên.
 
 ## Mục lục
 
@@ -10,7 +10,7 @@
 - [Danh Sách Tính Năng (42 features)](feature.md) — **Toàn bộ 42 tính năng được đánh số theo 7 nhóm**
 - [Hướng Dẫn Vận Hành & Luồng (Explanation)](explain.md) — **Giải thích luồng hoạt động, ví dụ từng EventType (Travel, Dining, Entertainment...), DeepSeek API**
 - [Tech Stack](docs/00-overview/tech-stack.md) — **Công nghệ sử dụng: Python FastAPI, LangGraph Python, React, Postgres, Redis, DeepSeek API**
-- [Team & Roles](docs/00-overview/team-roles.md) — **Chia 6 người theo vai trò để làm song song** (không chia theo nhóm tính năng), ma trận RACI
+- [Team & Roles](docs/00-overview/team-roles.md) — **Chia 6 người theo vai trò để làm song song** (Backend: 3, Frontend: 2, AI Agent: 2, DevOps/Security: 1), ma trận RACI
 
 ### 01 — Quy trình làm việc (Workflow)
 - [Contract-First Workflow](docs/01-workflow/contract-first-workflow.md) — **Cơ chế cốt lõi để 6 người chạy song song** không bị block nhau (đọc trước tiên)
@@ -35,12 +35,12 @@
 ### 04 — Phân chia công việc (Tasks) — chia theo **người**, chạy song song
 - [Master Task Breakdown (TASKS.md)](docs/TASKS.md) — **Toàn bộ micro-tasks chi tiết cho từng file & acceptance criteria**
 - [Task Board tổng](docs/04-tasks/task-board.md) — Bảng theo dõi tiến độ + Sprint plan 6 track song song
-- [Person 1 — Backend Dev A (Core Domain: Auth + Event/Plan/Vote/Invitation - FastAPI)](docs/04-tasks/person-1-backend-core.md)
-- [Person 2 — Backend Dev B (Platform: External API + Notification/Export + Admin - FastAPI)](docs/04-tasks/person-2-backend-platform.md)
-- [Person 3 — AI Engineer (Multi-Agent System & DeepSeek API - LangGraph Python)](docs/04-tasks/person-3-ai-engineer.md)
-- [Person 4 — Frontend Dev A (Core Flows UI)](docs/04-tasks/person-4-frontend-core.md)
-- [Person 5 — Frontend Dev B (AI Experience & Growth UI)](docs/04-tasks/person-5-frontend-growth.md)
-- [Person 6 — Cyber Security & DevOps (FastAPI Security, Docker, Ruff, Pytest)](docs/04-tasks/person-6-security-devops.md)
+- [Person 1 — Tạ Quang Huy (Backend Dev A: Core Domain & AI Integration)](docs/04-tasks/person-1-backend-core.md)
+- [Person 2 — Hà Đăng Huy & Phạm Đình Ánh Dương (Backend Dev B: Platform, Services & Integration)](docs/04-tasks/person-2-backend-platform.md)
+- [Person 3 — Nguyễn Tùng Dương & Tạ Quang Huy (AI Agent Team: LangGraph & Integration)](docs/04-tasks/person-3-ai-engineer.md)
+- [Person 4 — Hà Đăng Huy (Frontend Dev A: Core Flows UI)](docs/04-tasks/person-4-frontend-core.md)
+- [Person 5 — Nguyễn Minh Đức (Frontend Dev B: AI Experience & Growth UI)](docs/04-tasks/person-5-frontend-growth.md)
+- [Person 6 — Đinh Tiến Luân (Cyber Security & DevOps Engineer)](docs/04-tasks/person-6-security-devops.md)
 
 ### 05 — Bảo mật (Security)
 - [Security Guidelines](docs/05-security/security-guidelines.md) — Checklist bảo mật, Pydantic input sanitization, rate limiting, secrets management

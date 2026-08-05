@@ -1,6 +1,7 @@
-# 👤 Person 4 — Frontend Dev A (Core Flows UI)
+# 👤 Person 4 — Hà Đăng Huy (Frontend Dev A: Core Flows UI)
 
-> **Sở hữu**: UI cho Auth, Event, Plan, Vote, Checklist. Code song song với Backend Dev A qua mock (MSW), nối thật ở Integration Day.
+> **Người phụ trách**: **Hà Đăng Huy**
+> **Sở hữu**: UI cho Auth, Event Dashboard, EventType Selector, Plan Builder, Vote UI & Mapbox Integration (kiêm Backend Dev B: External APIs). Code song song với Backend Dev A qua mock (MSW), nối thật ở Integration Day.
 
 ---
 
