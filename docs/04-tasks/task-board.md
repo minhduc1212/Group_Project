@@ -33,7 +33,7 @@ Xem quy trình chi tiết ở [contract-first-workflow.md](../01-workflow/contra
 
 | Thành viên | Phân công vai trò | Task file chi tiết | Micro-tasks | Trạng thái | Blocker |
 |---|---|---|---|---|---|
-| **Tạ Quang Huy** | Backend Dev A (Core Domain) & AI Integration | [person-1-backend-core.md](person-1-backend-core.md) | TASK-001, TASK-101..106, TASK-201..204, TASK-301..306, TASK-404 | 🟡 To Do | — |
+| **Tạ Quang Huy** | Backend Dev A (Core Domain) & AI Integration | [person-1-backend-core.md](person-1-backend-core.md) | TASK-001, TASK-101..106, TASK-201..204, TASK-301..306, TASK-404 | 🟡 | — |
 | **Hà Đăng Huy** | Backend Dev B (Platform) & Frontend Dev A (Core UI) | [person-2-backend-platform.md](person-2-backend-platform.md) / [person-4-frontend-core.md](person-4-frontend-core.md) | TASK-107..108, TASK-205..208, TASK-004, TASK-111..113, TASK-212..215, TASK-314..317 | 🔲 To Do | — |
 | **Phạm Đình Ánh Dương** | Backend Dev C (Services & Realtime) | [person-2-backend-platform.md](person-2-backend-platform.md) | TASK-311..313, TASK-405 | 🔲 To Do | — |
 | **Nguyễn Minh Đức** | Frontend Dev B (AI Experience & Growth UI) | [person-5-frontend-growth.md](person-5-frontend-growth.md) | TASK-005, TASK-114..115, TASK-406..410 | 🔲 To Do | — |
