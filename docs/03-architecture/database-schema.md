@@ -1,6 +1,8 @@
 # Database Schema (Prisma / PostgreSQL)
 
 > Đây là schema khởi điểm cho Nhóm 2 — mọi thay đổi cấu trúc bảng dưới đây phải thông báo Nhóm 4 (AI Agent) và Nhóm 3 (Data Lookup) trước khi merge (xem `01-workflow/git-workflow.md`).
+>
+> **Cập nhật (Tạ Quang Huy)**: bổ sung 4 bảng mới (`Expense`, `ExpenseSplit`, `ChecklistItem`, `Notification`) + 2 field vào `User` + 1 field vào `AgentLog`, dựa trên rà soát task-board của cả 6 người. Lý do chi tiết từng thay đổi ghi ở mục 6. Còn 1 mục **CHƯA CHỐT** (`ChatMessage`) để lại bàn bạc trong buổi họp, xem mục 7.
 
 ## 1. Sơ đồ quan hệ chính
 
@@ -9,14 +11,20 @@ erDiagram
     User ||--o{ EventMember : joins
     User ||--o{ SavedPlace : saves
     User ||--o{ Plan : creates
+    User ||--o{ Expense : pays
+    User ||--o{ ExpenseSplit : owes
+    User ||--o{ Notification : receives
     Event ||--o{ EventMember : contains
     Event ||--o{ Plan : has
     Event ||--o{ Invitation : sends
+    Event ||--o{ Expense : has
+    Event ||--o{ ChecklistItem : has
     Plan ||--o{ PlanStop : includes
     Plan ||--o{ PlanVote : receives
+    Expense ||--o{ ExpenseSplit : splitsInto
 ```
 
-## 2. Prisma schema (rút gọn, khởi điểm)
+## 2. Prisma schema (đầy đủ, đã gộp bản cập nhật)
 
 ```prisma
 model User {
@@ -26,11 +34,16 @@ model User {
   fullName      String   @map("full_name")
   avatarUrl     String?  @map("avatar_url")
   provider      AuthProvider @default(LOCAL)
+  role          SystemRole   @default(USER)        // (MỚI) quyền hệ thống, khác EventRole
+  status        UserStatus   @default(ACTIVE)       // (MỚI) phục vụ Admin quản lý user
   createdAt     DateTime @default(now()) @map("created_at")
 
   eventMembers  EventMember[]
   savedPlaces   SavedPlace[]
   createdPlans  Plan[]
+  expensesPaid  Expense[]
+  expenseSplits ExpenseSplit[]
+  notifications Notification[]
 
   @@map("users")
 }
@@ -39,6 +52,16 @@ enum AuthProvider {
   LOCAL
   GOOGLE
   FACEBOOK
+}
+
+enum SystemRole {           // (MỚI)
+  USER
+  ADMIN
+}
+
+enum UserStatus {           // (MỚI)
+  ACTIVE
+  SUSPENDED
 }
 
 model Event {
@@ -51,9 +74,11 @@ model Event {
   endDate     DateTime @map("end_date")
   createdAt   DateTime @default(now()) @map("created_at")
 
-  members     EventMember[]
-  plans       Plan[]
-  invitations Invitation[]
+  members         EventMember[]
+  plans           Plan[]
+  invitations     Invitation[]
+  expenses        Expense[]
+  checklistItems  ChecklistItem[]
 
   @@map("events")
 }
@@ -200,6 +225,7 @@ model AgentLog {
   id           String   @id @default(uuid())
   agentName    String   @map("agent_name")
   eventId      String?  @map("event_id")
+  planId       String?  @map("plan_id")        // (MỚI) truy vết log ứng với Plan cụ thể nào
   inputTokens  Int      @map("input_tokens")
   outputTokens Int      @map("output_tokens")
   durationMs   Int      @map("duration_ms")
@@ -207,6 +233,76 @@ model AgentLog {
   createdAt    DateTime @default(now()) @map("created_at")
 
   @@map("agent_logs")   // phục vụ Nhóm 6 - Admin Dashboard theo dõi chi phí token
+}
+
+// ===== BẢNG MỚI: Chia tiền chung (TASK-404, TASK-409) =====
+
+model Expense {
+  id          String    @id @default(uuid())
+  eventId     String    @map("event_id")
+  planId      String?   @map("plan_id")        // liên kết Plan nếu chi phí gắn với 1 lịch trình cụ thể
+  paidById    String    @map("paid_by_id")
+  title       String
+  amount      Decimal
+  splitType   SplitType @default(EQUAL) @map("split_type")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  event       Event @relation(fields: [eventId], references: [id])
+  paidBy      User  @relation(fields: [paidById], references: [id])
+  splits      ExpenseSplit[]
+
+  @@map("expenses")
+}
+
+enum SplitType {
+  EQUAL   // chia đều cho tất cả thành viên
+  CUSTOM  // chia theo số tiền tự nhập cho từng người
+}
+
+model ExpenseSplit {
+  id          String   @id @default(uuid())
+  expenseId   String   @map("expense_id")
+  userId      String   @map("user_id")
+  amountOwed  Decimal  @map("amount_owed")
+  isSettled   Boolean  @default(false) @map("is_settled")
+
+  expense     Expense @relation(fields: [expenseId], references: [id])
+  user        User    @relation(fields: [userId], references: [id])
+
+  @@unique([expenseId, userId])
+  @@map("expense_splits")
+}
+
+// ===== BẢNG MỚI: Checklist đồ cần mang (TASK-313, TASK-317) =====
+
+model ChecklistItem {
+  id            String   @id @default(uuid())
+  eventId       String   @map("event_id")
+  title         String
+  isChecked     Boolean  @default(false) @map("is_checked")
+  isAiGenerated Boolean  @default(false) @map("is_ai_generated")
+  createdById   String?  @map("created_by_id")   // null nếu do AI tạo
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  event         Event @relation(fields: [eventId], references: [id])
+
+  @@map("checklist_items")
+}
+
+// ===== BẢNG MỚI: Thông báo trong app (TASK-311, luồng Realtime N5) =====
+
+model Notification {
+  id             String   @id @default(uuid())
+  userId         String   @map("user_id")
+  type           String   // INVITE | VOTE_OPEN | PLAN_CONFIRMED | EXPENSE_ADDED
+  message        String
+  isRead         Boolean  @default(false) @map("is_read")
+  relatedEventId String?  @map("related_event_id")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  user           User @relation(fields: [userId], references: [id])
+
+  @@map("notifications")
 }
 ```
 
@@ -221,6 +317,10 @@ model AgentLog {
 - `agent_logs(created_at)` — phục vụ query thống kê Admin Dashboard theo thời gian.
 - `invitations(event_id, email)` — tra cứu lời mời theo event.
 - `plans(event_id, created_by_id)` — tra cứu plan theo người tạo.
+- `expenses(event_id)` — (MỚI) liệt kê chi phí theo event.
+- `expense_splits(expense_id, user_id)` — (MỚI) unique, tránh 1 user có 2 dòng nợ cho cùng 1 expense.
+- `checklist_items(event_id)` — (MỚI) liệt kê checklist theo event.
+- `notifications(user_id, is_read)` — (MỚI) truy vấn nhanh "thông báo chưa đọc" của 1 user.
 
 ## 5. Metadata JSON theo StopCategory
 - RESTAURANT: `{ "menuItems": [{"name": "Phở bò", "price": 50000}], "cuisine": "Việt Nam", "bookingUrl": "..." }`
@@ -228,3 +328,17 @@ model AgentLog {
 - ATTRACTION: `{ "ticketPrice": 100000, "openingHours": "8:00-17:00", "tips": "Mang giày thoải mái" }`
 - CAFE: `{ "vibe": "Rooftop view", "priceRange": "40k-80k", "bookingUrl": "..." }`
 - HOTEL: `{ "checkIn": "14:00", "checkOut": "12:00", "pricePerNight": 800000, "bookingUrl": "..." }`
+
+## 6. Lý do các thay đổi (căn cứ)
+
+| Thay đổi | Task/tài liệu căn cứ | Vì sao cần |
+|---|---|---|
+| `User.role`, `User.status` | `TASK-405` (Admin Statistics APIs) | API `GET /admin/users` cần quản lý trạng thái user; `EventRole` chỉ có nghĩa trong 1 Event, không phải quyền hệ thống |
+| Bảng `ChecklistItem` | `TASK-313`, `TASK-317` | Cần lưu trạng thái check/uncheck và phân biệt item AI gợi ý vs user tự thêm để tính progress bar |
+| Bảng `Expense` + `ExpenseSplit` | `TASK-404`, `TASK-409` | `totalBudget`/`estimatedCost` chỉ là số dự trù, không phải số tiền thực chi và ai nợ ai |
+| Bảng `Notification` | `TASK-311`, `system-architecture.md` (luồng notification) | Cần lưu lại lịch sử thông báo trong app, không chỉ gửi email một lần rồi mất |
+| `AgentLog.planId` | Nhu cầu debug thực tế | Truy vết log AI ứng với đúng Plan nào, không chỉ Event chung chung |
+
+## 7. CHƯA CHỐT — cần bàn trong buổi họp Contract Session
+
+- **`ChatMessage` (lịch sử chat AI)**: `ai-agent-architecture.md` có nhắc `conversation_history` nhưng chưa rõ lưu tạm (RAM/session) hay lưu vĩnh viễn vào DB. **Cần hỏi trực tiếp AI Lead (Nguyễn Tùng Dương)** trước khi quyết định thêm bảng này.
