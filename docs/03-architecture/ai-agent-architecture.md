@@ -99,7 +99,7 @@ flowchart LR
 ## 5. Bảo mật đầu vào (phối hợp Nhóm 1 + Nhóm 4)
 - Mọi input tự do từ user qua Pydantic validation & bleach/sanitize trước khi đưa vào prompt.
 - Dùng cấu trúc message role user/system tách biệt của DeepSeek API, không tự ghép chuỗi thô.
-- Giới hạn độ dài input, giới hạn số bước trong LangGraph recursion_limit (mặc định 15 bước).
+- Giới hạn độ dài input, giới hạn số bước trong LangGraph recursion_limit (đặt 15 bước, xem `AI_MAX_STEPS_PER_SESSION`).
 - Output từ LLM được validate qua Pydantic schema trước khi lưu DB.
 
 ## 6. Theo dõi chi phí

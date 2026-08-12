@@ -4,7 +4,7 @@
 > Board này theo dõi tiến độ tổng thể với **6 cột dọc theo 6 thành viên** (Tạ Quang Huy, Hà Đăng Huy, Phạm Đình Ánh Dương, Nguyễn Minh Đức, Nguyễn Tùng Dương, Đinh Tiến Luân).
 
 ## 1. Sprint 0 — Contract Session (ngày 1–2, bắt buộc cả 6 người)
-Xem quy trình chi tiết ở [contract-first-workflow.md](../01-workflow/contract-first-workflow.md) và micro-tasks ở [TASKS.md](../TASKS.md) (TASK-001 đến TASK-008).
+Xem quy trình chi tiết ở [contract-first-workflow.md](../01-workflow/contract-first-workflow.md) và micro-tasks ở [TASKS.md](../TASKS.md) (TASK-001 đến TASK-011).
 - [ ] TASK-001 `[BE-Core - Tạ Quang Huy]`: Chốt SQLAlchemy & Pydantic DB Schemas
 - [ ] TASK-002 `[BE-Services - Phạm Đình Ánh Dương]`: FastAPI Controller Skeleton
 - [ ] TASK-003 `[AI Lead - Nguyễn Tùng Dương & Tạ Quang Huy]`: LangGraph State & Fixture Data
@@ -13,6 +13,9 @@ Xem quy trình chi tiết ở [contract-first-workflow.md](../01-workflow/contra
 - [ ] TASK-006 `[DevOps/Sec - Đinh Tiến Luân]`: Docker Compose & Environment
 - [ ] TASK-007 `[DevOps/Sec - Đinh Tiến Luân]`: CI/CD GitHub Actions Pipeline
 - [ ] TASK-008 `[DevOps/Sec - Đinh Tiến Luân]`: Pre-commit Hooks & Ruff setup
+- [ ] TASK-009 `[FE-Growth - Nguyễn Minh Đức]`: Design Tokens & Design System Spec
+- [ ] TASK-010 `[FE-Growth - Nguyễn Minh Đức]`: User Flows & Page Wireframes
+- [ ] TASK-011 `[FE-Growth - Nguyễn Minh Đức]`: Hi-fi Mockups, Component Library & Accessibility
 
 **Mốc ra khỏi Sprint 0**: contract đã push lên `main`, mọi người có thể code song song từ đây.
 
@@ -22,7 +25,7 @@ Xem quy trình chi tiết ở [contract-first-workflow.md](../01-workflow/contra
 |---|---|---|---|---|
 | **BE-Core & AI Tooling**<br>*(Tạ Quang Huy)* | DB Models & Alembic Migration (101) | Event/Plan CRUD + RolesGuard | Vote Engine + Plan Status (DRAFT→VOTING→CONFIRMED) | Realtime WS/SSE (402) + Token Logging (403) + Pytest coverage ≥ 70% |
 | **BE-Platform & FE-Core**<br>*(Hà Đăng Huy)* | HTTPX Async + Redis Cache / Auth UI | Places API (Category Filter) + Weather/Currency / Event Dashboard + Mapbox | Manual Plan Builder + Vote UI | Component Testing + Polish Responsive UI |
-| **BE-Services**<br>*(Phạm Đình Ánh Dương)* | Base Services (002) + Auth APIs (102–106) + Forgot/Reset Email (105) | Invitation APIs (203) | Email Notifications (SMTP) + PDF Export (WeasyPrint) | Admin APIs + Expense Splitting & Settlement (404, 405, 415) |
+| **BE-Services**<br>*(Phạm Đình Ánh Dương)* | Auth APIs (102–106) + Forgot/Reset Email (105) | Invitation APIs (203) | Email Notifications (SMTP) + PDF Export (WeasyPrint) | Admin APIs + Expense Splitting & Settlement (404, 405, 415) |
 | **FE-Growth**<br>*(Nguyễn Minh Đức)* | Landing Page + i18n Setup (VI/EN) | UI AI Chat Mock + Category Cards | Checklist UI + PDF Download Preview | Streaming AI Chat UI + Shared Expenses + Admin UI |
 | **AI Lead**<br>*(Nguyễn Tùng Dương)* | LangGraph Python Orchestrator + DeepSeek Wrapper | Location Agent + Research Agent + Note Agent | Plan Agent (DeepSeek-R1) + Cost + Conflict Resolver | Realtime Chat Agent (401) |
 | **DevOps & Security**<br>*(Đinh Tiến Luân)* | FastAPI Security Middlewares + Ruff/CI | External API Security & Retry Review | Input Validation & Pydantic Output Defense Audit | Pentest OWASP Top 10 + Staging & Production Deploy |

@@ -8,7 +8,7 @@
 
 ## 2. Quản lý secrets
 - `.env` thật **không bao giờ** commit — đã có trong `.gitignore` ngay từ commit đầu tiên của repo.
-- Chỉ commit `.env.example` với key rỗng/giá trị mẫu (xem file gốc `docs/.env.example`).
+- Chỉ commit `.env.example` với key rỗng/giá trị mẫu (xem file gốc `.env.example` ở root repo).
 - Secrets môi trường CI/production lưu trong **GitHub Actions Secrets** / biến môi trường của platform hosting (Render/Railway/Vercel), không lưu trong code hay trong file config JSON commit lên repo.
 - Nếu lỡ commit secret: **revoke/rotate key ngay lập tức** (không chỉ xoá khỏi commit sau — vì đã có trong lịch sử Git), sau đó dùng `git filter-repo`/BFG để xoá khỏi history nếu cần.
 

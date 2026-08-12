@@ -12,7 +12,7 @@ TASK-010 (User Flows & Wireframes) ──► layout/component từng page (Sprin
 TASK-011 (Hi-fi Mockups + Component Library + A11y) ──► Figma cho FE dev & review
 ```
 
-- **FE Dev A** (TASK-009): định nghĩa design tokens → áp vào Tailwind/shadcn config.
+- **FE Dev B** (TASK-009): định nghĩa design tokens → áp vào Tailwind/shadcn config.
 - **FE Dev B** (TASK-010, 011): vẽ wireframe + hi-fi mockup → chuyển cho cả team làm theo.
 - Đối chiếu lại **trước Integration Day** cuối mỗi Sprint để tránh lệch pixel với hiện thực.
 
@@ -48,6 +48,6 @@ docs/06-design/
 
 | Task | Chủ sở hữu | Output |
 |---|---|---|
-| [TASK-009](../TASKS.md) | FE Dev A | `design-tokens.md` + theme config |
+| [TASK-009](../TASKS.md) | FE Dev B | `design-tokens.md` + theme config |
 | [TASK-010](../TASKS.md) | FE Dev B | `user-flows.md` + `wireframes/` |
 | [TASK-011](../TASKS.md) | FE Dev B | `mockups.md` + component variants + a11y |

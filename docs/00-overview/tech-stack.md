@@ -12,7 +12,7 @@ Lựa chọn công nghệ ưu tiên: **Python FastAPI cho Backend & AI Agent (đ
 | Form | **React Hook Form + Zod** | Validate schema UI client trước khi submit |
 | Map | **Mapbox GL JS** hoặc **Google Maps JS SDK** | Theo Nhóm 3 |
 | i18n | **react-i18next** | Cho Nhóm 7 |
-| Realtime chat UI (Agent 9.7) | **WebSockets / SSE (FastAPI EventSourceResponse)** | Tích hợp sẵn trong FastAPI mượt mà |
+| Realtime chat UI | **WebSockets / SSE (FastAPI EventSourceResponse)** | Tích hợp sẵn trong FastAPI mượt mà |
 
 ## 2. Backend (Python FastAPI)
 | Hạng mục | Lựa chọn | Lý do |
@@ -49,7 +49,7 @@ Lựa chọn công nghệ ưu tiên: **Python FastAPI cho Backend & AI Agent (đ
 |---|---|
 | Email | FastAPI-Mail / aiosmtplib (SMTP async) |
 | Cron job | APScheduler / Celery Beat |
-| Export PDF | WeasyPrint / ReportLab / Playeteer Python |
+| Export PDF | WeasyPrint / ReportLab / Playwright Python |
 
 ## 6. DevOps / Hạ tầng
 | Hạng mục | Lựa chọn | Lý do |

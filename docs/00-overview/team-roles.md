@@ -14,9 +14,9 @@ Mỗi thành viên làm việc song song từ tuần 1 thông qua **hợp đồn
 
 | # | Thành viên | Vai trò chính & kiêm nhiệm | Sở hữu mảng kỹ thuật | File task chi tiết |
 |---|---|---|---|---|
-| 1 | **Tạ Quang Huy** | **Backend Dev A (Core Domain)** & **AI Agent Integration** | N1 (Auth) + N2 (Event/Plan/Vote/Invitation) — Thiết kế Schema DB gốc + Bridge Tool Calling cho AI Agent | [person-1-backend-core.md](../04-tasks/person-1-backend-core.md) |
+| 1 | **Tạ Quang Huy** | **Backend Dev A (Core Domain)** & **AI Agent Integration** | N2 (Event/Plan/Vote) + RolesGuard — Thiết kế Schema DB gốc + Bridge Tool Calling cho AI Agent | [person-1-backend-core.md](../04-tasks/person-1-backend-core.md) |
 | 2 | **Hà Đăng Huy** | **Backend Dev B (Platform)** & **Frontend Dev A (Core UI)** | N3 (External API Google Places/Weather/Currency) + UI Auth, Event Dashboard, Plan Builder, Vote UI & Mapbox | [person-2-backend-platform.md](../04-tasks/person-2-backend-platform.md) / [person-4-frontend-core.md](../04-tasks/person-4-frontend-core.md) |
-| 3 | **Phạm Đình Ánh Dương** | **Backend Dev C (Services & Realtime)** | N5 (Notification Email SMTP + PDF Export WeasyPrint) + Realtime WebSockets/SSE Server + N6 (Admin APIs) | [person-2-backend-platform.md](../04-tasks/person-2-backend-platform.md) |
+| 3 | **Phạm Đình Ánh Dương** | **Backend Dev C (Services & Settlement)** | N1 (Auth & User APIs) + Invitation + N5 (Notification Email SMTP + PDF Export WeasyPrint + Checklist) + Expense Splitting & Settlement + N6 (Admin APIs) | [person-2-backend-platform.md](../04-tasks/person-2-backend-platform.md) |
 | 4 | **Nguyễn Minh Đức** | **Frontend Dev B (AI Experience & Growth UI)** | UI Realtime Chat AI, Landing Page, i18n (VI/EN), Checklist UI, Shared Expenses Calculator, Admin Dashboard UI | [person-5-frontend-growth.md](../04-tasks/person-5-frontend-growth.md) |
 | 5 | **Nguyễn Tùng Dương** | **AI Agent Lead (LangGraph & Multi-Agent)** | N4 (Toàn bộ Multi-Agent System: Orchestrator, Location, Research, Plan Agent DeepSeek-R1, Cost & Conflict Resolver) | [person-3-ai-engineer.md](../04-tasks/person-3-ai-engineer.md) |
 | 6 | **Đinh Tiến Luân** | **DevOps & Cyber Security Engineer** | CI/CD GitHub Actions, Docker Compose, FastAPI Security Middlewares, Input Sanitization, Ruff/Black, Pentest OWASP Top 10 | [person-6-security-devops.md](../04-tasks/person-6-security-devops.md) |
@@ -36,10 +36,11 @@ R = Responsible (Người thực hiện) · A = Accountable (Người chịu tr�
 | Đầu việc | Tạ Quang Huy (BE Core/AI) | Hà Đăng Huy (BE Plat/FE Core) | Phạm Đình Ánh Dương (BE Serv) | Nguyễn Minh Đức (FE Growth) | Nguyễn Tùng Dương (AI Lead) | Đinh Tiến Luân (DevOps/Sec) |
 |---|---|---|---|---|---|---|
 | Contract API + DB Schema (Sprint 0) | **R/A** | C | C | C | C | C |
-| Auth (login/OAuth/JWT) | **R/A** | **R** (UI) | I | I | I | **R** (review sec) |
+| Auth (login/OAuth/JWT) | C/I | **R** (UI) | **R/A** | I | I | **R** (review sec) |
 | Event/Plan/Vote CRUD API | **R/A** | **R** (UI) | C | I | C (schema) | C |
 | External API (Places/Weather) + Cache | I | **R/A** | C | I | C (dùng data) | I |
-| Realtime SSE/WS, Email & PDF Export | I | I | **R/A** | C (UI Download) | C | C |
+| Realtime SSE/WS | **R/A** | I | C | C (UI Chat) | C | C |
+| Email & PDF Export | I | I | **R/A** | C (UI Download) | C | C |
 | AI Multi-Agent Architecture & Graphs | C (tools) | I | I | I | **R/A** | **R** (sec review) |
 | AI Tool Calling & Data Bridge | **R/A** | C | I | I | C | I |
 | UI Core Flows (Event/Plan/Vote/Map) | C | **R/A** | I | C | I | I |

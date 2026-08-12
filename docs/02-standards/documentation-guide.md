@@ -25,9 +25,9 @@ poetry run uvicorn app.main:app --reload --port 8000
 
 ### Frontend (React + Vite)
 ​```bash
-npm install
+pnpm install
 cp .env.example .env
-npm run dev
+pnpm run dev
 ​```
 
 ## Scripts chính
@@ -35,8 +35,8 @@ npm run dev
 |---|---|
 | `ruff check .` | Lint Python (backend) |
 | `pytest` | Chạy test Python (backend) |
-| `npm run lint` | Lint TypeScript (frontend) |
-| `npm run test` | Chạy test frontend |
+| `pnpm run lint` | Lint TypeScript (frontend) |
+| `pnpm run test` | Chạy test frontend |
 
 ## Cấu trúc thư mục
 ## Liên kết docs liên quan
@@ -69,7 +69,7 @@ def create_event(self, dto: CreateEventDto, user_id: str) -> Event:
 ## 4. Architecture Decision Record (ADR)
 Khi có quyết định kỹ thuật quan trọng (đổi DB, đổi thư viện orchestration, đổi cấu trúc Auth...), ghi lại theo template ngắn trong `03-architecture/adr/`:
 ```markdown
-# ADR-001: Chọn LangGraph.js thay vì tự viết orchestrator
+# ADR-001: Chọn LangGraph Python thay vì tự viết orchestrator
 
 ## Bối cảnh
 ## Các phương án đã xét

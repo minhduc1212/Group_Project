@@ -25,11 +25,10 @@
   POST   /auth/register
   POST   /auth/forgot-password
   POST   /auth/refresh-token
-  GET    /auth/me
 
 /api/v1/users
-  GET    /users/{id}/profile
-  PATCH  /users/{id}/profile
+  GET    /users/me                                  # thông tin profile user hiện tại (TASK-106)
+  PATCH  /users/me                                  # cập nhật full_name, avatar_url
 
 /api/v1/events
   GET    /events                                       # lấy danh sách event của user
@@ -57,9 +56,20 @@
   POST   /events/{eventId}/plans/{planId}/votes          # vote UP / DOWN / NEUTRAL + comment
   GET    /events/{eventId}/plans/{planId}/votes          # xem danh sách và kết quả vote
 
+/api/v1/events/{eventId}/finance  (tài chính chuyến đi — TASK-404/405/415)
+  POST   /events/{eventId}/fund-contributions            # thu quỹ → tạo Expense(type=ADVANCE)
+  GET    /events/{eventId}/expenses                      # danh sách chi tiêu
+  POST   /events/{eventId}/expenses                      # tạo chi tiêu (kèm expense_splits theo SplitType)
+  PATCH  /events/{eventId}/expenses/{expenseId}          # sửa chi tiêu
+  DELETE /events/{eventId}/expenses/{expenseId}          # xoá chi tiêu
+  GET    /events/{eventId}/balances                      # net balance từng member (SQL GROUP BY, không cần bảng MemberBalance)
+  GET    /events/{eventId}/settlements                   # danh sách giao dịch bù trừ
+  POST   /events/{eventId}/settlements                   # chạy thuật toán tối ưu (TASK-404) → ghi bảng settlements
+
 /api/v1/places        (Nhóm 3)
   GET    /places/search?keyword=&lat=&lng=&category=   # tra cứu địa điểm, category: RESTAURANT, CAFE, ENTERTAINMENT, ATTRACTION, HOTEL
   GET    /hotels/compare?ids=                          # so sánh khách sạn
+  POST   /saved-places                                 # lưu địa điểm yêu thích (TASK-306)
 
 /api/v1/utils          (Nhóm 3)
   GET    /weather?lat=&lng=
@@ -127,10 +137,10 @@
 ## 6. Domain & Subdomain (khi deploy)
 | Service | Domain gợi ý |
 |---|---|
-| Frontend | `travel-ai.<domain>.com` hoặc domain chính |
-| Backend API | `api.travel-ai.<domain>.com` |
-| AI Service (nếu tách riêng Python) | `ai.travel-ai.<domain>.com` |
-| Admin Dashboard | `admin.travel-ai.<domain>.com` (hoặc route `/admin` trong FE chính nếu không tách) |
+| Frontend | `tripmate.<domain>.com` hoặc domain chính |
+| Backend API | `api.tripmate.<domain>.com` |
+| AI Service (nếu tách riêng Python) | `ai.tripmate.<domain>.com` |
+| Admin Dashboard | `admin.tripmate.<domain>.com` (hoặc route `/admin` trong FE chính nếu không tách) |
 
 ## 7. Rate limiting
 - Áp dụng rate limit riêng cho nhóm endpoint `/ai/*` (chi phí LLM cao) — VD tối đa 20 request/phút/user.

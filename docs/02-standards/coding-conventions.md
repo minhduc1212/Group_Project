@@ -11,7 +11,7 @@
 - **Frontend (TypeScript)**:
   - ESLint: `eslint:recommended` + `@typescript-eslint/recommended` + `eslint-plugin-react-hooks`.
   - Prettier: 2 spaces, single quotes, dấu `;` cuối dòng, `printWidth: 100`.
-- Chạy `ruff check .` và `npm run lint` trong CI, PR fail nếu vi phạm style code.
+- Chạy `ruff check .` và `pnpm run lint` trong CI, PR fail nếu vi phạm style code.
 
 ## 2. Backend (Python FastAPI)
 - Cấu trúc module theo **Domain-Driven Layout**:

@@ -38,7 +38,7 @@ ENVIRONMENT=development
 FRONTEND_URL=http://localhost:5173
 
 # Database
-DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/travel_ai
+DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/tripmate
 
 # Redis
 REDIS_URL=redis://localhost:6379/0
@@ -72,8 +72,8 @@ SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=
 SMTP_PASSWORD=
-EMAILS_FROM_EMAIL=no-reply@travel-ai.com
-EMAILS_FROM_NAME=Group Plan AI
+EMAILS_FROM_EMAIL=no-reply@tripmate.com
+EMAILS_FROM_NAME=TripMate AI
 
 # Rate Limit
 RATE_LIMIT_AI_PER_MINUTE=20

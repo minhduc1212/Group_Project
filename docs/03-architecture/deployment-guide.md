@@ -54,7 +54,7 @@ Frontend (Vercel) ── gọi API qua VITE_API_BASE_URL ──► Backend (Rend
 ```yaml
 services:
   - type: web
-    name: travel-ai-backend
+    name: tripmate-backend
     runtime: docker
     repo: https://github.com/minhduc1212/Group_Project
     dockerContext: ./backend
@@ -62,22 +62,22 @@ services:
     envVars:
       - key: DATABASE_URL
         fromDatabase:
-          name: travel-ai-db
+          name: tripmate-db
           property: connectionString
       - key: REDIS_URL
         fromService:
           type: redis
-          name: travel-ai-redis
+          name: tripmate-redis
           property: connectionString
       # Các secret còn lại (SECRET_KEY, DEEPSEEK_API_KEY, ...) đặt thủ công trên dashboard Render
     healthCheckPath: /health
   - type: postgres
-    name: travel-ai-db
+    name: tripmate-db
     plan: free
-    databaseName: travel_ai
+    databaseName: tripmate
     ipAllowList: []
   - type: redis
-    name: travel-ai-redis
+    name: tripmate-redis
     plan: free
     maxmemoryPolicy: noeviction
 ```

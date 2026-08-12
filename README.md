@@ -29,7 +29,7 @@
 
 ### 03 — Kiến trúc hệ thống (Architecture)
 - [System Architecture](docs/03-architecture/system-architecture.md) — Sơ đồ tổng thể hệ thống (FastAPI Backend + LangGraph Python)
-- [Database Schema](docs/03-architecture/database-schema.md) — Thiết kế bảng dữ liệu chính (SQLAlchemy / SQLModel / Prisma, EventType, StopCategory, Invitation, metadata JSON)
+- [Database Schema](docs/03-architecture/database-schema.md) — Thiết kế bảng dữ liệu chính (SQLAlchemy / SQLModel, EventType, StopCategory, Invitation, metadata JSON)
 - [AI Agent Architecture](docs/03-architecture/ai-agent-architecture.md) — Kiến trúc Multi-Agent (LangGraph Python, EventType routing, DeepSeek API)
 
 ### 04 — Phân chia công việc (Tasks) — chia theo **người**, chạy song song

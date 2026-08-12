@@ -38,7 +38,7 @@ main                    → luôn deployable, bảo vệ (protected branch)
 
 ## 3. Xử lý conflict
 - Ưu tiên `rebase` thay vì `merge` khi cập nhật branch cá nhân từ `develop`, để lịch sử tuyến tính, dễ review.
-- Nếu conflict phức tạp liên quan đến người khác (VD Prisma schema) → trao đổi trực tiếp trước khi tự resolve.
+- Nếu conflict phức tạp liên quan đến người khác (VD database-schema.md) → trao đổi trực tiếp trước khi tự resolve.
 
 ## 4. Có cần nhánh `develop` không?
 - Team 6 người, đồ án ngắn hạn → **khuyến nghị bỏ qua `develop`, PR thẳng vào `main`** để đơn giản hoá, miễn là `main` luôn được bảo vệ bởi CI + review.

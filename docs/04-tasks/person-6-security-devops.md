@@ -27,7 +27,7 @@
 - [ ] **`TASK-007`** **GitHub Actions Pipeline Setup**
   - **Feature**: N/A
   - **Target Files**: `.github/workflows/ci.yml`
-  - **Acceptance Criteria**: Automated runs on PR: `ruff check backend`, `mypy backend`, `pytest backend`, `npm run lint frontend`, `npm run build frontend`.
+  - **Acceptance Criteria**: Automated runs on PR: `ruff check backend`, `mypy backend`, `pytest backend`, `pnpm run lint frontend`, `pnpm run build frontend`.
 - [ ] **`TASK-008`** **Pre-commit Hooks & Linter Setup**
   - **Feature**: N/A
   - **Target Files**: `.pre-commit-config.yaml`, `backend/pyproject.toml`

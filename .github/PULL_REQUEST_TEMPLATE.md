@@ -17,7 +17,7 @@ Closes #
 ## Checklist trước khi request review
 - [ ] Đã tự review lại diff của mình
 - [ ] Backend: Đã chạy `ruff check .`, `mypy backend`, và `pytest` local, pass hết
-- [ ] Frontend: Đã chạy `npm run lint` và `npm run test` local, pass hết
+- [ ] Frontend: Đã chạy `pnpm run lint` và `pnpm run test` local, pass hết
 - [ ] Đã thêm/cập nhật test cho logic mới hoặc thay đổi
 - [ ] Đã cập nhật docs liên quan (API/schema/kiến trúc) nếu có thay đổi
 - [ ] Không có secret/API key hardcode trong code

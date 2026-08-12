@@ -80,5 +80,5 @@
 ## 🤝 Handover & Review Guidelines (Person 5)
 
 1. **Buddy / Backup**: `Person 4` (Frontend Dev A)
-2. **Task Completion**: Run `npm run lint` and `npm run test`. Push branch `feature/TASK-xxx` and tag `@FE-A` on PR.
+2. **Task Completion**: Run `pnpm run lint` and `pnpm run test`. Push branch `feature/TASK-xxx` and tag `@FE-A` on PR.
 3. **Task Handover**: Follow 4 scenarios in [cross-team-collaboration.md](../01-workflow/cross-team-collaboration.md) Section 3.

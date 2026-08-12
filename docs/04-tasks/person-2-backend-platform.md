@@ -104,8 +104,8 @@
   - **Acceptance Criteria**: Tính split theo 3 kiểu `SplitType` — `EQUAL`, `EXACT`, `PERCENTAGE`; tính net balance từng member bằng SQL GROUP BY (không cần bảng `MemberBalance`, theo [database-schema.md](../03-architecture/database-schema.md) §3). `SettlementService.settle()` chạy thuật toán tối ưu số giao dịch theo ví dụ §3 (A/B/C/D → 3 transactions); lưu từng giao dịch bù trừ vào bảng `settlements` (1 dòng `Settlement`, `isSettled=false`). Unit test trong `tests/test_settlement.py` (cases 2/3/4 người).
 - [ ] **`TASK-415`** `[BE-Services - Phạm Đình Ánh Dương]` **Fund & Expense CRUD + Settlement Persistence APIs**
   - **Feature**: #41
-  - **Target Files**: `backend/app/api/v1/funds.py`, `backend/app/api/v1/expenses.py`, `backend/app/api/v1/settlements.py`, `backend/app/models/fund.py`, `backend/app/models/expense.py`, `backend/app/models/settlement.py`
-  - **Acceptance Criteria**: `POST/GET/PATCH/DELETE /events/{id}/fund-contributions` và `/events/{id}/expenses` (mỗi expense tạo `expense_splits` theo SplitType); `GET /events/{id}/balances` trả net balance từng member; `GET/POST /events/{id}/settlements` (chạy thuật toán TASK-404, ghi `EventSettlement`). Role guard theo RolesGuard TASK-204. Alembic migration + tests `test_expense.py`, `test_settlement.py`.
+  - **Target Files**: `backend/app/api/v1/funds.py` (router thu quỹ — tạo `Expense(type=ADVANCE)`, không có bảng/model riêng), `backend/app/api/v1/expenses.py`, `backend/app/api/v1/settlements.py`, `backend/app/models/expense.py`, `backend/app/models/settlement.py`
+  - **Acceptance Criteria**: `POST/GET/PATCH/DELETE /events/{id}/fund-contributions` (thu quỹ → tạo `Expense(type=ADVANCE)`) và `/events/{id}/expenses` (mỗi expense tạo `expense_splits` theo SplitType); `GET /events/{id}/balances` trả net balance từng member (SQL GROUP BY); `GET/POST /events/{id}/settlements` (chạy thuật toán TASK-404, ghi bảng `settlements`). Role guard theo RolesGuard TASK-204. Alembic migration + tests `test_expense.py`, `test_settlement.py`.
 
 ---
 

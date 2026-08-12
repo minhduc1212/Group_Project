@@ -20,17 +20,17 @@ Dự án có bộ tài liệu đầy đủ và chuẩn hóa. Nếu bạn mới v
 ---
 
 ### 🅱️ Backend Dev A — Core Domain & AI Integration (Tạ Quang Huy)
-> **Mục tiêu**: Nắm DB schema, API spec, Auth, Event/Plan/Vote/Invitation và Tool Calling cho AI Agent.
+> **Mục tiêu**: Nắm DB schema, API spec, Event/Plan/Vote, RolesGuard và Tool Calling cho AI Agent.
 
 1. Đọc **[contract-first-workflow.md](docs/01-workflow/contract-first-workflow.md)** (5 phút) — Hiểu cơ chế code song song từ ngày 1 bằng API contract.
 2. Đọc **[database-schema.md](docs/03-architecture/database-schema.md)** (5 phút) — Nắm kỹ các model SQLAlchemy: User, Event, Plan, PlanStop, PlanVote, Invitation.
-3. Đọc **[api-design-guide.md](docs/02-standards/api-design-guide.md)** (3 phút) — Nắm các endpoint REST `/auth/*`, `/events/*`, `/invitations/*`, `/plans/*`, `/votes/*`.
+3. Đọc **[api-design-guide.md](docs/02-standards/api-design-guide.md)** (3 phút) — Nắm các endpoint REST `/events/*`, `/plans/*`, `/votes/*` (Auth & Invitation do BE-Services đảm nhận).
 4. Mở **[person-1-backend-core.md](docs/04-tasks/person-1-backend-core.md)** (2 phút) — Xem danh sách các mã task `TASK-xxx` phụ trách.
 
 ---
 
 ### 🅲️ Backend Dev B & C — Platform & Integration (Hà Đăng Huy & Phạm Đình Ánh Dương)
-> **Mục tiêu**: Nắm cách tích hợp Google Places, Weather, Currency, Redis cache (Hà Đăng Huy) và Email SMTP, PDF Export, Realtime WS/SSE Server, Admin APIs (Phạm Đình Ánh Dương).
+> **Mục tiêu**: Nắm cách tích hợp Google Places, Weather, Currency, Redis cache (Hà Đăng Huy) và Auth APIs, Invitation, Email SMTP, PDF Export, Checklist, Expense Splitting & Settlement, Admin APIs (Phạm Đình Ánh Dương) + Realtime WS/SSE Server (Tạ Quang Huy).
 
 1. Đọc **[contract-first-workflow.md](docs/01-workflow/contract-first-workflow.md)** (5 phút) — Hiểu cách trả API spec để AI Engineer và FE dùng.
 2. Đọc **[api-design-guide.md](docs/02-standards/api-design-guide.md)** (3 phút) — Xem endpoint `/places/*`, `/weather`, `/export/*`, `/admin/*`.
@@ -105,8 +105,8 @@ poetry run uvicorn app.main:app --reload --port 8000
 ### Bước 3: Khởi động Frontend (React + Vite)
 ```bash
 cd ../frontend
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 > Truy cập Web UI tại: `http://localhost:5173`
 
@@ -148,14 +148,14 @@ npm run dev
 ### 3.4. Quy Trình Bàn Giao Công Việc (Task Handover — 4 Kịch Bản Chi Tiết)
 
 #### 🟢 Kịch bản 1: Bàn giao khi HOÀN THÀNH Task (Task Completion)
-1. **Tự kiểm tra (Self-Check)**: Chạy test local pass clean (`pytest backend`, `npm run test`, `ruff check`).
+1. **Tự kiểm tra (Self-Check)**: Chạy test local pass clean (`pytest backend`, `pnpm run test`, `ruff check`).
 2. **Tick Done**: Đổi `[ ]` thành `[x]` trong file task cá nhân và `docs/TASKS.md`.
 3. **Mở Pull Request**: Mở PR dựa trên template [.github/PULL_REQUEST_TEMPLATE.md](.github/PULL_REQUEST_TEMPLATE.md), tag **Buddy / Reviewer**.
 4. **Báo tin bàn giao**: Nhắn kênh `#dev`:
    ```
    ✅ [DONE] TASK-102: User Registration & Password Hashing
    PR: #12 (https://github.com/.../pull/12)
-   Reviewer: @BE-Platform (Buddy)
+   Reviewer: @BE-Core (Buddy)
    ```
 
 #### 🔄 Kịch bản 2: Bàn giao khi NHỜ LÀM HỘ / CHUYỂN GIAO DỞ DANG (Cross-Person Handover)
@@ -297,7 +297,7 @@ git branch -d feature/TASK-102-user-registration
 2. **Bước 2 — Nhận Task**: Mở file task cá nhân (`docs/04-tasks/person-x-*.md`), chọn 1 task ở trạng thái `🔲 To Do` (VD: `TASK-102`).
 3. **Bước 3 — Đọc Yêu Cầu**: Đọc kĩ `Target Files` và `Acceptance Criteria` của task đó trong [`docs/TASKS.md`](docs/TASKS.md).
 4. **Bước 4 — Tạo Nhánh**: Mở Terminal ➔ `git checkout main` ➔ `git pull origin main` ➔ `git checkout -b feature/TASK-102-user-registration`.
-5. **Bước 5 — Code & Test Local**: Chỉnh sửa code trong đúng các file quy định. Chạy linter & test local (`pytest backend`, `npm run test`, `ruff check`).
+5. **Bước 5 — Code & Test Local**: Chỉnh sửa code trong đúng các file quy định. Chạy linter & test local (`pytest backend`, `pnpm run test`, `ruff check`).
 6. **Bước 6 — Commit Code**: `git add .` ➔ `git commit -m "feat(auth): thêm API đăng ký user"`.
 7. **Bước 7 — Rebase & Push**: `git fetch origin main` ➔ `git rebase origin/main` ➔ `git push origin feature/TASK-102-user-registration`.
 8. **Bước 8 — Mở PR & Tick Done**: Mở PR trên GitHub ➔ Đổi ô check `[ ]` thành `[x]` trong file task ➔ Tag Buddy vào review.
@@ -330,8 +330,8 @@ git branch -d feature/TASK-102-user-registration
     2. Restart Docker: `docker compose restart`
     3. Chạy migration mới: `poetry run alembic upgrade head`
   - **Frontend**:
-    1. Cập nhật package: `cd frontend && npm install`
-    2. Restart dev server: `npm run dev`
+    1. Cập nhật package: `cd frontend && pnpm install`
+    2. Restart dev server: `pnpm run dev`
 
 ---
 
@@ -360,7 +360,7 @@ Group_Project/
 ├── .env.example                       ← Mẫu biến môi trường chuẩn
 │
 ├── docs/
-│   ├── TASKS.md                       ← 📌 BẢNG PHÂN RÃ MICRO-TASKS CHI TIẾT (TASK-001 -> TASK-414)
+│   ├── TASKS.md                       ← 📌 BẢNG PHÂN RÃ MICRO-TASKS CHI TIẾT (TASK-001 -> TASK-415)
 │   │
 │   ├── 00-overview/                   ← Tổng quan dự án & nhân sự
 │   │   ├── project-overview.md        ← Mục tiêu, scope MVP
@@ -384,7 +384,7 @@ Group_Project/
 │   │
 │   ├── 03-architecture/               ← Kiến trúc kỹ thuật
 │   │   ├── system-architecture.md     ← Sơ đồ tổng thể hệ thống
-│   │   ├── database-schema.md         ← SQLAlchemy/Prisma DB Models & Indexes
+│   │   ├── database-schema.md         ← SQLAlchemy DB Models & Indexes
 │   │   └── ai-agent-architecture.md   ← LangGraph Python Multi-Agent Architecture
 │   │
 │   ├── 04-tasks/                      ← Task cá nhân theo 6 thành viên

@@ -59,7 +59,7 @@ graph TD
 
 ## 5. Sơ đồ thư mục backend FastAPI đề xuất
 ```
-travel-ai/
+tripmate/
 ├── backend/                  # FastAPI Application
 │   ├── app/
 │   │   ├── main.py           # FastAPI entrypoint, middlewares, CORS

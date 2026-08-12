@@ -9,7 +9,7 @@ cd Group_Project
 
 # --- Backend (Python FastAPI) ---
 cd backend
-cp .env.example .env       # điền các key cần thiết
+cp ../.env.example .env    # .env.example nằm ở root repo — copy vào backend/.env và điền key
 docker compose up -d        # chạy PostgreSQL + Redis local
 poetry install              # hoặc: pip install -r requirements.txt
 poetry run alembic upgrade head
@@ -17,8 +17,8 @@ poetry run uvicorn app.main:app --reload --port 8000
 
 # --- Frontend (React + Vite) ---
 cd ../frontend
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 ## Quy trình làm việc (tóm tắt — chi tiết ở `docs/01-workflow/`)

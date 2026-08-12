@@ -19,7 +19,7 @@ Hệ thống hỗ trợ **mọi hoạt động nhóm** — không chỉ du lịc
 ---
 
 ## 2. Luồng Phát Triển Phần Mềm (Software Development Flow)
-Dự án áp dụng mô hình **Contract-First Development** để 6 người (2 BE, 2 FE, 1 AI, 1 Security/DevOps) có thể chạy song song từ ngày đầu tiên mà không bị block nhau:
+Dự án áp dụng mô hình **Contract-First Development** để 6 người (3 BE, 2 FE, 1 AI, 1 Security/DevOps) có thể chạy song song từ ngày đầu tiên mà không bị block nhau:
 
 ```mermaid
 graph TD
@@ -42,7 +42,7 @@ graph TD
 ### Các bước hoạt động cụ thể:
 1. **Sprint 0 (1-2 ngày đầu):** Cả nhóm thảo luận chốt DB Schema (SQLAlchemy/SQLModel) và OpenAPI Spec (FastAPI tự động sinh ra ở `/docs`).
 2. **Thiết lập Mock:** 
-   - Backend Dev A dựng bộ khung APIRouter rỗng chỉ có Signature (trả về status code `501 Not Implemented` hoặc mock JSON tạm).
+   - Backend Dev (BE-Services) dựng bộ khung APIRouter rỗng chỉ có Signature (trả về status code `501 Not Implemented` hoặc mock JSON tạm).
    - Frontend Dev dùng **Mock Service Worker (MSW)** giả lập API response đúng cấu trúc đã chốt để dựng UI.
    - AI Engineer định nghĩa định dạng Pydantic schema của các Agent và sử dụng dữ liệu giả lập (`fixtures/mock_places.json`) để test đồ thị LangGraph Python.
 3. **Integration Day (Cuối mỗi Sprint):** Tắt toàn bộ mock, trỏ URL API Frontend về Backend Staging, kết nối AI Agent với database thật để kiểm thử toàn diện luồng nghiệp vụ.
@@ -69,11 +69,11 @@ graph TD
 ### Ví dụ 1: Luồng Du Lịch (TRAVEL Event)
 1. Owner hoặc Member gửi yêu cầu vào màn hình chat: *"Thiết kế lịch trình nghỉ dưỡng nhẹ nhàng cho nhóm 3 người ở Đà Lạt, thích ngắm cảnh, ăn uống, ngân sách khoảng 5 triệu/người."*
 2. **AI Orchestrator** nhận `eventType = TRAVEL` -> kích hoạt luồng TRAVEL trong LangGraph Python:
-   - **Location Agent (9.2)** tìm các điểm phù hợp -> gọi Google Places API (category: `ATTRACTION`, `RESTAURANT`, `HOTEL`). Kết quả cache qua Redis.
-   - **Research Agent (9.5)** tổng hợp thông tin, review chi tiết.
-   - **Plan Agent (9.3)** (dùng `deepseek-reasoner`) sắp xếp lịch trình tối ưu theo ngày.
-   - **Cost Agent (9.9)** tính toán chi phí dự kiến bằng Python code.
-   - **Booking Agent (9.1)** gợi ý link đặt phòng khách sạn, vé xe.
+   - **Location Agent** tìm các điểm phù hợp -> gọi Google Places API (category: `ATTRACTION`, `RESTAURANT`, `HOTEL`). Kết quả cache qua Redis.
+   - **Research Agent** tổng hợp thông tin, review chi tiết.
+   - **Plan Agent** (dùng `deepseek-reasoner`) sắp xếp lịch trình tối ưu theo ngày.
+   - **Cost Agent** tính toán chi phí dự kiến bằng Python code.
+   - **Booking Agent** gợi ý link đặt phòng khách sạn, vé xe.
 3. Kết quả gửi về dạng **Draft Plan** → cả nhóm xem, vote, confirm.
 
 ### Ví dụ 2: Luồng Đi Ăn (DINING Event)

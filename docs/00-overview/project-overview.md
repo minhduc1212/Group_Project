@@ -1,7 +1,7 @@
 # 🚀 Project Overview — Nền Tảng Lên Kế Hoạch Nhóm Tích Hợp AI Multi-Agent
 
 > [!NOTE]
-> **Tóm Tắt Dự Án (Elevator Pitch)**: Group Plan AI là nền tảng web giúp các nhóm bạn và gia đình lên kế hoạch & chốt nhanh mọi hoạt động chung — từ chuyến du lịch nhiều ngày, bữa tối nhóm, buổi cafe chiều thứ 7, đến các hoạt động giải trí cuối tuần (karaoke, bowling, tham quan). Hệ thống kết hợp cơ chế bình chọn công khai cùng đội ngũ trợ lý AI Multi-Agent (LangGraph Python + DeepSeek API) để tự động hóa việc tìm địa điểm thật, lên lộ trình tối ưu, gợi ý menu/món ăn, tính chi phí và phân giải xung đột ý kiến.
+> **Tóm Tắt Dự Án (Elevator Pitch)**: TripMate AI là nền tảng web giúp các nhóm bạn và gia đình lên kế hoạch & chốt nhanh mọi hoạt động chung — từ chuyến du lịch nhiều ngày, bữa tối nhóm, buổi cafe chiều thứ 7, đến các hoạt động giải trí cuối tuần (karaoke, bowling, tham quan). Hệ thống kết hợp cơ chế bình chọn công khai cùng đội ngũ trợ lý AI Multi-Agent (LangGraph Python + DeepSeek API) để tự động hóa việc tìm địa điểm thật, lên lộ trình tối ưu, gợi ý menu/món ăn, tính chi phí và phân giải xung đột ý kiến.
 
 ---
 

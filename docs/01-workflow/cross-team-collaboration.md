@@ -114,14 +114,21 @@ backend/app/
 ├── models/                  ← SQLAlchemy DB Models
 ├── schemas/                 ← Pydantic v2 DTOs
 ├── api/v1/                  ← FastAPI APIRouters
-│   ├── auth.py              ← Person 2 sở hữu (BE-Services: Phạm Đình Ánh Dương)
-│   ├── events.py            ← Person 1 sở hữu
-│   ├── plans.py             ← Person 1 sở hữu
-│   ├── votes.py             ← Person 1 sở hữu
-│   ├── places.py            ← Person 2 sở hữu
-│   ├── utils.py             ← Person 2 sở hữu
-│   ├── export.py            ← Person 2 sở hữu
-│   └── ai.py                ← Person 3 sở hữu
+│   ├── auth.py              ← Phạm Đình Ánh Dương (BE-Services)
+│   ├── users.py             ← Phạm Đình Ánh Dương (BE-Services)
+│   ├── invitations.py       ← Phạm Đình Ánh Dương (BE-Services)
+│   ├── events.py            ← Tạ Quang Huy (BE-Core)
+│   ├── plans.py             ← Tạ Quang Huy (BE-Core)
+│   ├── votes.py             ← Tạ Quang Huy (BE-Core)
+│   ├── saved_places.py      ← Tạ Quang Huy (BE-Core)
+│   ├── places.py            ← Hà Đăng Huy (BE-Platform)
+│   ├── utils.py             ← Hà Đăng Huy (BE-Platform)
+│   ├── export.py            ← Phạm Đình Ánh Dương (BE-Services)
+│   ├── funds.py             ← Phạm Đình Ánh Dương (BE-Services)
+│   ├── expenses.py          ← Phạm Đình Ánh Dương (BE-Services)
+│   ├── settlements.py       ← Phạm Đình Ánh Dương (BE-Services)
+│   ├── admin.py             ← Phạm Đình Ánh Dương (BE-Services)
+│   └── ai.py                ← Nhóm AI Agent (Nguyễn Tùng Dương & Tạ Quang Huy)
 ├── services/                ← Service layer (auth_service, event_service, places_service...)
 └── ai_agents/               ← Person 3 (AI Engineer) sở hữu
     ├── orchestrator.py
@@ -168,6 +175,7 @@ Khi Person B muốn giúp Person A (VD: BE Dev B giúp BE Dev A làm Vote module
 |---|---|---|
 | BE Dev A (Core) | BE Dev B (Platform) | Cùng backend Python FastAPI, hiểu SQLAlchemy |
 | BE Dev B (Platform) | BE Dev A (Core) | Ngược lại |
+| BE Dev C (Services & Settlement) | BE Dev A (Core) | Cùng backend Python FastAPI, Dương xử lý Auth/Expense, Tạ hiểu schema rõ nhất |
 | AI Engineer | BE Dev A (Core) | AI cần hiểu schema, BE-A hiểu schema rõ nhất |
 | FE Dev A (Core) | FE Dev B (Growth) | Cùng frontend, cùng React |
 | FE Dev B (Growth) | FE Dev A (Core) | Ngược lại |
@@ -184,7 +192,7 @@ Khi Person B muốn giúp Person A (VD: BE Dev B giúp BE Dev A làm Vote module
 Khi hoàn thành một micro-task (Ví dụ: `TASK-102`):
 
 1. **Tự kiểm tra (Self-Check)**:
-   - Chạy linter & test local pass clean: `ruff check backend` và `pytest backend` (hoặc `npm run test` phía FE).
+   - Chạy linter & test local pass clean: `ruff check backend` và `pytest backend` (hoặc `pnpm run test` phía FE).
    - Kiểm tra code đáp ứng đủ các tiêu chí trong **Acceptance Criteria** của task trong `docs/TASKS.md`.
 2. **Cập nhật trạng thái Task**:
    - Mở file task cá nhân (`person-x-*.md`) và file `docs/TASKS.md`, đổi ô tick từ `[ ]` thành `[x]`.
@@ -196,7 +204,7 @@ Khi hoàn thành một micro-task (Ví dụ: `TASK-102`):
    ```
    ✅ [DONE] TASK-102: User Registration & Password Hashing
    PR: #12 (https://github.com/.../pull/12)
-   Reviewer: @BE-B (Buddy)
+   Reviewer: @BE-Core (Buddy)
    ```
 
 ---
