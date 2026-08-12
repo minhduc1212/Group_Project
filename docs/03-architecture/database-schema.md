@@ -413,6 +413,7 @@ enum ChatRole {
 model AgentLog {
   id           String   @id @default(uuid())
   agentName    String   @map("agent_name")
+  userId       String?  @map("user_id")
   eventId      String?  @map("event_id")
   planId       String?  @map("plan_id")
   inputTokens  Int      @map("input_tokens")
