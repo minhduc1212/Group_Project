@@ -20,27 +20,27 @@ erDiagram
     User ||--o{ Notification : receives
     User ||--o{ Invitation : sent_invitations
     User ||--o{ ChatMessage : sends
-    User ||--o{ FundContribution : deposits
+    
+    %% Financial Relations
     User ||--o{ Expense : pays_expense
     User ||--o{ ExpenseSplit : owes_split
-    User ||--o{ SettlementTransaction : transfers
+    User ||--o{ Settlement : transfers
 
     Event ||--o{ EventMember : contains
     Event ||--o{ Plan : has
     Event ||--o{ Invitation : sends
     Event ||--o{ ChecklistItem : has
     Event ||--o{ ChatMessage : has
-    Event ||--o{ FundContribution : collects_fund
+    
+    %% Financial Relations
     Event ||--o{ Expense : records_expense
-    Event ||--o{ EventSettlement : calculates_settlement
+    Event ||--o{ Settlement : records_settlement
 
     Plan ||--o{ PlanStop : includes
     Plan ||--o{ PlanVote : receives
     PlanStop ||--o{ Expense : stop_expenses
 
     Expense ||--o{ ExpenseSplit : divided_into
-    EventSettlement ||--o{ MemberBalance : summarizes
-    EventSettlement ||--o{ SettlementTransaction : suggests
 ```
 
 ---
@@ -83,13 +83,11 @@ model User {
   createdChecklistItems ChecklistItem[]
   chatMessages          ChatMessage[]
   
-  // Financial Relations (Quản lý tài chính & Chia tiền)
-  fundContributions   FundContribution[]
+  // Financial Relations (Quản lý tài chính 3 bảng tối ưu)
   paidExpenses        Expense[]               @relation("ExpensesPaid")
   expenseSplits       ExpenseSplit[]
-  memberBalances      MemberBalance[]
-  settlementsFrom     SettlementTransaction[] @relation("SettlementsFrom")
-  settlementsTo       SettlementTransaction[] @relation("SettlementsTo")
+  settlementsFrom     Settlement[]            @relation("SettlementsFrom")
+  settlementsTo       Settlement[]            @relation("SettlementsTo")
 
   @@map("users")
 }
@@ -132,9 +130,8 @@ model Event {
   chatMessages      ChatMessage[]
   
   // Financial Relations
-  fundContributions FundContribution[]
   expenses          Expense[]
-  settlements       EventSettlement[]
+  settlements       Settlement[]
 
   @@map("events")
 }
@@ -251,58 +248,50 @@ enum VoteValue {
 }
 
 // ==========================================
-// 4. QUẢN LÝ TÀI CHÍNH: QUỸ & CHI PHÍ THỰC TẾ
+// 4. QUẢN LÝ TÀI CHÍNH (CẤU TRÚC 3 BẢNG TỐI ƯU)
 // ==========================================
 
-// Bảng 1: Quỹ nhóm đóng trước (Thu mỗi người trước X tiền)
-model FundContribution {
-  id        String   @id @default(uuid())
-  eventId   String   @map("event_id")
-  userId    String   @map("user_id")
-  amount    Decimal  // Số tiền thành viên nộp vào quỹ (VD: 1,000)
-  note      String?  // Ghi chú (VD: "Đóng quỹ đợt 1")
-  paidAt    DateTime @default(now()) @map("paid_at")
-
-  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("fund_contributions")
-}
-
-// Bảng 2: Ghi nhận Chi phí thực tế (Actual Expenses) phát sinh trong sự kiện
+// Bảng 1: Ghi nhận mọi giao dịch (Thu quỹ & Chi tiêu thật)
 model Expense {
   id          String        @id @default(uuid())
   eventId     String        @map("event_id")
-  planStopId  String?       @map("plan_stop_id") // Nullable (nếu chi ngoài kế hoạch)
-  paidById    String        @map("paid_by_id")   // Thành viên đứng ra trả tiền trước
-  title       String                             // Tiêu đề (VD: "Tiền phòng homestay", "Ăn tối")
-  amount      Decimal                            // Tổng số tiền đã trả (VD: 5,000)
+  planStopId  String?       @map("plan_stop_id") // Nếu khoản chi thuộc 1 địa điểm cụ thể
+  paidById    String        @map("paid_by_id")   // Ai đã BỎ TIỀN RA (Nguồn tiền)
+  title       String                             // VD: "Thu quỹ trước", "Tiền phòng khách sạn"
+  amount      Decimal                            
+  type        ExpenseType   @default(PAYMENT)    // Phân biệt Đóng quỹ vs Chi tiêu thực
   category    StopCategory?
   splitType   SplitType     @default(EQUAL) @map("split_type")
-  note        String?                            // Ghi chú thêm (VD: "4000 trả tiền phòng")
-  receiptUrl  String?       @map("receipt_url")  // Link ảnh hóa đơn/chuyển khoản
+  note        String?                            
+  receiptUrl  String?       @map("receipt_url")  
   createdAt   DateTime      @default(now()) @map("created_at")
 
   event       Event         @relation(fields: [eventId], references: [id], onDelete: Cascade)
   planStop    PlanStop?     @relation(fields: [planStopId], references: [id], onDelete: SetNull)
   paidBy      User          @relation("ExpensesPaid", fields: [paidById], references: [id], onDelete: Cascade)
-  splits      ExpenseSplit[]
+  splits      ExpenseSplit[]                     // Chi tiết những ai thụ hưởng khoản này
 
+  @@index([eventId])
   @@map("expenses")
 }
 
+enum ExpenseType {
+  ADVANCE   // Khoản thu quỹ trước chuyến đi
+  PAYMENT   // Khoản chi tiêu thực tế phát sinh
+}
+
 enum SplitType {
-  EQUAL       // Chia đều cho các thành viên chọn
-  EXACT       // Chia chỉ định chính xác số tiền từng người
+  EQUAL       // Chia đều
+  EXACT       // Chia theo con số chính xác
   PERCENTAGE  // Chia theo tỷ lệ phần trăm
 }
 
-// Bảng 3: Chi tiết phần chi phí gánh của từng thành viên trong khoản chi
+// Bảng 2: Chi tiết người gánh khoản chi (Giải quyết bài toán chia không đều)
 model ExpenseSplit {
   id        String   @id @default(uuid())
   expenseId String   @map("expense_id")
-  userId    String   @map("user_id")
-  amount    Decimal  // Số tiền thành viên này chịu cho khoản chi này
+  userId    String   @map("user_id")      // Ai là người XÀI tiền
+  amount    Decimal                       // Gánh bao nhiêu tiền trong hóa đơn này
 
   expense   Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -311,66 +300,26 @@ model ExpenseSplit {
   @@map("expense_splits")
 }
 
-// ==========================================
-// 5. AI QUYẾT TOÁN & BÙ TRỪ NỢ (SETTLEMENT)
-// ==========================================
-
-// Bảng Báo cáo chốt quyết toán sự kiện
-model EventSettlement {
-  id               String    @id @default(uuid())
-  eventId          String    @map("event_id")
-  totalFundPaid    Decimal   @default(0) @map("total_fund_paid")    // Tổng quỹ đã thu
-  totalExpensePaid Decimal   @default(0) @map("total_expense_paid") // Tổng tiền thành viên tự ứng ra
-  totalCost        Decimal   @default(0) @map("total_cost")         // Tổng chi phí thực tế phát sinh
-  perMemberShare   Decimal   @default(0) @map("per_member_share")   // Mức chi bình quân mỗi người
-  isClosed         Boolean   @default(false) @map("is_closed")      // Đã chốt xong chưa
-  closedAt         DateTime? @map("closed_at")
-  createdAt        DateTime  @default(now()) @map("created_at")
-
-  event            Event                   @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  memberBalances   MemberBalance[]
-  transactions     SettlementTransaction[]
-
-  @@map("event_settlements")
-}
-
-// Bảng Tổng kết số dư tài chính từng thành viên
-model MemberBalance {
+// Bảng 3: Giao dịch chuyển khoản bù trừ nợ (Kết quả của thuật toán AI)
+model Settlement {
   id           String          @id @default(uuid())
-  settlementId String          @map("settlement_id")
-  userId       String          @map("user_id")
-  fundPaid     Decimal         @default(0) @map("fund_paid")    // Tiền đóng quỹ (VD: 1,000)
-  expensePaid  Decimal         @default(0) @map("expense_paid") // Tiền tự chi ra ngoài (VD: 100, 300, 800, 5,000)
-  totalPaid    Decimal         @default(0) @map("total_paid")   // Tổng đã nộp/ứng (fundPaid + expensePaid)
-  targetShare  Decimal         @default(0) @map("target_share") // Tổng nghĩa vụ phải chịu (VD: 2,300)
-  netBalance   Decimal         @default(0) @map("net_balance")  // Số dư nợ ròng (totalPaid - targetShare)
-
-  settlement   EventSettlement @relation(fields: [settlementId], references: [id], onDelete: Cascade)
-  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([settlementId, userId])
-  @@map("member_balances")
-}
-
-// Bảng Gợi ý Giao dịch Bù trừ Nợ Tối ưu (AI tính toán để giảm số lần chuyển tiền)
-model SettlementTransaction {
-  id           String          @id @default(uuid())
-  settlementId String          @map("settlement_id")
-  fromUserId   String          @map("from_user_id") // Người phải chuyển tiền đi (nợ)
-  toUserId     String          @map("to_user_id")   // Người nhận tiền về (dư)
+  eventId      String          @map("event_id")
+  fromUserId   String          @map("from_user_id") // Người nợ (cần chuyển đi)
+  toUserId     String          @map("to_user_id")   // Người chủ nợ (được nhận về)
   amount       Decimal                              // Số tiền cần chuyển
-  isSettled    Boolean         @default(false) @map("is_settled")
-  settledAt    DateTime?       @map("settled_at")
+  isSettled    Boolean         @default(false) @map("is_settled") // True = Đã bank tiền thành công
+  createdAt    DateTime        @default(now()) @map("created_at")
 
-  settlement   EventSettlement @relation(fields: [settlementId], references: [id], onDelete: Cascade)
+  event        Event           @relation(fields: [eventId], references: [id], onDelete: Cascade)
   fromUser     User            @relation("SettlementsFrom", fields: [fromUserId], references: [id], onDelete: Cascade)
   toUser       User            @relation("SettlementsTo", fields: [toUserId], references: [id], onDelete: Cascade)
 
-  @@map("settlement_transactions")
+  @@index([eventId])
+  @@map("settlements")
 }
 
 // ==========================================
-// 6. CHECKLIST, NOTIFICATION, CHAT & LOGS
+// 5. CHECKLIST, NOTIFICATION, CHAT & LOGS
 // ==========================================
 
 model SavedPlace {
@@ -478,68 +427,53 @@ model AgentLog {
 
 ---
 
-## 3. Quy trình & Thuật toán Quyết toán Chi phí (Ví dụ thực tế)
+## 3. Thuật toán Quyết toán Chi phí (Ví dụ thực tế 3 Bảng)
 
-### 💡 Bài toán thực tế
-Giả sử nhóm có 4 thành viên (**A, B, C, D**) tham gia chuyến đi:
-1. **Thu tiền quỹ trước**: Mỗi người đóng trước `1,000` vào quỹ nhóm.
-2. **Chi phí thực tế phát sinh trong chuyến đi**:
-   - Thành viên **A** trả ngoài: `100` (Tiền nước)
-   - Thành viên **B** trả ngoài: `300` (Tiền taxi)
-   - Thành viên **C** trả ngoài: `800` (Tiền ăn tối)
-   - Thành viên **D** trả ngoài: `5,000` (bao gồm `4,000` tiền phòng + `1,000` chi phí chung)
+### 💡 Bài toán 1: "Tiền ai nấy xài, ai chơi nấy chịu" (Chia nhóm nhỏ)
+Giả sử nhóm có 6 người: **A, B, C, D, E, F**.
+- **Tình huống**: Nhóm đi chơi 2 tăng.
+  - Tăng 1: Mua vé xem phim (500k, E trả). 5 người A, B, C, D, E đi, F ở nhà.
+  - Tăng 2: Đi nhậu (300k, C trả). Chỉ có A, B, C đi.
 
----
+**Cách dữ liệu lưu vào Database:**
+1. **Vé xem phim (500k)**:
+   - `Expense`: `E` trả 500k.
+   - `ExpenseSplit`: 5 dòng (A:100k, B:100k, C:100k, D:100k, E:100k).
+2. **Đi nhậu (300k)**:
+   - `Expense`: `C` trả 300k.
+   - `ExpenseSplit`: 3 dòng (A:100k, B:100k, C:100k).
 
-### 📐 Công thức & Luồng tính toán của AI Cost Agent
+**Công thức Backend tính toán:** `Số dư cá nhân = SUM(Tiền Bỏ Ra) - SUM(Tiền Đã Xài)`
+- **A**: Bỏ ra 0đ - Xài (100k phim + 100k nhậu) = **-200k** (A nợ 200k)
+- **B**: Bỏ ra 0đ - Xài (100k phim + 100k nhậu) = **-200k** (B nợ 200k)
+- **C**: Bỏ ra 300k - Xài (100k phim + 100k nhậu) = **+100k** (C dư 100k)
+- **D**: Bỏ ra 0đ - Xài (100k phim ) = **-100k** (D nợ 100k)
+- **E**: Bỏ ra 500k - Xài (100k phim) = **+400k** (E dư 400k)
+- **F**: Bỏ ra 0đ - Xài 0đ = **0đ** (F không liên quan)
 
-#### Bước 1: Tính tổng chi phí thực tế & Nghĩa vụ mỗi người phải gánh (`target_share`)
-* **Tổng tiền đã ứng ra (Quỹ + Trả ngoài)**: 
-  $$\text{Tổng đóng/ứng} = \sum (\text{FundPaid} + \text{ExpensePaid})$$
-  - A: $1000 + 100 = 1100$
-  - B: $1000 + 300 = 1300$
-  - C: $1000 + 800 = 1800$
-  - D: $1000 + 5000 = 6000$
-  - **Tổng toàn bộ tiền chi trả**: $1100 + 1300 + 1800 + 6000 = 9200$
+*(Không cần bảng MemberBalance, Backend gọi 1 lệnh SQL Group By là ra toàn bộ số dư)*.
 
-* **Chi phí bình quân mỗi người phải chịu (`target_share`)**:
-  $$\text{Mức gánh chi phí/người} = \frac{\text{Tổng chi phí}}{N} = \frac{9200}{4} = 2300$$
-
----
-
-#### Bước 2: Tính số dư ròng (`net_balance`) của từng người
-$$\text{NetBalance} = \text{TotalPaid} - \text{TargetShare}$$
-
-| Thành viên | Đã đóng quỹ | Tự chi trả | Tổng đã đóng (`TotalPaid`) | Mức phải chịu (`TargetShare`) | Số dư ròng (`NetBalance`) | Trạng thái tài chính |
-|---|---|---|---|---|---|---|
-| **A** | 1,000 | 100 | **1,100** | 2,300 | **-1,200** | 🔴 Nợ thêm 1,200 |
-| **B** | 1,000 | 300 | **1,300** | 2,300 | **-1,000** | 🔴 Nợ thêm 1,000 |
-| **C** | 1,000 | 800 | **1,800** | 2,300 | **-500** | 🔴 Nợ thêm 500 |
-| **D** | 1,000 | 5,000 | **6,000** | 2,300 | **+3,700** | 🟢 Được nhận lại 3,700 |
-| **TỔNG** | 4,000 | 6,200 | **10,200** | 9,200 | **0** | **Cân bằng tuyệt đối** |
+### 💡 Bài toán 2: Kết hợp Thu Quỹ Trước
+- **Tình huống**: Nhóm A, B, C thu quỹ trước mỗi người 1,000k.
+- `Expense`: Tạo 3 dòng `type = ADVANCE` (A nộp 1000k, B nộp 1000k, C nộp 1000k). Không cần tạo `ExpenseSplit`.
+- Lúc này số dư của A tự động trở thành `+1000k`. Nếu A đi chơi xài hết 800k (ghi vào `ExpenseSplit`), số dư tự động tụt xuống `+200k`. Mọi luồng tiền khớp hoàn hảo!
 
 ---
 
-#### Bước 3: Thuật toán Bù trừ Nợ Tối ưu (Optimal Debt Settlement)
-Hệ thống / AI Cost Agent sẽ tự động ghép cặp người nợ âm với người dư dương để **tối thiểu hóa số lượng giao dịch chuyển khoản**:
-
-1. **A** nợ 1,200 $\rightarrow$ Chuyển trực tiếp cho **D**: **1,200**
-2. **B** nợ 1,000 $\rightarrow$ Chuyển trực tiếp cho **D**: **1,000**
-3. **C** nợ 500 $\rightarrow$ Chuyển trực tiếp cho **D**: **500**
-4. **D** nhận từ A (1,200) + B (1,000) + C (500) = **2,700**, cộng thêm **1,000** rút từ Quỹ chung còn lại $\rightarrow$ Tổng nhận đúng **3,700**.
-
-Kết quả: Chỉ cần **3 giao dịch chuyển khoản**, tất cả thành viên về đúng 0đ chênh lệch!
+### 💡 Bước cuối: Tạo `Settlement` (Gợi ý thanh toán)
+Sau khi có bảng Số dư, AI Cost Agent ghép cặp người NỢ và người DƯ để ra danh sách chuyển khoản tối ưu nhất:
+- Tạo các dòng vào bảng `Settlement`: VD `A` nợ `E` 200k $\rightarrow$ `Settlement(from: A, to: E, amount: 200k)`.
+- User mở app thấy gợi ý, chuyển khoản ngoài đời xong bấm nút $\rightarrow$ cập nhật `isSettled = true`.
+- Nếu có thêm khoản chi mới: Backend chỉ việc **Xóa** các Settlement cũ (`isSettled = false`) và tính lại từ đầu cực kì nhẹ nhàng.
 
 ---
 
 ## 4. Index & Quy tắc Performance
 
-- `fund_contributions(event_id, user_id)` — Tra cứu nhanh lịch sử đóng quỹ.
-- `expenses(event_id, paid_by_id)` — Truy vấn nhanh các khoản chi của sự kiện.
-- `expense_splits(expense_id, user_id)` — Unique constraint chống chia trùng.
-- `member_balances(settlement_id, user_id)` — Unique constraint cho bảng tổng kết số dư.
-- `settlement_transactions(settlement_id, from_user_id, to_user_id)` — Truy vấn danh sách giao dịch chuyển tiền cần thực hiện.
-- All FK relations include `onDelete: Cascade` / `SetNull` thích hợp để đảm bảo tính toàn vẹn dữ liệu.
+- `expenses(event_id)` — Truy vấn mọi khoản thu chi trong sự kiện.
+- `expense_splits(expense_id, user_id)` — Ràng buộc Unique ngăn chia tiền trùng.
+- `settlements(event_id)` — Tra cứu danh sách các yêu cầu chuyển khoản trong sự kiện.
+- Các khoá ngoại (FK) đều được cấu hình `onDelete: Cascade` hoặc `SetNull` đảm bảo toàn vẹn dữ liệu.
 
 ---
 
@@ -548,4 +482,4 @@ Kết quả: Chỉ cần **3 giao dịch chuyển khoản**, tất cả thành v
 | Ngày | Người sửa | Nội dung sửa | Lý do |
 |---|---|---|---|
 | Sprint 0 | Tạ Quang Huy | Đã tạm bỏ feature Expense chi tiết | Giảm độ phức tạp ban đầu |
-| **Sprint 1 (Mới)** | **Tạ Quang Huy** | **Khôi phục & Nâng cấp Hệ thống Quản lý Tài chính 3 Giai đoạn** (`FundContribution`, `Expense`, `ExpenseSplit`, `EventSettlement`, `MemberBalance`, `SettlementTransaction`) | Hỗ trợ tính năng AI Cost Agent dự tính trước + thu tiền quỹ trước + nốt chi phí thực tế + tự động tính nợ ròng và gợi ý chuyển tiền tối ưu theo bài toán thực tế. |
+| **Sprint 1 (Mới)** | **Tạ Quang Huy** | **Chốt kiến trúc Quản lý Tài chính 3 Bảng Tối Ưu** (`Expense`, `ExpenseSplit`, `Settlement`) | Giải quyết triệt để 100% bài toán chia lẻ, thu quỹ trước, gợi ý nợ tự động với ít bảng nhất. Loại bỏ hoàn toàn sự cồng kềnh của mô hình 6 bảng. |
