@@ -16,7 +16,7 @@ class Plan(Base):
     created_by_id: Mapped[Optional[str]] = mapped_column(ForeignKey("users.id",
 ondelete="SET NULL"), nullable=True)
 
-    stops: Mapped[List[PlanStop]] = relationship("PlanStop", back_populates="plan",cascade="all, delete-orphan")
+    stops: Mapped[List["PlanStop"]] = relationship("PlanStop", back_populates="plan",cascade="all, delete-orphan")
 
 class PlanStop(Base):
     __tablename__ = "plan_stops"

@@ -2,7 +2,6 @@ from .base import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String , Enum
 from typing import List, Optional
-from .enums import SystemRole
 
 class User(Base):
     __tablename__ = "users"
@@ -13,3 +12,4 @@ class User(Base):
     provider: Mapped[str] = mapped_column(String, default="LOCAL")
     role: Mapped[SystemRole] = mapped_column(Enum(SystemRole), default=SystemRole.USER) 
     event_members: Mapped[List["EventMember"]] = relationship("EventMember",back_populates="user")
+  
