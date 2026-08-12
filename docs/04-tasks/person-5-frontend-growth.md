@@ -1,7 +1,7 @@
 # 👤 Person 5 — Nguyễn Minh Đức (Frontend Dev B: AI Experience & Growth UI)
 
 > **Người phụ trách**: **Nguyễn Minh Đức**
-> **Sở hữu**: UI Realtime Chat AI streaming, Landing Page, i18n đa ngôn ngữ (VI/EN), Checklist UI, Shared Expenses Calculator & Admin Dashboard UI.
+> **Sở hữu**: UI Realtime Chat AI streaming, Landing Page, i18n đa ngôn ngữ (VI/EN), Design Tokens & Design System, Checklist UI, Shared Expenses Calculator & Admin Dashboard UI.
 
 ---
 
@@ -9,10 +9,10 @@
 
 | Sprint | Task Count | Done | Status |
 |---|---|---|---|
-| **Sprint 0** | 3 Tasks | 0/3 | 🔲 To Do |
+| **Sprint 0** | 4 Tasks | 0/4 | 🔲 To Do |
 | **Sprint 1** | 2 Tasks | 0/2 | 🔲 To Do |
 | **Sprint 2** | 0 Tasks (Support AI Chat Mock) | 0/0 | 🔲 To Do |
-| **Sprint 3** | 0 Tasks (Support PDF Preview) | 0/0 | 🔲 To Do |
+| **Sprint 3** | 1 Task (Packing Checklist UI) | 0/1 | 🔲 To Do |
 | **Sprint 4** | 5 Tasks | 0/5 | 🔲 To Do |
 
 ---
@@ -24,6 +24,10 @@
   - **Feature**: #31, #32
   - **Target Files**: `frontend/src/mocks/handlers/ai.ts`
   - **Acceptance Criteria**: Simulates SSE / WebSocket chunked responses for chat UI testing without calling real backend.
+- [ ] **`TASK-009`** **Design Tokens & Design System Spec**
+  - **Feature**: #42
+  - **Target Files**: `docs/06-design/design-tokens.md`, `frontend/src/styles/theme.ts`, `frontend/tailwind.config.js`
+  - **Acceptance Criteria**: Chốt palette (light/dark), typography scale, spacing, radius, shadow; mapping sang shadcn/Tailwind theme config; là nguồn duy nhất cho mọi màn hình (feed vào TASK-111).
 - [ ] **`TASK-010`** **User Flows & Page Wireframes**
   - **Feature**: #1 → #42
   - **Target Files**: `docs/06-design/user-flows.md`, `docs/06-design/wireframes/` (Mermaid/ASCII hoặc Figma)
@@ -42,6 +46,12 @@
   - **Feature**: #40
   - **Target Files**: `frontend/src/i18n/`, `frontend/src/locales/` (`vi.json`, `en.json`)
   - **Acceptance Criteria**: Header language toggle switches entire UI seamlessly between Vietnamese and English.
+
+### Sprint 3 — Packing Checklist UI
+- [ ] **`TASK-317`** **Packing Checklist UI Screen**
+  - **Feature**: #35
+  - **Target Files**: `frontend/src/features/checklist/pages/ChecklistPage.tsx`
+  - **Acceptance Criteria**: Interactive checklist with item check/uncheck, custom item add/delete, progress bar.
 
 ### Sprint 4 — Realtime Chat UI, Shared Expenses & Admin Dashboard
 - [ ] **`TASK-406`** **AI Chat Interface with Streaming Output**

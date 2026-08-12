@@ -114,7 +114,7 @@ backend/app/
 ├── models/                  ← SQLAlchemy DB Models
 ├── schemas/                 ← Pydantic v2 DTOs
 ├── api/v1/                  ← FastAPI APIRouters
-│   ├── auth.py              ← Person 1 sở hữu
+│   ├── auth.py              ← Person 2 sở hữu (BE-Services: Phạm Đình Ánh Dương)
 │   ├── events.py            ← Person 1 sở hữu
 │   ├── plans.py             ← Person 1 sở hữu
 │   ├── votes.py             ← Person 1 sở hữu

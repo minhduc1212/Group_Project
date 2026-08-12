@@ -23,7 +23,7 @@
 |---|---|---|---|
 | `[BE-A]` / `[BE-Core]` | Backend Core Domain & DB Schema | **Tạ Quang Huy** | [person-1-backend-core.md](04-tasks/person-1-backend-core.md) |
 | `[BE-B]` / `[BE-Platform]` | External APIs (Places/Weather) & Redis Cache | **Hà Đăng Huy** | [person-2-backend-platform.md](04-tasks/person-2-backend-platform.md) |
-| `[BE-Services]` | Email, PDF Export, Realtime WS/SSE & Admin | **Phạm Đình Ánh Dương** | [person-2-backend-platform.md](04-tasks/person-2-backend-platform.md) |
+| `[BE-Services]` | Auth, Email, PDF Export, Invitations, Expense & Settlement, Admin | **Phạm Đình Ánh Dương** | [person-2-backend-platform.md](04-tasks/person-2-backend-platform.md) |
 | `[FE-A]` / `[FE-Core]` | Frontend Core Flows UI (Auth, Event, Plan, Map) | **Hà Đăng Huy** | [person-4-frontend-core.md](04-tasks/person-4-frontend-core.md) |
 | `[FE-B]` / `[FE-Growth]` | Frontend AI Chat UI, Shared Expenses & Admin | **Nguyễn Minh Đức** | [person-5-frontend-growth.md](04-tasks/person-5-frontend-growth.md) |
 | `[AI]` | AI Multi-Agent Architecture & Integration | **Nguyễn Tùng Dương** (Lead) & **Tạ Quang Huy** (Tooling) | [person-3-ai-engineer.md](04-tasks/person-3-ai-engineer.md) |
@@ -38,7 +38,7 @@
   - **Feature**: N/A (Sprint 0 Contract)
   - **Target Files**: `backend/app/models/` (`user.py`, `event.py`, `plan.py`, `vote.py`, `invitation.py`, `log.py`, **`fund.py`, `expense.py`, `settlement.py`**), `backend/app/schemas/`
   - **Acceptance Criteria**: Full support for `EventType`, `StopCategory`, `metadata` JSON, `Invitation`, `PlanStatus`. Có đủ 6 bảng tài chính trong [database-schema.md](03-architecture/database-schema.md): `fund_contributions`, `expenses`, `expense_splits`, `event_settlements`, `member_balances`, `settlement_transactions` + `total_budget`/`estimated_cost` trên Plan. Migration passes clean via Alembic.
-- [ ] **TASK-002** `[BE-A]` **FastAPI APIRouter Skeleton**
+- [ ] **TASK-002** `[BE-Services]` **FastAPI APIRouter Skeleton**
   - **Feature**: N/A (Contract)
   - **Target Files**: `backend/app/api/v1/` (`auth.py`, `events.py`, `plans.py`, `votes.py`, `invitations.py`, `places.py`, `ai.py`)
   - **Acceptance Criteria**: Routes return `501 Not Implemented` with matching Pydantic response models. Swagger accessible at `http://localhost:8000/docs`.
@@ -71,7 +71,7 @@
 
 ### 0.3 UI/UX Design (Sprint 0 — làm trước khi bắt đầu code giao diện)
 > Làm song song với Contract Session. Kết quả là **nguồn chân lý thiết kế** cho FE Dev A & B xuyên suốt các Sprint sau. Tài liệu thiết kế lưu tại `docs/06-design/`.
-- [ ] **TASK-009** `[FE-A]` **Design Tokens & Design System Spec**
+- [ ] **TASK-009** `[FE-B]` **Design Tokens & Design System Spec**
   - **Feature**: #42
   - **Target Files**: `docs/06-design/design-tokens.md`, `frontend/src/styles/theme.ts`, `frontend/tailwind.config.js`
   - **Acceptance Criteria**: Chốt palette (light/dark), typography scale, spacing, radius, shadow; mapping sang shadcn/Tailwind theme config; được dùng làm nguồn duy nhất cho mọi màn hình (feed vào TASK-111).
@@ -88,28 +88,28 @@
 
 ## 🔐 Sprint 1 — Auth & Core Infrastructure
 
-### 1.1 Auth & User Management (Backend Core)
+### 1.1 Auth & User Management (Backend Core & Services)
 - [ ] **TASK-101** `[BE-A]` **Database Models & Alembic Initial Migration**
   - **Feature**: #2, #4
   - **Target Files**: `backend/app/models/user.py`, `backend/alembic/versions/`
   - **Acceptance Criteria**: User table created with `id`, `email`, `password_hash`, `full_name`, `avatar_url`, `provider`.
-- [ ] **TASK-102** `[BE-A]` **User Registration & Password Hashing**
+- [ ] **TASK-102** `[BE-Services]` **User Registration & Password Hashing**
   - **Feature**: #2
   - **Target Files**: `backend/app/api/v1/auth.py`, `backend/app/services/auth_service.py`
   - **Acceptance Criteria**: `POST /api/v1/auth/register` validates Pydantic schema, hashes password using `passlib[bcrypt]`, returns user JWT tokens.
-- [ ] **TASK-103** `[BE-A]` **OAuth2 Integration (Google & Facebook)**
+- [ ] **TASK-103** `[BE-Services]` **OAuth2 Integration (Google & Facebook)**
   - **Feature**: #1
   - **Target Files**: `backend/app/api/v1/auth.py`, `backend/app/core/oauth.py`
   - **Acceptance Criteria**: `POST /api/v1/auth/login/google` exchanges auth code for token, creates or logs in user, returns JWT access/refresh token.
-- [ ] **TASK-104** `[BE-A]` **JWT Access & Refresh Token Rotation**
+- [ ] **TASK-104** `[BE-Services]` **JWT Access & Refresh Token Rotation**
   - **Feature**: #5
   - **Target Files**: `backend/app/core/security.py`, `backend/app/api/v1/auth.py`
   - **Acceptance Criteria**: Access token expires in 15 mins. `POST /api/v1/auth/refresh-token` validates refresh token in httpOnly cookie and issues new pair.
-- [ ] **TASK-105** `[BE-A]` **Forgot & Reset Password Flow**
+- [ ] **TASK-105** `[BE-Services]` **Forgot & Reset Password Flow**
   - **Feature**: #3
   - **Target Files**: `backend/app/api/v1/auth.py`, `backend/app/services/email_service.py`
   - **Acceptance Criteria**: `POST /api/v1/auth/forgot-password` generates single-use 15-min token and sends email via SMTP.
-- [ ] **TASK-106** `[BE-A]` **User Profile API (GET & PATCH)**
+- [ ] **TASK-106** `[BE-Services]` **User Profile API (GET & PATCH)**
   - **Feature**: #4
   - **Target Files**: `backend/app/api/v1/users.py`, `backend/app/services/user_service.py`
   - **Acceptance Criteria**: `GET /api/v1/users/me` returns current user profile; `PATCH /api/v1/users/me` updates `full_name`, `avatar_url`.
@@ -178,7 +178,7 @@
 
 ## 📅 Sprint 2 — Event, Plan & External Integrations
 
-### 2.1 Event & Invitation Management (Backend Core)
+### 2.1 Event & Invitation Management (Backend Core & Services)
 - [ ] **TASK-201** `[BE-A]` **Event Database Models & Alembic Migration**
   - **Feature**: #6
   - **Target Files**: `backend/app/models/event.py`, `backend/alembic/versions/`
@@ -187,7 +187,7 @@
   - **Feature**: #6, #9
   - **Target Files**: `backend/app/api/v1/events.py`, `backend/app/services/event_service.py`
   - **Acceptance Criteria**: `POST /events` creates event and assigns creator as `OWNER`. `GET /events` lists user events. `PATCH /events/{id}` updates event info.
-- [ ] **TASK-203** `[BE-A]` **Invitation Database Model & APIs**
+- [ ] **TASK-203** `[BE-Services]` **Invitation Database Model & APIs**
   - **Feature**: #7
   - **Target Files**: `backend/app/models/invitation.py`, `backend/app/api/v1/invitations.py`
   - **Acceptance Criteria**: `POST /events/{id}/invitations` generates invitation link / email. `PATCH /invitations/{id}` allows user to ACCEPT or DECLINE. Joining adds entry to `event_members`.
@@ -316,7 +316,7 @@
   - **Target Files**: `backend/app/services/checklist_service.py`
   - **Acceptance Criteria**: Generates customizable packing list based on EventType and weather forecast.
 
-### 3.4 Plan, Voting & Checklist UI Screens (Frontend Core)
+### 3.4 Plan, Voting & Checklist UI Screens (Frontend Core & Growth)
 - [ ] **TASK-314** `[FE-A]` **Manual Plan Builder Component (Drag & Drop)**
   - **Feature**: #11, #12
   - **Target Files**: `frontend/src/features/plan/components/PlanBuilder.tsx`
@@ -329,7 +329,7 @@
   - **Feature**: #14
   - **Target Files**: `frontend/src/features/plan/components/PlanHeader.tsx`
   - **Acceptance Criteria**: Shows status badge (Draft, Voting, Confirmed). Renders "Confirm Plan" button only for Event Owner.
-- [ ] **TASK-317** `[FE-A]` **Packing Checklist UI Screen**
+- [ ] **TASK-317** `[FE-B]` **Packing Checklist UI Screen**
   - **Feature**: #35
   - **Target Files**: `frontend/src/features/checklist/pages/ChecklistPage.tsx`
   - **Acceptance Criteria**: Interactive checklist with item check/uncheck, custom item add/delete, progress bar.
@@ -338,12 +338,12 @@
 
 ## 🚀 Sprint 4 — Realtime AI Chat, Admin Dashboard & Pentest
 
-### 4.1 Realtime AI Chat Engine (Backend & AI)
+### 4.1 Realtime AI Chat Engine (AI & Backend Integration)
 - [ ] **TASK-401** `[AI]` **Chat Agent & Function Calling Setup**
   - **Feature**: #31
   - **Target Files**: `backend/app/ai_agents/agents/chat_agent.py`
   - **Acceptance Criteria**: Chat Agent routes user queries, calls sub-agent tools dynamically, maintains conversation state.
-- [ ] **TASK-402** `[BE-A]` **FastAPI WebSocket & SSE Endpoints for Streaming**
+- [ ] **TASK-402** `[AI]` **FastAPI WebSocket & SSE Endpoints for Streaming**
   - **Feature**: #31
   - **Target Files**: `backend/app/api/v1/ai.py`
   - **Acceptance Criteria**: `/api/v1/ai/chat/stream` streams LLM output tokens in real-time using `EventSourceResponse` (SSE) or WebSockets.
@@ -352,12 +352,12 @@
   - **Target Files**: `backend/app/services/agent_logger.py`
   - **Acceptance Criteria**: Every LLM call logs `input_tokens`, `output_tokens`, `duration_ms`, `agent_name`, `user_id` to `agent_logs` table.
 
-### 4.2 Shared Expense Splitting & Settlement (Backend Core & Platform)
-- [ ] **TASK-404** `[BE-A]` **Expense Splitting & Optimal Settlement Algorithm**
+### 4.2 Shared Expense Splitting & Settlement (Backend Services)
+- [ ] **TASK-404** `[BE-Services]` **Expense Splitting & Optimal Settlement Algorithm**
   - **Feature**: #41
   - **Target Files**: `backend/app/services/expense_service.py`, `backend/app/services/settlement_service.py`
   - **Acceptance Criteria**: Tính split theo 3 kiểu `SplitType` — `EQUAL`, `EXACT`, `PERCENTAGE`; tính balance từng member (`MemberBalance`). `SettlementService.settle()` chạy **thuật toán tối ưu số giao dịch** theo ví dụ [database-schema.md](../03-architecture/database-schema.md) §3 (A/B/C/D → 3 transactions) — thuật toán greedy: tạo biểu đồ creditor/debtor từ net balance, khớp cặp, số transaction ≤ số người nợ; lưu `EventSettlement` + `SettlementTransaction`. Unit test thuật toán trên cases 2/3/4 người (định nghĩa trong `tests/test_settlement.py`).
-- [ ] **TASK-415** `[BE-A]` **Fund & Expense CRUD + Settlement Persistence APIs**
+- [ ] **TASK-415** `[BE-Services]` **Fund & Expense CRUD + Settlement Persistence APIs**
   - **Feature**: #41
   - **Target Files**: `backend/app/api/v1/funds.py`, `backend/app/api/v1/expenses.py`, `backend/app/api/v1/settlements.py`, `backend/app/models/fund.py`, `backend/app/models/expense.py`, `backend/app/models/settlement.py`
   - **Acceptance Criteria**: `POST/GET/PATCH/DELETE /events/{id}/fund-contributions` và `/events/{id}/expenses` (mỗi expense tạo `expense_splits` theo SplitType); `GET /events/{id}/balances` trả net balance từng member; `GET /events/{id}/settlements` + `POST /events/{id}/settlements` (chạy thuật toán TASK-404, ghi `EventSettlement`). Role guard: chỉ OWNER/MEMBER được sửa expense (theo RolesGuard TASK-204). Alembic migration + tests `test_expense.py`, `test_settlement.py`.

@@ -1,7 +1,7 @@
 # 👤 Person 1 — Tạ Quang Huy (Backend Dev A: Core Domain & AI Integration)
 
 > **Người phụ trách**: **Tạ Quang Huy**
-> **Sở hữu**: Auth (N1) + Event/Plan/Vote/Invitation (N2) — người thiết kế DB schema & FastAPI models gốc dùng chung toàn hệ thống + Kiêm nhiệm AI Agent Integration (Tool Calling & Data Bridge).
+> **Sở hữu**: Event/Plan/Vote (N2) — người thiết kế DB schema & FastAPI models gốc dùng chung (Auth chỉ giữ DB model 101) + Kiêm nhiệm AI Agent Integration (Tool Calling & Data Bridge).
 > **Tham gia bắt buộc**: Contract Session (Sprint 0), Integration Day cuối mỗi Sprint.
 
 ---
@@ -10,11 +10,11 @@
 
 | Sprint | Task Count | Done | Status |
 |---|---|---|---|
-| **Sprint 0** | 2 Tasks | 0/2 | 🔲 To Do |
-| **Sprint 1** | 6 Tasks | 0/6 | 🔲 To Do |
-| **Sprint 2** | 4 Tasks | 0/4 | 🔲 To Do |
+| **Sprint 0** | 1 Task | 0/1 | 🔲 To Do |
+| **Sprint 1** | 1 Task | 0/1 | 🔲 To Do |
+| **Sprint 2** | 3 Tasks | 0/3 | 🔲 To Do |
 | **Sprint 3** | 6 Tasks | 0/6 | 🔲 To Do |
-| **Sprint 4** | 2 Tasks | 0/2 | 🔲 To Do |
+| **Sprint 4** | 0 Tasks (Review AI Integration & Expense/Settlement) | 0/0 | 🔲 To Do |
 
 ---
 
@@ -25,38 +25,14 @@
   - **Feature**: N/A (Sprint 0 Contract)
   - **Target Files**: `backend/app/models/` (`user.py`, `event.py`, `plan.py`, `vote.py`, `invitation.py`, `log.py`, **`fund.py`, `expense.py`, `settlement.py`**), `backend/app/schemas/`
   - **Acceptance Criteria**: Full support for `EventType`, `StopCategory`, `metadata` JSON, `Invitation`, `PlanStatus`. Có đủ 6 bảng tài chính trong [database-schema.md](../03-architecture/database-schema.md): `fund_contributions`, `expenses`, `expense_splits`, `event_settlements`, `member_balances`, `settlement_transactions` + `total_budget`/`estimated_cost` trên Plan. Migration passes clean via Alembic.
-- [ ] **`TASK-002`** **FastAPI APIRouter Skeleton**
-  - **Feature**: N/A (Contract)
-  - **Target Files**: `backend/app/api/v1/` (`auth.py`, `events.py`, `plans.py`, `votes.py`, `invitations.py`)
-  - **Acceptance Criteria**: Routes return `501 Not Implemented` with matching Pydantic response models. Swagger accessible at `/docs`.
-
-### Sprint 1 — Auth & User Management (FastAPI + PyJWT)
+### Sprint 1 — Core DB Models & Migration
+> Auth APIs (102–106) đã chuyển sang Person 2 (Phạm Đình Ánh Dương).
 - [ ] **`TASK-101`** **Database Models & Alembic Initial Migration**
   - **Feature**: #2, #4
   - **Target Files**: `backend/app/models/user.py`, `backend/alembic/versions/`
   - **Acceptance Criteria**: User table created with `id`, `email`, `password_hash`, `full_name`, `avatar_url`, `provider`.
-- [ ] **`TASK-102`** **User Registration & Password Hashing**
-  - **Feature**: #2
-  - **Target Files**: `backend/app/api/v1/auth.py`, `backend/app/services/auth_service.py`
-  - **Acceptance Criteria**: `POST /api/v1/auth/register` validates Pydantic schema, hashes password using `passlib[bcrypt]`, returns user JWT tokens.
-- [ ] **`TASK-103`** **OAuth2 Integration (Google & Facebook)**
-  - **Feature**: #1
-  - **Target Files**: `backend/app/api/v1/auth.py`, `backend/app/core/oauth.py`
-  - **Acceptance Criteria**: `POST /api/v1/auth/login/google` exchanges auth code for token, creates or logs in user, returns JWT access/refresh token.
-- [ ] **`TASK-104`** **JWT Access & Refresh Token Rotation**
-  - **Feature**: #5
-  - **Target Files**: `backend/app/core/security.py`, `backend/app/api/v1/auth.py`
-  - **Acceptance Criteria**: Access token expires in 15 mins. `POST /api/v1/auth/refresh-token` validates refresh token in httpOnly cookie and issues new pair.
-- [ ] **`TASK-105`** **Forgot & Reset Password Flow**
-  - **Feature**: #3
-  - **Target Files**: `backend/app/api/v1/auth.py`, `backend/app/services/email_service.py`
-  - **Acceptance Criteria**: `POST /api/v1/auth/forgot-password` generates single-use 15-min token and sends email via SMTP.
-- [ ] **`TASK-106`** **User Profile API (GET & PATCH)**
-  - **Feature**: #4
-  - **Target Files**: `backend/app/api/v1/users.py`, `backend/app/services/user_service.py`
-  - **Acceptance Criteria**: `GET /api/v1/users/me` returns current user profile; `PATCH /api/v1/users/me` updates `full_name`, `avatar_url`.
 
-### Sprint 2 — Event, Plan & Invitation Management
+### Sprint 2 — Event & Plan Management
 - [ ] **`TASK-201`** **Event Database Models & Alembic Migration**
   - **Feature**: #6
   - **Target Files**: `backend/app/models/event.py`, `backend/alembic/versions/`
@@ -65,10 +41,6 @@
   - **Feature**: #6, #9
   - **Target Files**: `backend/app/api/v1/events.py`, `backend/app/services/event_service.py`
   - **Acceptance Criteria**: `POST /events` creates event and assigns creator as `OWNER`. `GET /events` lists user events. `PATCH /events/{id}` updates event info.
-- [ ] **`TASK-203`** **Invitation Database Model & APIs**
-  - **Feature**: #7
-  - **Target Files**: `backend/app/models/invitation.py`, `backend/app/api/v1/invitations.py`
-  - **Acceptance Criteria**: `POST /events/{id}/invitations` generates invitation. `PATCH /invitations/{id}` allows user to ACCEPT or DECLINE.
 - [ ] **`TASK-204`** **RolesGuard Dependency (Owner / Member / Viewer)**
   - **Feature**: #8
   - **Target Files**: `backend/app/api/v1/dependencies.py`
@@ -100,15 +72,10 @@
   - **Target Files**: `backend/app/api/v1/saved_places.py`
   - **Acceptance Criteria**: `POST /saved-places` saves favorite restaurant, place, or venue to user's saved list.
 
-### Sprint 4 — Shared Expense & Settlement (Backend Core)
-- [ ] **`TASK-404`** **Expense Splitting & Optimal Settlement Algorithm**
-  - **Feature**: #41
-  - **Target Files**: `backend/app/services/expense_service.py`, `backend/app/services/settlement_service.py`
-  - **Acceptance Criteria**: Tính split theo 3 kiểu `SplitType` — `EQUAL`, `EXACT`, `PERCENTAGE`; tính balance từng member (`MemberBalance`). `SettlementService.settle()` chạy thuật toán tối ưu số giao dịch theo ví dụ [database-schema.md](../03-architecture/database-schema.md) §3 (A/B/C/D → 3 transactions); lưu `EventSettlement` + `SettlementTransaction`. Unit test trong `tests/test_settlement.py` (cases 2/3/4 người).
-- [ ] **`TASK-415`** **Fund & Expense CRUD + Settlement Persistence APIs**
-  - **Feature**: #41
-  - **Target Files**: `backend/app/api/v1/funds.py`, `backend/app/api/v1/expenses.py`, `backend/app/api/v1/settlements.py`, `backend/app/models/fund.py`, `backend/app/models/expense.py`, `backend/app/models/settlement.py`
-  - **Acceptance Criteria**: `POST/GET/PATCH/DELETE /events/{id}/fund-contributions` và `/events/{id}/expenses` (mỗi expense tạo `expense_splits` theo SplitType); `GET /events/{id}/balances` trả net balance từng member; `GET/POST /events/{id}/settlements` (chạy thuật toán TASK-404, ghi `EventSettlement`). Role guard theo RolesGuard TASK-204. Alembic migration + tests `test_expense.py`, `test_settlement.py`.
+### Sprint 4 — AI Integration (Review)
+- **TASK-404** (Expense Splitting & Optimal Settlement Algorithm) + **TASK-415** (Fund & Expense CRUD) → đã chuyển sang [person-2-backend-platform.md](person-2-backend-platform.md) — **Phạm Đình Ánh Dương** (Sprint 4).
+- **AI Integration** của Tạ Quang Huy: TASK-402 (FastAPI WebSocket/SSE) + TASK-403 (Agent Token Logging) — theo dõi chi tiết tại [person-3-ai-engineer.md](person-3-ai-engineer.md) (Sprint 4).
+- Person 1 đảm nhận vai trò **reviewer** cho cụm Expense/Settlement (404/415) và AI Integration (402/403).
 
 ---
 

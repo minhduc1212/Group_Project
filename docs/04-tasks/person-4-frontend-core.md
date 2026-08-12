@@ -9,25 +9,21 @@
 
 | Sprint | Task Count | Done | Status |
 |---|---|---|---|
-| **Sprint 0** | 2 Tasks | 0/2 | 🔲 To Do |
+| **Sprint 0** | 1 Task | 0/1 | 🔲 To Do |
 | **Sprint 1** | 3 Tasks | 0/3 | 🔲 To Do |
 | **Sprint 2** | 4 Tasks | 0/4 | 🔲 To Do |
-| **Sprint 3** | 4 Tasks | 0/4 | 🔲 To Do |
+| **Sprint 3** | 3 Tasks | 0/3 | 🔲 To Do |
 | **Sprint 4** | 0 Tasks (Support Testing & Polish) | 0/0 | 🔲 To Do |
 
 ---
 
 ## 🛠️ Detailed Sprint Backlog
 
-### Sprint 0 — MSW Mock Setup & Design System
+### Sprint 0 — MSW Mock Setup
 - [ ] **`TASK-004`** **MSW Mock Handlers Setup for Core APIs**
   - **Feature**: N/A
   - **Target Files**: `frontend/src/mocks/handlers/` (`auth.ts`, `events.ts`, `plans.ts`)
   - **Acceptance Criteria**: MSW intercepts `/api/v1/auth/*` và `/api/v1/events/*`, returning mock JSON adhering to OpenAPI contract.
-- [ ] **`TASK-009`** **Design Tokens & Design System Spec**
-  - **Feature**: #42
-  - **Target Files**: `docs/06-design/design-tokens.md`, `frontend/src/styles/theme.ts`, `frontend/tailwind.config.js`
-  - **Acceptance Criteria**: Chốt palette (light/dark), typography scale, spacing, radius, shadow; mapping sang shadcn/Tailwind theme config; là nguồn duy nhất cho mọi màn hình (feed vào TASK-111).
 
 ### Sprint 1 — UI System & Auth Screens
 - [ ] **`TASK-111`** **Project Skeleton & Design System (Tailwind + shadcn)**
@@ -61,7 +57,7 @@
   - **Target Files**: `frontend/src/components/map/MapView.tsx`
   - **Acceptance Criteria**: Renders markers for plan stops, centers camera dynamically, shows popup details on marker click.
 
-### Sprint 3 — Plan Builder, Voting Dashboard & Checklist UI
+### Sprint 3 — Plan Builder & Voting Dashboard
 - [ ] **`TASK-314`** **Manual Plan Builder Component (Drag & Drop)**
   - **Feature**: #11, #12
   - **Target Files**: `frontend/src/features/plan/components/PlanBuilder.tsx`
@@ -74,10 +70,6 @@
   - **Feature**: #14
   - **Target Files**: `frontend/src/features/plan/components/PlanHeader.tsx`
   - **Acceptance Criteria**: Shows status badge (Draft, Voting, Confirmed). Renders "Confirm Plan" button only for Event Owner.
-- [ ] **`TASK-317`** **Packing Checklist UI Screen**
-  - **Feature**: #35
-  - **Target Files**: `frontend/src/features/checklist/pages/ChecklistPage.tsx`
-  - **Acceptance Criteria**: Interactive checklist with item check/uncheck, custom item add/delete, progress bar.
 
 ---
 
