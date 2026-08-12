@@ -101,7 +101,7 @@
 - [ ] **`TASK-404`** `[BE-Services - Phạm Đình Ánh Dương]` **Expense Splitting & Optimal Settlement Algorithm**
   - **Feature**: #41
   - **Target Files**: `backend/app/services/expense_service.py`, `backend/app/services/settlement_service.py`
-  - **Acceptance Criteria**: Tính split theo 3 kiểu `SplitType` — `EQUAL`, `EXACT`, `PERCENTAGE`; tính balance từng member (`MemberBalance`). `SettlementService.settle()` chạy thuật toán tối ưu số giao dịch theo ví dụ [database-schema.md](../03-architecture/database-schema.md) §3 (A/B/C/D → 3 transactions); lưu `EventSettlement` + `SettlementTransaction`. Unit test trong `tests/test_settlement.py` (cases 2/3/4 người).
+  - **Acceptance Criteria**: Tính split theo 3 kiểu `SplitType` — `EQUAL`, `EXACT`, `PERCENTAGE`; tính net balance từng member bằng SQL GROUP BY (không cần bảng `MemberBalance`, theo [database-schema.md](../03-architecture/database-schema.md) §3). `SettlementService.settle()` chạy thuật toán tối ưu số giao dịch theo ví dụ §3 (A/B/C/D → 3 transactions); lưu từng giao dịch bù trừ vào bảng `settlements` (1 dòng `Settlement`, `isSettled=false`). Unit test trong `tests/test_settlement.py` (cases 2/3/4 người).
 - [ ] **`TASK-415`** `[BE-Services - Phạm Đình Ánh Dương]` **Fund & Expense CRUD + Settlement Persistence APIs**
   - **Feature**: #41
   - **Target Files**: `backend/app/api/v1/funds.py`, `backend/app/api/v1/expenses.py`, `backend/app/api/v1/settlements.py`, `backend/app/models/fund.py`, `backend/app/models/expense.py`, `backend/app/models/settlement.py`

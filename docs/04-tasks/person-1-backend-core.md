@@ -23,8 +23,8 @@
 ### Sprint 0 — Contract Session
 - [ ] **`TASK-001`** **Design SQLAlchemy & Pydantic DB Schemas**
   - **Feature**: N/A (Sprint 0 Contract)
-  - **Target Files**: `backend/app/models/` (`user.py`, `event.py`, `plan.py`, `vote.py`, `invitation.py`, `log.py`, **`fund.py`, `expense.py`, `settlement.py`**), `backend/app/schemas/`
-  - **Acceptance Criteria**: Full support for `EventType`, `StopCategory`, `metadata` JSON, `Invitation`, `PlanStatus`. Có đủ 6 bảng tài chính trong [database-schema.md](../03-architecture/database-schema.md): `fund_contributions`, `expenses`, `expense_splits`, `event_settlements`, `member_balances`, `settlement_transactions` + `total_budget`/`estimated_cost` trên Plan. Migration passes clean via Alembic.
+  - **Target Files**: `backend/app/models/` (`user.py`, `event.py`, `plan.py`, `vote.py`, `invitation.py`, `log.py`, **`expense.py`, `settlement.py`**), `backend/app/schemas/`
+  - **Acceptance Criteria**: Full support for `EventType`, `StopCategory`, `metadata` JSON, `Invitation`, `PlanStatus`. Đủ 3 bảng tài chính trong [database-schema.md](../03-architecture/database-schema.md): `expenses`, `expense_splits`, `settlements` (thu quỹ = `Expense.type=ADVANCE`, số dư member tính bằng SQL GROUP BY — không cần bảng MemberBalance) + `total_budget` trên Plan / `estimated_cost` trên PlanStop. Migration passes clean via Alembic.
 ### Sprint 1 — Core DB Models & Migration
 > Auth APIs (102–106) đã chuyển sang Person 2 (Phạm Đình Ánh Dương).
 - [ ] **`TASK-101`** **Database Models & Alembic Initial Migration**

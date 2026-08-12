@@ -36,8 +36,8 @@
 ### 0.1 Architecture & Contract Definition
 - [ ] **TASK-001** `[BE-A]` **Design SQLAlchemy & Pydantic Schemas**
   - **Feature**: N/A (Sprint 0 Contract)
-  - **Target Files**: `backend/app/models/` (`user.py`, `event.py`, `plan.py`, `vote.py`, `invitation.py`, `log.py`, **`fund.py`, `expense.py`, `settlement.py`**), `backend/app/schemas/`
-  - **Acceptance Criteria**: Full support for `EventType`, `StopCategory`, `metadata` JSON, `Invitation`, `PlanStatus`. Có đủ 6 bảng tài chính trong [database-schema.md](03-architecture/database-schema.md): `fund_contributions`, `expenses`, `expense_splits`, `event_settlements`, `member_balances`, `settlement_transactions` + `total_budget`/`estimated_cost` trên Plan. Migration passes clean via Alembic.
+  - **Target Files**: `backend/app/models/` (`user.py`, `event.py`, `plan.py`, `vote.py`, `invitation.py`, `log.py`, **`expense.py`, `settlement.py`**), `backend/app/schemas/`
+  - **Acceptance Criteria**: Full support for `EventType`, `StopCategory`, `metadata` JSON, `Invitation`, `PlanStatus`. Đủ 3 bảng tài chính trong [database-schema.md](03-architecture/database-schema.md): `expenses`, `expense_splits`, `settlements` (thu quỹ = `Expense.type=ADVANCE`, số dư member tính bằng SQL GROUP BY — không cần bảng MemberBalance) + `total_budget` trên Plan / `estimated_cost` trên PlanStop. Migration passes clean via Alembic.
 - [ ] **TASK-002** `[BE-Services]` **FastAPI APIRouter Skeleton**
   - **Feature**: N/A (Contract)
   - **Target Files**: `backend/app/api/v1/` (`auth.py`, `events.py`, `plans.py`, `votes.py`, `invitations.py`, `places.py`, `ai.py`)
@@ -356,11 +356,11 @@
 - [ ] **TASK-404** `[BE-Services]` **Expense Splitting & Optimal Settlement Algorithm**
   - **Feature**: #41
   - **Target Files**: `backend/app/services/expense_service.py`, `backend/app/services/settlement_service.py`
-  - **Acceptance Criteria**: Tính split theo 3 kiểu `SplitType` — `EQUAL`, `EXACT`, `PERCENTAGE`; tính balance từng member (`MemberBalance`). `SettlementService.settle()` chạy **thuật toán tối ưu số giao dịch** theo ví dụ [database-schema.md](../03-architecture/database-schema.md) §3 (A/B/C/D → 3 transactions) — thuật toán greedy: tạo biểu đồ creditor/debtor từ net balance, khớp cặp, số transaction ≤ số người nợ; lưu `EventSettlement` + `SettlementTransaction`. Unit test thuật toán trên cases 2/3/4 người (định nghĩa trong `tests/test_settlement.py`).
+  - **Acceptance Criteria**: Tính split theo 3 kiểu `SplitType` — `EQUAL`, `EXACT`, `PERCENTAGE`; tính net balance từng member bằng SQL GROUP BY (không cần bảng `MemberBalance`, theo [database-schema.md](../03-architecture/database-schema.md) §3). `SettlementService.settle()` chạy **thuật toán tối ưu số giao dịch** theo ví dụ §3 (A/B/C/D → 3 transactions) — thuật toán greedy: tạo biểu đồ creditor/debtor từ net balance, khớp cặp, số transaction ≤ số người nợ; lưu từng giao dịch bù trừ vào bảng `settlements` (1 dòng `Settlement`, `isSettled=false`). Unit test thuật toán trên cases 2/3/4 người (định nghĩa trong `tests/test_settlement.py`).
 - [ ] **TASK-415** `[BE-Services]` **Fund & Expense CRUD + Settlement Persistence APIs**
   - **Feature**: #41
-  - **Target Files**: `backend/app/api/v1/funds.py`, `backend/app/api/v1/expenses.py`, `backend/app/api/v1/settlements.py`, `backend/app/models/fund.py`, `backend/app/models/expense.py`, `backend/app/models/settlement.py`
-  - **Acceptance Criteria**: `POST/GET/PATCH/DELETE /events/{id}/fund-contributions` và `/events/{id}/expenses` (mỗi expense tạo `expense_splits` theo SplitType); `GET /events/{id}/balances` trả net balance từng member; `GET /events/{id}/settlements` + `POST /events/{id}/settlements` (chạy thuật toán TASK-404, ghi `EventSettlement`). Role guard: chỉ OWNER/MEMBER được sửa expense (theo RolesGuard TASK-204). Alembic migration + tests `test_expense.py`, `test_settlement.py`.
+  - **Target Files**: `backend/app/api/v1/funds.py` (router thu quỹ — tạo `Expense(type=ADVANCE)`, không có bảng/model riêng), `backend/app/api/v1/expenses.py`, `backend/app/api/v1/settlements.py`, `backend/app/models/expense.py`, `backend/app/models/settlement.py`
+  - **Acceptance Criteria**: `POST/GET/PATCH/DELETE /events/{id}/fund-contributions` (thu quỹ → tạo `Expense(type=ADVANCE)`) và `/events/{id}/expenses` (mỗi expense tạo `expense_splits` theo SplitType); `GET /events/{id}/balances` trả net balance từng member (SQL GROUP BY); `GET /events/{id}/settlements` + `POST /events/{id}/settlements` (chạy thuật toán TASK-404, ghi bảng `settlements`). Role guard: chỉ OWNER/MEMBER được sửa expense (theo RolesGuard TASK-204). Alembic migration + tests `test_expense.py`, `test_settlement.py`.
 
 ### 4.3 Admin Dashboard Service (Backend Services)
 - [ ] **TASK-405** `[BE-Services]` **Admin Statistics APIs**
