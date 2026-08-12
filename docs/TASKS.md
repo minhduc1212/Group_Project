@@ -302,16 +302,16 @@
   - **Target Files**: `backend/app/ai_agents/agents/booking_agent.py`
   - **Acceptance Criteria**: Returns direct booking URLs for hotels (Booking.com / Agoda), restaurant reservations, or activity tickets without performing payment.
 
-### 3.3 Notifications & Export (Backend Platform)
-- [ ] **TASK-311** `[BE-B]` **Email Notification Service (SMTP)**
+### 3.3 Notifications & Export (Backend Services)
+- [ ] **TASK-311** `[BE-Services]` **Email Notification Service (SMTP)**
   - **Feature**: #33
   - **Target Files**: `backend/app/services/notification_service.py`
   - **Acceptance Criteria**: Sends email notifications when invited to event, when plan vote opens, and when plan is confirmed.
-- [ ] **TASK-312** `[BE-B]` **PDF Export Service (WeasyPrint / ReportLab)**
+- [ ] **TASK-312** `[BE-Services]` **PDF Export Service (WeasyPrint / ReportLab)**
   - **Feature**: #34
   - **Target Files**: `backend/app/api/v1/export.py`, `backend/app/services/export_service.py`
   - **Acceptance Criteria**: `GET /events/{id}/export/pdf` generates downloadable PDF with event timeline, stop details, map snapshot, and expense summary.
-- [ ] **TASK-313** `[BE-B]` **Packing Checklist Generation Service**
+- [ ] **TASK-313** `[BE-Services]` **Packing Checklist Generation Service**
   - **Feature**: #35
   - **Target Files**: `backend/app/services/checklist_service.py`
   - **Acceptance Criteria**: Generates customizable packing list based on EventType and weather forecast.
@@ -362,8 +362,8 @@
   - **Target Files**: `backend/app/api/v1/funds.py`, `backend/app/api/v1/expenses.py`, `backend/app/api/v1/settlements.py`, `backend/app/models/fund.py`, `backend/app/models/expense.py`, `backend/app/models/settlement.py`
   - **Acceptance Criteria**: `POST/GET/PATCH/DELETE /events/{id}/fund-contributions` và `/events/{id}/expenses` (mỗi expense tạo `expense_splits` theo SplitType); `GET /events/{id}/balances` trả net balance từng member; `GET /events/{id}/settlements` + `POST /events/{id}/settlements` (chạy thuật toán TASK-404, ghi `EventSettlement`). Role guard: chỉ OWNER/MEMBER được sửa expense (theo RolesGuard TASK-204). Alembic migration + tests `test_expense.py`, `test_settlement.py`.
 
-### 4.3 Admin Dashboard Service (Backend Platform)
-- [ ] **TASK-405** `[BE-B]` **Admin Statistics APIs**
+### 4.3 Admin Dashboard Service (Backend Services)
+- [ ] **TASK-405** `[BE-Services]` **Admin Statistics APIs**
   - **Feature**: #36, #37
   - **Target Files**: `backend/app/api/v1/admin.py`, `backend/app/services/admin_service.py`
   - **Acceptance Criteria**: `GET /admin/dashboard/overview` returns total users, total events, token usage history, cache hit rate. `GET /admin/users` lists and manages user status.
