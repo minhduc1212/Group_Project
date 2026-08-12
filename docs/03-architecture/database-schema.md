@@ -2,6 +2,8 @@
 
 > **Tài liệu chuẩn kiến trúc Database** cho dự án Web Lên Kế Hoạch Nhóm Tích Hợp AI Multi-Agent.
 >
+> ⚠️ **Quan trọng về ORM**: Schema trong tài liệu này được viết bằng **cú pháp Prisma** để dễ đọc, dễ thảo luận thiết kế trong Sprint 0. **Implementation thực tế dùng SQLAlchemy 2.0 / SQLModel (Async)** với Alembic migrations. Các khái niệm (model, relation, enum, index, constraint) giữ nguyên — chỉ khác cú pháp khai báo. Xem [naming-conventions.md](../02-standards/naming-conventions.md) mục 2 để biết convention SQLAlchemy/SQLModel cụ thể.
+>
 > **Cập nhật quan trọng (Tích hợp AI Cost Agent & Hệ thống Quản lý / Chia Tiền Chuyến Đi)**:
 > Bổ sung toàn bộ hệ thống quản lý tài chính 3 giai đoạn: **Dự toán AI (Cost Agent)** $\rightarrow$ **Quỹ nhóm & Ghi nhận chi phí thực tế** $\rightarrow$ **AI Tự động Quyết toán & Bù trừ nợ tối ưu (Optimal Settlement)**.
 

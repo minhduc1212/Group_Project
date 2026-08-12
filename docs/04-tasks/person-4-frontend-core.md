@@ -9,7 +9,7 @@
 
 | Sprint | Task Count | Done | Status |
 |---|---|---|---|
-| **Sprint 0** | 1 Task | 0/1 | 🔲 To Do |
+| **Sprint 0** | 2 Tasks | 0/2 | 🔲 To Do |
 | **Sprint 1** | 3 Tasks | 0/3 | 🔲 To Do |
 | **Sprint 2** | 4 Tasks | 0/4 | 🔲 To Do |
 | **Sprint 3** | 4 Tasks | 0/4 | 🔲 To Do |
@@ -19,11 +19,15 @@
 
 ## 🛠️ Detailed Sprint Backlog
 
-### Sprint 0 — MSW Mock Setup
+### Sprint 0 — MSW Mock Setup & Design System
 - [ ] **`TASK-004`** **MSW Mock Handlers Setup for Core APIs**
   - **Feature**: N/A
   - **Target Files**: `frontend/src/mocks/handlers/` (`auth.ts`, `events.ts`, `plans.ts`)
-  - **Acceptance Criteria**: MSW intercepts `/api/v1/auth/*` and `/api/v1/events/*`, returning mock JSON adhering to OpenAPI contract.
+  - **Acceptance Criteria**: MSW intercepts `/api/v1/auth/*` và `/api/v1/events/*`, returning mock JSON adhering to OpenAPI contract.
+- [ ] **`TASK-009`** **Design Tokens & Design System Spec**
+  - **Feature**: #42
+  - **Target Files**: `docs/06-design/design-tokens.md`, `frontend/src/styles/theme.ts`, `frontend/tailwind.config.js`
+  - **Acceptance Criteria**: Chốt palette (light/dark), typography scale, spacing, radius, shadow; mapping sang shadcn/Tailwind theme config; là nguồn duy nhất cho mọi màn hình (feed vào TASK-111).
 
 ### Sprint 1 — UI System & Auth Screens
 - [ ] **`TASK-111`** **Project Skeleton & Design System (Tailwind + shadcn)**

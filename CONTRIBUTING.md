@@ -5,7 +5,7 @@ Chào mừng vào team! Đọc [guides.md](guides.md) (15 phút) để xem lộ 
 ## Bắt đầu nhanh
 ```bash
 git clone <repo-url>
-cd travel-ai
+cd Group_Project
 
 # --- Backend (Python FastAPI) ---
 cd backend

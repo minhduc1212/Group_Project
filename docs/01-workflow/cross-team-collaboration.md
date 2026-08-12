@@ -34,7 +34,7 @@ Phát hiện cần đổi → Báo #contract-changes → PR cập nhật docs �
    Ảnh hưởng: @FE-A (đang render list places), @AI-Engineer (Location Agent)
    PR docs: #45
    ```
-2. **Mở 1 PR riêng** chỉ chứa thay đổi docs (schema, API guide, shared-types) — review nhanh trong ngày, không để tồn đọng.
+2. **Mở 1 PR riêng** chỉ chứa thay đổi docs (schema, API guide, Pydantic schemas) — review nhanh trong ngày, không để tồn đọng.
 3. **Ưu tiên backward-compatible**: thêm field mới (optional) thay vì đổi/xóa field cũ → người khác không bị break ngay.
 4. Người bị ảnh hưởng cập nhật code/mock của mình theo contract mới.
 
@@ -144,8 +144,8 @@ backend/app/
 
 ✅ CHIỀU DỌC (dễ nhảy vào giúp):
    Task 1: "API tạo event mới (POST /events)" — 1 endpoint, 1 service method, 1 test
-   Task 2: "API mời thành viên (POST /events/:id/invitations)" — 1 endpoint riêng
-   Task 3: "API lấy danh sách member (GET /events/:id/members)" — 1 endpoint riêng
+   Task 2: "API mời thành viên (POST /events/{id}/invitations)" — 1 endpoint riêng
+   Task 3: "API lấy danh sách member (GET /events/{id}/members)" — 1 endpoint riêng
    → Mỗi task độc lập, ai rảnh nhặt task nào cũng được (theo đúng mã TASK-xxx trong docs/TASKS.md)
 ```
 
@@ -214,7 +214,7 @@ Khi Person A chuyển giao task đang dở cho Person B (hoặc Person B nhảy 
    - **Người bàn giao**: @BE-A → **Người nhận**: @BE-B
    - **Đã làm xong**:
      - [x] Tạo SQLAlchemy Model `PlanVote`
-     - [x] Endpoint `POST /events/:id/plans/:planId/votes` nhận vote UP/DOWN
+     - [x] Endpoint `POST /events/{id}/plans/{planId}/votes` nhận vote UP/DOWN
    - **Còn lại cần làm tiếp**:
      - [ ] Kiểm tra constraint unique `(plan_id, user_id)`
      - [ ] Tổng hợp kết quả vote trả về cho FE

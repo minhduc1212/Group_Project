@@ -11,37 +11,56 @@ Mỗi service (`backend/`, `frontend/`, `ai-service/` nếu tách riêng) có 1 
 # <Tên service>
 
 ## Mô tả ngắn
-## Yêu cầu hệ thống (Node version, ...)
+## Yêu cầu hệ thống (Python/Node version, ...)
 ## Cài đặt
+
+### Backend (Python FastAPI)
+​```bash
+poetry install          # hoặc: pip install -r requirements.txt
+cp .env.example .env    # điền các key cần thiết
+docker compose up -d    # PostgreSQL + Redis
+poetry run alembic upgrade head
+poetry run uvicorn app.main:app --reload --port 8000
+​```
+
+### Frontend (React + Vite)
 ​```bash
 npm install
 cp .env.example .env
 npm run dev
 ​```
+
 ## Scripts chính
 | Lệnh | Mô tả |
 |---|---|
-| npm run dev | ... |
-| npm run test | ... |
-| npm run lint | ... |
+| `ruff check .` | Lint Python (backend) |
+| `pytest` | Chạy test Python (backend) |
+| `npm run lint` | Lint TypeScript (frontend) |
+| `npm run test` | Chạy test frontend |
 
 ## Cấu trúc thư mục
 ## Liên kết docs liên quan
 ```
 
 ## 3. Comment trong code
-### Backend/Frontend (TypeScript) — dùng JSDoc cho hàm/service public
-```ts
-/**
- * Tạo event mới và tự động thêm người tạo làm Owner.
- * @param dto - Dữ liệu tạo event đã được validate
- * @param userId - ID người dùng đang thực hiện (lấy từ JWT)
- * @returns Event vừa tạo kèm thông tin member
- * @throws BadRequestException nếu ngày kết thúc trước ngày bắt đầu
- */
-async createEvent(dto: CreateEventDto, userId: string): Promise<Event> { ... }
+### Backend (Python) — dùng Google-style docstring cho hàm/service public
+```python
+def create_event(self, dto: CreateEventDto, user_id: str) -> Event:
+    """Tạo event mới và tự động thêm người tạo làm Owner.
+
+    Args:
+        dto: Dữ liệu tạo event đã được Pydantic validate.
+        user_id: ID người dùng đang thực hiện (lấy từ JWT).
+
+    Returns:
+        Event vừa tạo kèm thông tin member.
+
+    Raises:
+        ValueError: Nếu ngày kết thúc trước ngày bắt đầu.
+    """
+    ...
 ```
-- **Không comment những gì code đã tự nói rõ** (VD `// tăng i lên 1` cho `i++` là thừa).
+- **Không comment những gì code đã tự nói rõ** (VD `# tăng i lên 1` cho `i += 1` là thừa).
 - Comment giải thích **"tại sao"** khi logic không hiển nhiên (VD: vì sao dùng transaction, vì sao retry 3 lần).
 
 ### AI Agent / Prompt

@@ -8,11 +8,12 @@
 
 | Sprint | Focus | Total Micro-Tasks | Status |
 |---|---|---|---|
-| **Sprint 0** | Contract Session, DB Models, OpenAPI Spec, Docker & CI/CD | 12 Tasks | 🔲 To Do |
-| **Sprint 1** | Auth Module, Base External APIs, Orchestrator Skeleton, Core UI Foundations | 18 Tasks | 🔲 To Do |
-| **Sprint 2** | Event/Plan/Invitation CRUD, Places/Weather API, Location & Research Agents, UI Event/Plan | 25 Tasks | 🔲 To Do |
-| **Sprint 3** | Vote Engine, Manual Plan Flow, Plan/Cost/Conflict Agents, Export PDF & Notifications | 26 Tasks | 🔲 To Do |
-| **Sprint 4** | Streaming AI Chat UI, Shared Expenses, Admin Dashboard, Security Pentest & Hardening | 21 Tasks | 🔲 To Do |
+| **Sprint 0** | Contract Session, DB Models, OpenAPI Spec, UI/UX Design, Docker & CI/CD | 11 Tasks | 🔲 To Do |
+| **Sprint 1** | Auth Module, Base External APIs, Orchestrator Skeleton, Core UI Foundations, Vercel Deploy | 18 Tasks | 🔲 To Do |
+| **Sprint 2** | Event/Plan/Invitation CRUD, Places/Weather API, Location & Research Agents, UI Event/Plan, Render Deploy | 16 Tasks | 🔲 To Do |
+| **Sprint 3** | Vote Engine, Manual Plan Flow, Plan/Cost/Conflict Agents, Export PDF & Notifications | 17 Tasks | 🔲 To Do |
+| **Sprint 4** | Streaming AI Chat UI, Shared Expenses, Admin Dashboard, Security Pentest & Hardening | 15 Tasks | 🔲 To Do |
+| **Tổng cộng** | 5 Sprint | **77 Tasks** | |
 
 ---
 
@@ -35,8 +36,8 @@
 ### 0.1 Architecture & Contract Definition
 - [ ] **TASK-001** `[BE-A]` **Design SQLAlchemy & Pydantic Schemas**
   - **Feature**: N/A (Sprint 0 Contract)
-  - **Target Files**: `backend/app/models/` (`user.py`, `event.py`, `plan.py`, `vote.py`, `invitation.py`, `log.py`), `backend/app/schemas/`
-  - **Acceptance Criteria**: Full support for `EventType`, `StopCategory`, `metadata` JSON, `Invitation`, `PlanStatus`. Migration passes clean via Alembic.
+  - **Target Files**: `backend/app/models/` (`user.py`, `event.py`, `plan.py`, `vote.py`, `invitation.py`, `log.py`, **`fund.py`, `expense.py`, `settlement.py`**), `backend/app/schemas/`
+  - **Acceptance Criteria**: Full support for `EventType`, `StopCategory`, `metadata` JSON, `Invitation`, `PlanStatus`. Có đủ 6 bảng tài chính trong [database-schema.md](03-architecture/database-schema.md): `fund_contributions`, `expenses`, `expense_splits`, `event_settlements`, `member_balances`, `settlement_transactions` + `total_budget`/`estimated_cost` trên Plan. Migration passes clean via Alembic.
 - [ ] **TASK-002** `[BE-A]` **FastAPI APIRouter Skeleton**
   - **Feature**: N/A (Contract)
   - **Target Files**: `backend/app/api/v1/` (`auth.py`, `events.py`, `plans.py`, `votes.py`, `invitations.py`, `places.py`, `ai.py`)
@@ -67,6 +68,21 @@
   - **Feature**: N/A
   - **Target Files**: `.pre-commit-config.yaml`, `backend/pyproject.toml`
   - **Acceptance Criteria**: Blocks local git commit if Ruff linting fails or Black formatting drifts.
+
+### 0.3 UI/UX Design (Sprint 0 — làm trước khi bắt đầu code giao diện)
+> Làm song song với Contract Session. Kết quả là **nguồn chân lý thiết kế** cho FE Dev A & B xuyên suốt các Sprint sau. Tài liệu thiết kế lưu tại `docs/06-design/`.
+- [ ] **TASK-009** `[FE-A]` **Design Tokens & Design System Spec**
+  - **Feature**: #42
+  - **Target Files**: `docs/06-design/design-tokens.md`, `frontend/src/styles/theme.ts`, `frontend/tailwind.config.js`
+  - **Acceptance Criteria**: Chốt palette (light/dark), typography scale, spacing, radius, shadow; mapping sang shadcn/Tailwind theme config; được dùng làm nguồn duy nhất cho mọi màn hình (feed vào TASK-111).
+- [ ] **TASK-010** `[FE-B]` **User Flows & Page Wireframes**
+  - **Feature**: #1 → #42
+  - **Target Files**: `docs/06-design/user-flows.md`, `docs/06-design/wireframes/` (Mermaid/ASCII hoặc Figma)
+  - **Acceptance Criteria**: Flowchart các luồng chính: register/login → tạo event → mời member → tạo/vote plan → confirm → chia chi phí; wireframe từng page chốt layout + component + empty/loading/error state.
+- [ ] **TASK-011** `[FE-B]` **Hi-fi Mockups, Component Library & Accessibility**
+  - **Feature**: #42
+  - **Target Files**: `docs/06-design/mockups.md` (link Figma), `frontend/src/components/ui/` (variants)
+  - **Acceptance Criteria**: Hi-fi mockups cho 6 EventType + AI chat streaming + expense/settlement; component variants (Button/Input/Card/Dialog/Toast) theo design tokens; responsive breakpoints (mobile/tablet/desktop) + contrast WCAG AA.
 
 ---
 
@@ -150,6 +166,14 @@
   - **Target Files**: `backend/app/api/v1/auth.py`
   - **Acceptance Criteria**: Sign-off on bcrypt cost factor ≥ 10, JWT secret length ≥ 32 chars, httpOnly cookie settings, rate limit configuration.
 
+### 1.6 Frontend Deployment — Vercel (CI/CD)
+> Tương ứng feature "Hosting Frontend | **Vercel**" trong [tech-stack.md](../00-overview/tech-stack.md). Chi tiết cấu hình xem [deployment-guide.md](../03-architecture/deployment-guide.md). **Frontend deploy từ Sprint 1** vì TASK-113 đã có UI base — không chờ đến cuối dự án.
+- [ ] **TASK-118** `[SEC/DEVOPS]` **Vercel Deploy Pipeline (Preview + Production)**
+  - **Feature**: N/A (Deployment)
+  - **Target Files**: `vercel.json`, `.github/workflows/cd-frontend.yml`, `docs/03-architecture/deployment-guide.md`
+  - **Acceptance Criteria**: Mỗi PR tạo **Preview URL** riêng; merge vào `main` tự động deploy **Production**. Cấu hình biến môi trường theo env: `VITE_API_BASE_URL` (Preview → staging, Production → Render domain), `VITE_USE_MOCK=false`, `VITE_MAPBOX_ACCESS_TOKEN`. Smoke test URL live sau deploy (build pass + trang tải được + không lỗi runtime).
+  - **Definition of Done**: `vercel.json` chốt build command + output dir + headers; CD workflow chạy `pnpm build` + upload build; link project trên Vercel team.
+
 ---
 
 ## 📅 Sprint 2 — Event, Plan & External Integrations
@@ -162,11 +186,11 @@
 - [ ] **TASK-202** `[BE-A]` **Event CRUD APIs**
   - **Feature**: #6, #9
   - **Target Files**: `backend/app/api/v1/events.py`, `backend/app/services/event_service.py`
-  - **Acceptance Criteria**: `POST /events` creates event and assigns creator as `OWNER`. `GET /events` lists user events. `PATCH /events/:id` updates event info.
+  - **Acceptance Criteria**: `POST /events` creates event and assigns creator as `OWNER`. `GET /events` lists user events. `PATCH /events/{id}` updates event info.
 - [ ] **TASK-203** `[BE-A]` **Invitation Database Model & APIs**
   - **Feature**: #7
   - **Target Files**: `backend/app/models/invitation.py`, `backend/app/api/v1/invitations.py`
-  - **Acceptance Criteria**: `POST /events/:id/invitations` generates invitation link / email. `PATCH /invitations/:id` allows user to ACCEPT or DECLINE. Joining adds entry to `event_members`.
+  - **Acceptance Criteria**: `POST /events/{id}/invitations` generates invitation link / email. `PATCH /invitations/{id}` allows user to ACCEPT or DECLINE. Joining adds entry to `event_members`.
 - [ ] **TASK-204** `[BE-A]` **RolesGuard Dependency (Owner / Member / Viewer)**
   - **Feature**: #8
   - **Target Files**: `backend/app/api/v1/dependencies.py`
@@ -222,6 +246,14 @@
   - **Target Files**: `frontend/src/components/map/MapView.tsx`
   - **Acceptance Criteria**: Renders markers for plan stops, centers camera dynamically, shows popup details on marker click.
 
+### 2.5 Backend Deployment — Render (CI/CD)
+> Tương ứng feature "Hosting Backend | **Render / Railway / VPS**" trong [tech-stack.md](../00-overview/tech-stack.md). Chi tiết cấu hình xem [deployment-guide.md](../03-architecture/deployment-guide.md). **Backend deploy từ Sprint 2** — sau khi có Event/Plan CRUD thật, để Integration Day cuối Sprint 2 Frontend bỏ mock trỏ API thật.
+- [ ] **TASK-216** `[SEC/DEVOPS]` **Render Deploy Pipeline (FastAPI + Postgres + Redis)**
+  - **Feature**: N/A (Deployment)
+  - **Target Files**: `render.yaml`, `backend/Dockerfile.prod`, `.github/workflows/cd-backend.yml`, `docs/03-architecture/deployment-guide.md`
+  - **Acceptance Criteria**: Render Blueprint (`render.yaml`) khởi tạo FastAPI web service + PostgreSQL 15 + Redis 7. Deploy tự động khi merge vào `main`. Chạy `alembic upgrade head` trong quá trình deploy. `/health` trả green. Secrets (JWT, DB URL, AI keys, email) cấu hình qua Render env, **không** hardcode/.env commit.
+  - **Definition of Done**: `Dockerfile.prod` dùng non-root user + multi-stage; CD workflow build image + push; smoke test curl `/health` sau deploy.
+
 ---
 
 ## 🗳️ Sprint 3 — Voting System, Plan Generation & Exports
@@ -234,15 +266,15 @@
 - [ ] **TASK-302** `[BE-A]` **Manual Plan Creation API**
   - **Feature**: #11
   - **Target Files**: `backend/app/api/v1/plans.py`, `backend/app/services/plan_service.py`
-  - **Acceptance Criteria**: `POST /events/:id/plans` with `is_ai_generated=False` creates manual plan with initial status `DRAFT`.
+  - **Acceptance Criteria**: `POST /events/{id}/plans` with `is_ai_generated=False` creates manual plan with initial status `DRAFT`.
 - [ ] **TASK-303** `[BE-A]` **Plan Stop Management API (Reorder / Add / Delete / Edit)**
   - **Feature**: #12
   - **Target Files**: `backend/app/api/v1/plans.py`
-  - **Acceptance Criteria**: `PATCH /events/:id/plans/:planId/stops` supports reordering stop sequence, updating notes, cost, and JSON metadata.
+  - **Acceptance Criteria**: `PATCH /events/{id}/plans/{planId}/stops` supports reordering stop sequence, updating notes, cost, and JSON metadata.
 - [ ] **TASK-304** `[BE-A]` **Plan Vote API & Tallying Logic**
   - **Feature**: #13
   - **Target Files**: `backend/app/api/v1/votes.py`, `backend/app/services/vote_service.py`
-  - **Acceptance Criteria**: `POST /events/:id/plans/:planId/votes` allows voting UP, DOWN, NEUTRAL with optional comment. Enforces unique constraint per `(plan_id, user_id)`.
+  - **Acceptance Criteria**: `POST /events/{id}/plans/{planId}/votes` allows voting UP, DOWN, NEUTRAL with optional comment. Enforces unique constraint per `(plan_id, user_id)`.
 - [ ] **TASK-305** `[BE-A]` **Plan Status Transition API (DRAFT → VOTING → CONFIRMED)**
   - **Feature**: #14
   - **Target Files**: `backend/app/api/v1/plans.py`
@@ -278,7 +310,7 @@
 - [ ] **TASK-312** `[BE-B]` **PDF Export Service (WeasyPrint / ReportLab)**
   - **Feature**: #34
   - **Target Files**: `backend/app/api/v1/export.py`, `backend/app/services/export_service.py`
-  - **Acceptance Criteria**: `GET /events/:id/export/pdf` generates downloadable PDF with event timeline, stop details, map snapshot, and expense summary.
+  - **Acceptance Criteria**: `GET /events/{id}/export/pdf` generates downloadable PDF with event timeline, stop details, map snapshot, and expense summary.
 - [ ] **TASK-313** `[BE-B]` **Packing Checklist Generation Service**
   - **Feature**: #35
   - **Target Files**: `backend/app/services/checklist_service.py`
@@ -320,11 +352,15 @@
   - **Target Files**: `backend/app/services/agent_logger.py`
   - **Acceptance Criteria**: Every LLM call logs `input_tokens`, `output_tokens`, `duration_ms`, `agent_name`, `user_id` to `agent_logs` table.
 
-### 4.2 Shared Expense Splitting (Backend Core & Platform)
-- [ ] **TASK-404** `[BE-A]` **Expense Splitting Calculation Service**
+### 4.2 Shared Expense Splitting & Settlement (Backend Core & Platform)
+- [ ] **TASK-404** `[BE-A]` **Expense Splitting & Optimal Settlement Algorithm**
   - **Feature**: #41
-  - **Target Files**: `backend/app/services/expense_service.py`
-  - **Acceptance Criteria**: Computes equal per-person split, custom itemized split, and balance summary for event members.
+  - **Target Files**: `backend/app/services/expense_service.py`, `backend/app/services/settlement_service.py`
+  - **Acceptance Criteria**: Tính split theo 3 kiểu `SplitType` — `EQUAL`, `EXACT`, `PERCENTAGE`; tính balance từng member (`MemberBalance`). `SettlementService.settle()` chạy **thuật toán tối ưu số giao dịch** theo ví dụ [database-schema.md](../03-architecture/database-schema.md) §3 (A/B/C/D → 3 transactions) — thuật toán greedy: tạo biểu đồ creditor/debtor từ net balance, khớp cặp, số transaction ≤ số người nợ; lưu `EventSettlement` + `SettlementTransaction`. Unit test thuật toán trên cases 2/3/4 người (định nghĩa trong `tests/test_settlement.py`).
+- [ ] **TASK-415** `[BE-A]` **Fund & Expense CRUD + Settlement Persistence APIs**
+  - **Feature**: #41
+  - **Target Files**: `backend/app/api/v1/funds.py`, `backend/app/api/v1/expenses.py`, `backend/app/api/v1/settlements.py`, `backend/app/models/fund.py`, `backend/app/models/expense.py`, `backend/app/models/settlement.py`
+  - **Acceptance Criteria**: `POST/GET/PATCH/DELETE /events/{id}/fund-contributions` và `/events/{id}/expenses` (mỗi expense tạo `expense_splits` theo SplitType); `GET /events/{id}/balances` trả net balance từng member; `GET /events/{id}/settlements` + `POST /events/{id}/settlements` (chạy thuật toán TASK-404, ghi `EventSettlement`). Role guard: chỉ OWNER/MEMBER được sửa expense (theo RolesGuard TASK-204). Alembic migration + tests `test_expense.py`, `test_settlement.py`.
 
 ### 4.3 Admin Dashboard Service (Backend Platform)
 - [ ] **TASK-405** `[BE-B]` **Admin Statistics APIs**
@@ -345,10 +381,10 @@
   - **Feature**: #25, #32
   - **Target Files**: `frontend/src/features/plan/components/StopCategoryCard.tsx`
   - **Acceptance Criteria**: Custom card designs: displays menu items for RESTAURANT, activity ticket prices for ENTERTAINMENT, opening hours/tips for SIGHTSEEING.
-- [ ] **TASK-409** `[FE-B]` **Shared Expense Calculator UI**
+- [ ] **TASK-409** `[FE-B]` **Shared Expense & Settlement UI**
   - **Feature**: #41
-  - **Target Files**: `frontend/src/features/expense/pages/ExpensePage.tsx`
-  - **Acceptance Criteria**: Displays total cost, per-person debt matrix, settled status toggle.
+  - **Target Files**: `frontend/src/features/expense/pages/ExpensePage.tsx`, `frontend/src/features/expense/components/ExpenseForm.tsx`, `frontend/src/features/expense/components/FundPoolCard.tsx`, `frontend/src/features/expense/components/SettlementTable.tsx`
+  - **Acceptance Criteria**: UI tương ứng API TASK-415: form thêm expense chọn SplitType (EQUAL/EXACT/PERCENTAGE), hiển thị fund pool + từng member đóng bao nhiêu, danh sách expense, net balance từng người, bảng settlement tối ưu (ai trả ai bao nhiêu) kèm trạng thái settled toggle. Empty/loading/error states đầy đủ (theo wireframe TASK-010).
 - [ ] **TASK-410** `[FE-B]` **Admin Dashboard UI Screen**
   - **Feature**: #36, #37
   - **Target Files**: `frontend/src/features/admin/pages/AdminDashboardPage.tsx`
@@ -367,7 +403,7 @@
   - **Feature**: Security
   - **Target Files**: Entire Application
   - **Acceptance Criteria**: Verifies SQL injection safety (SQLAlchemy parameterized queries), XSS escaping, CORS enforcement, and authorization guards across all endpoints.
-- [ ] **TASK-414** `[SEC/DEVOPS]` **Production Build & Deployment Validation**
+- [ ] **TASK-414** `[SEC/DEVOPS]` **Production Build & Deployment Validation (Vercel + Render)**
   - **Feature**: DevOps
-  - **Target Files**: `docker-compose.prod.yml`, GitHub Actions
-  - **Acceptance Criteria**: Production Docker container builds cleanly; staging deployment verified with SSL, environment secrets, and green health checks.
+  - **Target Files**: `docker-compose.prod.yml`, `vercel.json`, `render.yaml`, GitHub Actions
+  - **Acceptance Criteria**: Production Docker container builds cleanly; **end-to-end smoke test trên URL production thật** — Frontend tại Vercel domain (từ TASK-118) gọi Backend tại Render domain (từ TASK-216): đăng nhập → tạo event → tạo plan → xem expense, `/health` green, SSL + CORS đúng domain, environment secrets không lộ (quét `.env`/hardcoded key). Có checklist verify trước khi demo cuối.

@@ -57,7 +57,7 @@
 - [ ] **`TASK-312`** `[BE-Services - Phạm Đình Ánh Dương]` **PDF Export Service (WeasyPrint / ReportLab)**
   - **Feature**: #34
   - **Target Files**: `backend/app/api/v1/export.py`, `backend/app/services/export_service.py`
-  - **Acceptance Criteria**: `GET /events/:id/export/pdf` generates downloadable PDF with event timeline, stop details, map snapshot, and expense summary.
+  - **Acceptance Criteria**: `GET /events/{id}/export/pdf` generates downloadable PDF with event timeline, stop details, map snapshot, and expense summary.
 - [ ] **`TASK-313`** `[BE-Services - Phạm Đình Ánh Dương]` **Packing Checklist Generation Service**
   - **Feature**: #35
   - **Target Files**: `backend/app/services/checklist_service.py`

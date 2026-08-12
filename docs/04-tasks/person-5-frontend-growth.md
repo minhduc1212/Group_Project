@@ -9,7 +9,7 @@
 
 | Sprint | Task Count | Done | Status |
 |---|---|---|---|
-| **Sprint 0** | 1 Task | 0/1 | 🔲 To Do |
+| **Sprint 0** | 3 Tasks | 0/3 | 🔲 To Do |
 | **Sprint 1** | 2 Tasks | 0/2 | 🔲 To Do |
 | **Sprint 2** | 0 Tasks (Support AI Chat Mock) | 0/0 | 🔲 To Do |
 | **Sprint 3** | 0 Tasks (Support PDF Preview) | 0/0 | 🔲 To Do |
@@ -19,11 +19,19 @@
 
 ## 🛠️ Detailed Sprint Backlog
 
-### Sprint 0 — MSW Streaming Mock Setup
+### Sprint 0 — MSW Mock, User Flows & Hi-fi Mockups
 - [ ] **`TASK-005`** **MSW Streaming Mock Setup for AI Chat**
   - **Feature**: #31, #32
   - **Target Files**: `frontend/src/mocks/handlers/ai.ts`
   - **Acceptance Criteria**: Simulates SSE / WebSocket chunked responses for chat UI testing without calling real backend.
+- [ ] **`TASK-010`** **User Flows & Page Wireframes**
+  - **Feature**: #1 → #42
+  - **Target Files**: `docs/06-design/user-flows.md`, `docs/06-design/wireframes/` (Mermaid/ASCII hoặc Figma)
+  - **Acceptance Criteria**: Flowchart các luồng chính: register/login → tạo event → mời member → tạo/vote plan → confirm → chia chi phí; wireframe từng page chốt layout + component + empty/loading/error state.
+- [ ] **`TASK-011`** **Hi-fi Mockups, Component Library & Accessibility**
+  - **Feature**: #42
+  - **Target Files**: `docs/06-design/mockups.md` (link Figma), `frontend/src/components/ui/` (variants)
+  - **Acceptance Criteria**: Hi-fi mockups cho 6 EventType + AI chat streaming + expense/settlement; component variants (Button/Input/Card/Dialog/Toast) theo design tokens (TASK-009); responsive breakpoints (mobile/tablet/desktop) + contrast WCAG AA.
 
 ### Sprint 1 — Landing Page & i18n
 - [ ] **`TASK-114`** **Landing Page & Hero Section**
@@ -48,10 +56,10 @@
   - **Feature**: #25, #32
   - **Target Files**: `frontend/src/features/plan/components/StopCategoryCard.tsx`
   - **Acceptance Criteria**: Custom card designs: displays menu items for RESTAURANT, activity ticket prices for ENTERTAINMENT, opening hours/tips for SIGHTSEEING.
-- [ ] **`TASK-409`** **Shared Expense Calculator UI**
+- [ ] **`TASK-409`** **Shared Expense & Settlement UI**
   - **Feature**: #41
-  - **Target Files**: `frontend/src/features/expense/pages/ExpensePage.tsx`
-  - **Acceptance Criteria**: Displays total cost, per-person debt matrix, settled status toggle.
+  - **Target Files**: `frontend/src/features/expense/pages/ExpensePage.tsx`, `frontend/src/features/expense/components/ExpenseForm.tsx`, `frontend/src/features/expense/components/FundPoolCard.tsx`, `frontend/src/features/expense/components/SettlementTable.tsx`
+  - **Acceptance Criteria**: UI tương ứng API TASK-415: form thêm expense chọn SplitType (EQUAL/EXACT/PERCENTAGE), hiển thị fund pool + từng member đóng bao nhiêu, danh sách expense, net balance từng người, bảng settlement tối ưu (ai trả ai bao nhiêu) kèm trạng thái settled toggle. Empty/loading/error states đầy đủ (theo wireframe TASK-010).
 - [ ] **`TASK-410`** **Admin Dashboard UI Screen**
   - **Feature**: #36, #37
   - **Target Files**: `frontend/src/features/admin/pages/AdminDashboardPage.tsx`

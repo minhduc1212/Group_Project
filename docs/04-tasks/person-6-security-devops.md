@@ -10,8 +10,8 @@
 | Sprint | Task Count | Done | Status |
 |---|---|---|---|
 | **Sprint 0** | 3 Tasks | 0/3 | 🔲 To Do |
-| **Sprint 1** | 2 Tasks | 0/2 | 🔲 To Do |
-| **Sprint 2** | 0 Tasks (Support Review API Security) | 0/0 | 🔲 To Do |
+| **Sprint 1** | 3 Tasks | 0/3 | 🔲 To Do |
+| **Sprint 2** | 1 Task | 0/1 | 🔲 To Do |
 | **Sprint 3** | 0 Tasks (Support Review Export/Mail) | 0/0 | 🔲 To Do |
 | **Sprint 4** | 4 Tasks | 0/4 | 🔲 To Do |
 
@@ -33,7 +33,7 @@
   - **Target Files**: `.pre-commit-config.yaml`, `backend/pyproject.toml`
   - **Acceptance Criteria**: Blocks local git commit if Ruff linting fails or Black formatting drifts.
 
-### Sprint 1 — Security Middlewares & Auth Review
+### Sprint 1 — Security Middlewares, Auth Review & Frontend Deploy
 - [ ] **`TASK-116`** **FastAPI Security Middlewares**
   - **Feature**: Security Baseline
   - **Target Files**: `backend/app/main.py`
@@ -42,6 +42,16 @@
   - **Feature**: Security
   - **Target Files**: `backend/app/api/v1/auth.py`
   - **Acceptance Criteria**: Sign-off on bcrypt cost factor ≥ 10, JWT secret length ≥ 32 chars, httpOnly cookie settings, rate limit configuration.
+- [ ] **`TASK-118`** **Vercel Deploy Pipeline (Preview + Production)**
+  - **Feature**: N/A (Deployment)
+  - **Target Files**: `vercel.json`, `.github/workflows/cd-frontend.yml`, `docs/03-architecture/deployment-guide.md`
+  - **Acceptance Criteria**: Mỗi PR tạo Preview URL riêng; merge `main` tự động deploy Production. Biến môi trường theo env: `VITE_API_BASE_URL`, `VITE_USE_MOCK=false`, `VITE_MAPBOX_ACCESS_TOKEN`. Smoke test URL live sau deploy (build pass + trang tải được + không lỗi runtime).
+
+### Sprint 2 — Backend Deploy (Render)
+- [ ] **`TASK-216`** **Render Deploy Pipeline (FastAPI + Postgres + Redis)**
+  - **Feature**: N/A (Deployment)
+  - **Target Files**: `render.yaml`, `backend/Dockerfile.prod`, `.github/workflows/cd-backend.yml`, `docs/03-architecture/deployment-guide.md`
+  - **Acceptance Criteria**: Render Blueprint (`render.yaml`) khởi tạo FastAPI web service + PostgreSQL 15 + Redis 7. Deploy tự động khi merge `main`. Chạy `alembic upgrade head` trong quá trình deploy. `/health` green. Secrets (JWT, DB URL, AI keys, email) qua Render env, không hardcode/.env commit. `Dockerfile.prod` non-root user + multi-stage.
 
 ### Sprint 4 — Pentest, Pydantic Audits & Production Deploy
 - [ ] **`TASK-411`** **Input Sanitization & Boundary Validation Audit**
@@ -56,10 +66,10 @@
   - **Feature**: Security
   - **Target Files**: Entire Application
   - **Acceptance Criteria**: Verifies SQL injection safety (SQLAlchemy parameterized queries), XSS escaping, CORS enforcement, and authorization guards across all endpoints.
-- [ ] **`TASK-414`** **Production Build & Deployment Validation**
+- [ ] **`TASK-414`** **Production Build & Deployment Validation (Vercel + Render)**
   - **Feature**: DevOps
-  - **Target Files**: `docker-compose.prod.yml`, GitHub Actions
-  - **Acceptance Criteria**: Production Docker container builds cleanly; staging deployment verified with SSL, environment secrets, and green health checks.
+  - **Target Files**: `docker-compose.prod.yml`, `vercel.json`, `render.yaml`, GitHub Actions
+  - **Acceptance Criteria**: Production Docker container builds cleanly; **end-to-end smoke test trên URL production thật** — Frontend tại Vercel domain (TASK-118) gọi Backend tại Render domain (TASK-216): đăng nhập → tạo event → tạo plan → xem expense, `/health` green, SSL + CORS đúng domain, environment secrets không lộ. Có checklist verify trước khi demo cuối.
 
 ---
 

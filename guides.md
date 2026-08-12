@@ -396,6 +396,13 @@ Group_Project/
 │   │   ├── person-5-frontend-growth.md← Nguyễn Minh Đức (Frontend AI & Growth UI)
 │   │   └── person-6-security-devops.md← Đinh Tiến Luân (Cyber Security & DevOps)
 │   │
-│   └── 05-security/                   ← Bảo mật
-│       └── security-guidelines.md     ← Standard security checklist & Pydantic sanitization
+│   ├── 05-security/                   ← Bảo mật
+│   │   └── security-guidelines.md     ← Standard security checklist & Pydantic sanitization
+│   │
+│   └── 06-design/                     ← UI/UX Design (Sprint 0)
+│       ├── README.md                  ← Overview + quy trình Design → Code
+│       ├── design-tokens.md           ← Palette, typography, spacing (TASK-009)
+│       ├── user-flows.md              ← Flowchart các luồng chính (TASK-010)
+│       ├── wireframes/                ← Wireframe từng page (TASK-010)
+│       └── mockups.md                 ← Hi-fi mockups trên Figma (TASK-011)
 ```

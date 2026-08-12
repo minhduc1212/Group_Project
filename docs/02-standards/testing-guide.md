@@ -3,8 +3,8 @@
 ## 1. Mức test & công cụ
 | Loại | Công cụ | Bắt buộc cho |
 |---|---|---|
-| Unit test | Jest (BE), Vitest (FE) | Service/business logic, util function, Agent logic |
-| Integration test | Jest + Supertest (BE, dùng test DB riêng) | Endpoint API quan trọng (Auth, Event/Plan/Vote CRUD, AI orchestrator) |
+| Unit test | pytest (BE), Vitest (FE) | Service/business logic, util function, Agent logic |
+| Integration test | pytest + httpx.AsyncClient (BE, dùng test DB riêng) | Endpoint API quan trọng (Auth, Event/Plan/Vote CRUD, AI orchestrator) |
 | Component test | Vitest + React Testing Library | Component có logic/state phức tạp (form, vote UI) |
 | E2E (nếu còn thời gian) | Playwright | Luồng chính: đăng nhập → tạo event → tạo plan → vote |
 
@@ -20,32 +20,30 @@
 
 ## 3. Quy tắc đặt tên test
 ```
-<tên-file-gốc>.spec.ts     // unit/integration test đi kèm module
-<tên-file-gốc>.e2e-spec.ts  // e2e test
+test_<tên_module>.py          // unit/integration test đi kèm module
+test_<tên_module>_e2e.py       // e2e test
 ```
-- `describe` = tên class/function đang test, `it`/`test` = mô tả hành vi theo dạng "should ... when ...":
-```ts
-describe('EventService', () => {
-  describe('createEvent', () => {
-    it('should create event and set creator as OWNER', async () => { ... });
-    it('should throw BadRequestException when endDate is before startDate', async () => { ... });
-  });
-});
+- `class` = nhóm các test liên quan, `def test_` = mô tả hành vi theo dạng "should ... when ...":
+```python
+class TestEventService:
+    class TestCreateEvent:
+        def test_should_create_event_and_set_creator_as_owner(self, ...): ...
+        def test_should_raise_error_when_end_date_before_start_date(self, ...): ...
 ```
 
 ## 4. Cấu trúc test: Arrange – Act – Assert (AAA)
-```ts
-it('should throw ForbiddenException when a VIEWER tries to edit plan', async () => {
-  // Arrange
-  const viewer = createMockMember({ role: 'VIEWER' });
-  const dto = { title: 'New title' };
+```python
+async def test_should_raise_403_when_viewer_tries_to_edit_plan(self, async_client):
+    # Arrange
+    viewer = create_mock_member(role="VIEWER")
+    dto = {"title": "New title"}
 
-  // Act
-  const act = () => planService.updatePlan(planId, dto, viewer);
+    # Act
+    response = await async_client.patch(f"/api/v1/events/{event_id}/plans/{plan_id}", json=dto,
+                                         headers=viewer_auth_header(viewer))
 
-  // Assert
-  await expect(act).rejects.toThrow(ForbiddenException);
-});
+    # Assert
+    assert response.status_code == 403
 ```
 
 ## 5. Test riêng cho AI Agent (Nhóm 4)
@@ -53,13 +51,12 @@ Vì gọi LLM thật tốn chi phí + không deterministic, tách 2 lớp test:
 
 ### a) Test logic thuần (không gọi LLM thật) — bắt buộc
 - Mock LLM client, trả về response giả định (fixture JSON cố định).
-- Test: orchestrator có route đúng sang sub-agent tương ứng không, agent có validate/parse đúng output theo Zod schema không, có xử lý đúng khi LLM trả JSON sai định dạng không (fallback/retry).
-```ts
-it('should route to plan agent when intent is "create_plan"', async () => {
-  mockLLM.mockResolvedValueOnce({ intent: 'create_plan', payload: {...} });
-  const result = await orchestrator.run(input);
-  expect(planAgent.generate).toHaveBeenCalled();
-});
+- Test: orchestrator có route đúng sang sub-agent tương ứng không, agent có validate/parse đúng output theo Pydantic schema không, có xử lý đúng khi LLM trả JSON sai định dạng không (fallback/retry).
+```python
+async def test_should_route_to_plan_agent_when_intent_is_create_plan(self):
+    mock_llm.return_value = {"intent": "create_plan", "payload": {...}}
+    result = await orchestrator.run(input)
+    plan_agent.generate.assert_called_once()
 ```
 
 ### b) Test tích hợp với LLM thật (không chạy trong CI mặc định) — tuỳ chọn
@@ -69,17 +66,17 @@ it('should route to plan agent when intent is "create_plan"', async () => {
 ## 6. Integration test API
 - Dùng database test riêng (Postgres container riêng qua `docker-compose.test.yml`), seed data trước mỗi test suite, rollback/truncate sau mỗi test.
 - Không test integration nhắm vào database dev/production.
-```ts
-describe('POST /events (e2e)', () => {
-  it('should return 401 when no token provided', () => {
-    return request(app.getHttpServer()).post('/events').send(dto).expect(401);
-  });
-});
+```python
+class TestCreateEvent:
+    async def test_should_return_401_when_no_token_provided(self, async_client):
+        dto = {"name": "Test Event", "event_type": "DINING"}
+        response = await async_client.post("/api/v1/events", json=dto)
+        assert response.status_code == 401
 ```
 
 ## 7. Bắt buộc trong CI (GitHub Actions)
-- Mọi PR chạy: `lint` → `unit test` → `integration test` (dùng test DB trong container) → `build`.
+- Mọi PR chạy: `ruff check` + `mypy` → `pytest` unit test → `pytest` integration test (dùng test DB trong container) → `docker build`.
 - PR fail bất kỳ bước nào → không cho merge (branch protection rule yêu cầu check "CI / test" pass).
 
 ## 8. Khi nào **không cần** viết test
-- Code cấu hình thuần (VD `main.ts` bootstrap NestJS), UI tĩnh không có logic (landing page tĩnh Nhóm 7) — ưu tiên thời gian cho logic nghiệp vụ và AI Agent.
+- Code cấu hình thuần (VD `backend/app/main.py` FastAPI app bootstrap), UI tĩnh không có logic (landing page tĩnh Nhóm 7) — ưu tiên thời gian cho logic nghiệp vụ và AI Agent.

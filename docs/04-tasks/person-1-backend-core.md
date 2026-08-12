@@ -14,7 +14,7 @@
 | **Sprint 1** | 6 Tasks | 0/6 | 🔲 To Do |
 | **Sprint 2** | 4 Tasks | 0/4 | 🔲 To Do |
 | **Sprint 3** | 6 Tasks | 0/6 | 🔲 To Do |
-| **Sprint 4** | 1 Task | 0/1 | 🔲 To Do |
+| **Sprint 4** | 2 Tasks | 0/2 | 🔲 To Do |
 
 ---
 
@@ -23,8 +23,8 @@
 ### Sprint 0 — Contract Session
 - [ ] **`TASK-001`** **Design SQLAlchemy & Pydantic DB Schemas**
   - **Feature**: N/A (Sprint 0 Contract)
-  - **Target Files**: `backend/app/models/` (`user.py`, `event.py`, `plan.py`, `vote.py`, `invitation.py`, `log.py`), `backend/app/schemas/`
-  - **Acceptance Criteria**: Full support for `EventType`, `StopCategory`, `metadata` JSON, `Invitation`, `PlanStatus`. Migration passes clean via Alembic.
+  - **Target Files**: `backend/app/models/` (`user.py`, `event.py`, `plan.py`, `vote.py`, `invitation.py`, `log.py`, **`fund.py`, `expense.py`, `settlement.py`**), `backend/app/schemas/`
+  - **Acceptance Criteria**: Full support for `EventType`, `StopCategory`, `metadata` JSON, `Invitation`, `PlanStatus`. Có đủ 6 bảng tài chính trong [database-schema.md](../03-architecture/database-schema.md): `fund_contributions`, `expenses`, `expense_splits`, `event_settlements`, `member_balances`, `settlement_transactions` + `total_budget`/`estimated_cost` trên Plan. Migration passes clean via Alembic.
 - [ ] **`TASK-002`** **FastAPI APIRouter Skeleton**
   - **Feature**: N/A (Contract)
   - **Target Files**: `backend/app/api/v1/` (`auth.py`, `events.py`, `plans.py`, `votes.py`, `invitations.py`)
@@ -64,11 +64,11 @@
 - [ ] **`TASK-202`** **Event CRUD APIs**
   - **Feature**: #6, #9
   - **Target Files**: `backend/app/api/v1/events.py`, `backend/app/services/event_service.py`
-  - **Acceptance Criteria**: `POST /events` creates event and assigns creator as `OWNER`. `GET /events` lists user events. `PATCH /events/:id` updates event info.
+  - **Acceptance Criteria**: `POST /events` creates event and assigns creator as `OWNER`. `GET /events` lists user events. `PATCH /events/{id}` updates event info.
 - [ ] **`TASK-203`** **Invitation Database Model & APIs**
   - **Feature**: #7
   - **Target Files**: `backend/app/models/invitation.py`, `backend/app/api/v1/invitations.py`
-  - **Acceptance Criteria**: `POST /events/:id/invitations` generates invitation. `PATCH /invitations/:id` allows user to ACCEPT or DECLINE.
+  - **Acceptance Criteria**: `POST /events/{id}/invitations` generates invitation. `PATCH /invitations/{id}` allows user to ACCEPT or DECLINE.
 - [ ] **`TASK-204`** **RolesGuard Dependency (Owner / Member / Viewer)**
   - **Feature**: #8
   - **Target Files**: `backend/app/api/v1/dependencies.py`
@@ -82,15 +82,15 @@
 - [ ] **`TASK-302`** **Manual Plan Creation API**
   - **Feature**: #11
   - **Target Files**: `backend/app/api/v1/plans.py`, `backend/app/services/plan_service.py`
-  - **Acceptance Criteria**: `POST /events/:id/plans` with `is_ai_generated=False` creates manual plan with initial status `DRAFT`.
+  - **Acceptance Criteria**: `POST /events/{id}/plans` with `is_ai_generated=False` creates manual plan with initial status `DRAFT`.
 - [ ] **`TASK-303`** **Plan Stop Management API (Reorder / Add / Delete / Edit)**
   - **Feature**: #12
   - **Target Files**: `backend/app/api/v1/plans.py`
-  - **Acceptance Criteria**: `PATCH /events/:id/plans/:planId/stops` supports reordering stop sequence, updating notes, cost, and JSON metadata.
+  - **Acceptance Criteria**: `PATCH /events/{id}/plans/{planId}/stops` supports reordering stop sequence, updating notes, cost, and JSON metadata.
 - [ ] **`TASK-304`** **Plan Vote API & Tallying Logic**
   - **Feature**: #13
   - **Target Files**: `backend/app/api/v1/votes.py`, `backend/app/services/vote_service.py`
-  - **Acceptance Criteria**: `POST /events/:id/plans/:planId/votes` allows voting UP, DOWN, NEUTRAL with optional comment. Enforces unique constraint per `(plan_id, user_id)`.
+  - **Acceptance Criteria**: `POST /events/{id}/plans/{planId}/votes` allows voting UP, DOWN, NEUTRAL with optional comment. Enforces unique constraint per `(plan_id, user_id)`.
 - [ ] **`TASK-305`** **Plan Status Transition API (DRAFT → VOTING → CONFIRMED)**
   - **Feature**: #14
   - **Target Files**: `backend/app/api/v1/plans.py`
@@ -100,11 +100,15 @@
   - **Target Files**: `backend/app/api/v1/saved_places.py`
   - **Acceptance Criteria**: `POST /saved-places` saves favorite restaurant, place, or venue to user's saved list.
 
-### Sprint 4 — Shared Expense Calculation & Hardening
-- [ ] **`TASK-404`** **Expense Splitting Calculation Service**
+### Sprint 4 — Shared Expense & Settlement (Backend Core)
+- [ ] **`TASK-404`** **Expense Splitting & Optimal Settlement Algorithm**
   - **Feature**: #41
-  - **Target Files**: `backend/app/services/expense_service.py`
-  - **Acceptance Criteria**: Computes equal per-person split, custom itemized split, and balance summary for event members.
+  - **Target Files**: `backend/app/services/expense_service.py`, `backend/app/services/settlement_service.py`
+  - **Acceptance Criteria**: Tính split theo 3 kiểu `SplitType` — `EQUAL`, `EXACT`, `PERCENTAGE`; tính balance từng member (`MemberBalance`). `SettlementService.settle()` chạy thuật toán tối ưu số giao dịch theo ví dụ [database-schema.md](../03-architecture/database-schema.md) §3 (A/B/C/D → 3 transactions); lưu `EventSettlement` + `SettlementTransaction`. Unit test trong `tests/test_settlement.py` (cases 2/3/4 người).
+- [ ] **`TASK-415`** **Fund & Expense CRUD + Settlement Persistence APIs**
+  - **Feature**: #41
+  - **Target Files**: `backend/app/api/v1/funds.py`, `backend/app/api/v1/expenses.py`, `backend/app/api/v1/settlements.py`, `backend/app/models/fund.py`, `backend/app/models/expense.py`, `backend/app/models/settlement.py`
+  - **Acceptance Criteria**: `POST/GET/PATCH/DELETE /events/{id}/fund-contributions` và `/events/{id}/expenses` (mỗi expense tạo `expense_splits` theo SplitType); `GET /events/{id}/balances` trả net balance từng member; `GET/POST /events/{id}/settlements` (chạy thuật toán TASK-404, ghi `EventSettlement`). Role guard theo RolesGuard TASK-204. Alembic migration + tests `test_expense.py`, `test_settlement.py`.
 
 ---
 

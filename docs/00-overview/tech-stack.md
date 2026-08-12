@@ -57,9 +57,12 @@ Lựa chọn công nghệ ưu tiên: **Python FastAPI cho Backend & AI Agent (đ
 | Containerization | **Docker + docker-compose** | Uvicorn + PostgreSQL + Redis local |
 | Package Manager | **Poetry / uv** | Quản lý dependency Python sạch sẽ |
 | CI | **GitHub Actions** | Ruff (lint) + pytest + build |
-| Hosting Frontend | **Vercel** | Free preview |
-| Hosting Backend | **Render / Railway / VPS** | Chạy FastAPI uvicorn server |
-| Quản lý secrets | `.env` + Pydantic BaseSettings | |
+| CD (Frontend) | **GitHub Actions + Vercel** | Deploy tự động: mỗi PR → Preview URL, merge `main` → Production (TASK-118) |
+| CD (Backend) | **GitHub Actions + Render Blueprint** | `render.yaml` + `Dockerfile.prod`: auto-deploy FastAPI + Postgres 15 + Redis 7 khi merge `main` (TASK-216) |
+| Hosting Frontend | **Vercel** | Free preview + production domain |
+| Hosting Backend | **Render** (fallback: Railway / VPS) | Chạy FastAPI uvicorn server |
+| Quản lý secrets | `.env` + Pydantic BaseSettings | Production: đặt qua env của Vercel/Render, không commit `.env` |
+| Deploy guide | [deployment-guide.md](../03-architecture/deployment-guide.md) | Chi tiết `vercel.json`, `render.yaml`, smoke test |
 
 ## 7. Testing
 | Hạng mục | Lựa chọn |

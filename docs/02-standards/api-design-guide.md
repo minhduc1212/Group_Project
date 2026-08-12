@@ -6,11 +6,11 @@
 
 | Method | Ý nghĩa | Ví dụ |
 |---|---|---|
-| `GET` | Đọc dữ liệu | `GET /events`, `GET /events/:id` |
+| `GET` | Đọc dữ liệu | `GET /events`, `GET /events/{id}` |
 | `POST` | Tạo mới | `POST /events` |
-| `PATCH` | Cập nhật 1 phần | `PATCH /events/:id` |
+| `PATCH` | Cập nhật 1 phần | `PATCH /events/{id}` |
 | `PUT` | Thay thế toàn bộ (ít dùng) | — |
-| `DELETE` | Xoá | `DELETE /events/:id` |
+| `DELETE` | Xoá | `DELETE /events/{id}` |
 
 ## 2. Versioning
 - Prefix version ở đầu path: `/api/v1/...`
@@ -28,34 +28,34 @@
   GET    /auth/me
 
 /api/v1/users
-  GET    /users/:id/profile
-  PATCH  /users/:id/profile
+  GET    /users/{id}/profile
+  PATCH  /users/{id}/profile
 
 /api/v1/events
   GET    /events                                       # lấy danh sách event của user
   POST   /events                                       # tạo event (name, type: EventType, location, dates)
-  GET    /events/:id                                   # chi tiết event + thành viên + plans
-  PATCH  /events/:id                                   # sửa thông tin event
-  DELETE /events/:id                                   # xoá event (chỉ Owner)
-  GET    /events/:id/members                           # lấy danh sách thành viên
+  GET    /events/{id}                                   # chi tiết event + thành viên + plans
+  PATCH  /events/{id}                                   # sửa thông tin event
+  DELETE /events/{id}                                   # xoá event (chỉ Owner)
+  GET    /events/{id}/members                           # lấy danh sách thành viên
 
 /api/v1/invitations
-  POST   /events/:eventId/invitations                  # gửi lời mời vào event (email / userId)
+  POST   /events/{eventId}/invitations                  # gửi lời mời vào event (email / userId)
   GET    /invitations/me                               # danh sách lời mời của user hiện tại
-  PATCH  /invitations/:id                              # chấp nhận (ACCEPTED) hoặc từ chối (DECLINED)
+  PATCH  /invitations/{id}                              # chấp nhận (ACCEPTED) hoặc từ chối (DECLINED)
 
-/api/v1/events/:eventId/plans
-  GET    /events/:eventId/plans                        # danh sách plans trong event
-  POST   /events/:eventId/plans                        # tạo plan mới (AI hoặc thủ công, isAiGenerated: bool)
-  GET    /events/:eventId/plans/:planId                # chi tiết plan + stops + votes
-  PATCH  /events/:eventId/plans/:planId                # sửa thông tin plan (title, budget...)
-  PATCH  /events/:eventId/plans/:planId/status         # chuyển trạng thái: DRAFT -> VOTING -> CONFIRMED
-  DELETE /events/:eventId/plans/:planId                # xoá plan
-  PATCH  /events/:eventId/plans/:planId/stops          # đổi thứ tự / thêm / xoá / sửa điểm dừng (PlanStop)
+/api/v1/events/{eventId}/plans
+  GET    /events/{eventId}/plans                        # danh sách plans trong event
+  POST   /events/{eventId}/plans                        # tạo plan mới (AI hoặc thủ công, isAiGenerated: bool)
+  GET    /events/{eventId}/plans/{planId}                # chi tiết plan + stops + votes
+  PATCH  /events/{eventId}/plans/{planId}                # sửa thông tin plan (title, budget...)
+  PATCH  /events/{eventId}/plans/{planId}/status         # chuyển trạng thái: DRAFT -> VOTING -> CONFIRMED
+  DELETE /events/{eventId}/plans/{planId}                # xoá plan
+  PATCH  /events/{eventId}/plans/{planId}/stops          # đổi thứ tự / thêm / xoá / sửa điểm dừng (PlanStop)
 
-/api/v1/events/:eventId/plans/:planId/votes
-  POST   /events/:eventId/plans/:planId/votes          # vote UP / DOWN / NEUTRAL + comment
-  GET    /events/:eventId/plans/:planId/votes          # xem danh sách và kết quả vote
+/api/v1/events/{eventId}/plans/{planId}/votes
+  POST   /events/{eventId}/plans/{planId}/votes          # vote UP / DOWN / NEUTRAL + comment
+  GET    /events/{eventId}/plans/{planId}/votes          # xem danh sách và kết quả vote
 
 /api/v1/places        (Nhóm 3)
   GET    /places/search?keyword=&lat=&lng=&category=   # tra cứu địa điểm, category: RESTAURANT, CAFE, ENTERTAINMENT, ATTRACTION, HOTEL
@@ -68,7 +68,7 @@
 /api/v1/ai              (Nhóm 4)
   POST   /ai/orchestrator/run          # điểm vào chính, orchestrator tự điều phối sub-agent theo EventType
   POST   /ai/chat                       # màn hình chat với AI (15)
-  GET    /ai/chat/:sessionId/history
+  GET    /ai/chat/{sessionId}/history
   POST   /ai/agents/booking/suggest
   POST   /ai/agents/location/search
   POST   /ai/agents/plan/generate
@@ -81,7 +81,7 @@
   POST   /notifications/mark-read
 
 /api/v1/export            (Nhóm 5)
-  GET    /events/:eventId/export/pdf
+  GET    /events/{eventId}/export/pdf
 
 /api/v1/admin               (Nhóm 6)
   GET    /admin/users
@@ -108,7 +108,7 @@
   }
 }
 ```
-- `error.code` dùng `UPPER_SNAKE_CASE`, thống nhất danh sách trong `common/exceptions/error-codes.ts` — tránh mỗi người tự đặt 1 kiểu.
+- `error.code` dùng `UPPER_SNAKE_CASE`, thống nhất danh sách trong `backend/app/core/error_codes.py` — tránh mỗi người tự đặt 1 kiểu.
 
 ## 5. HTTP status code chuẩn
 | Code | Khi nào dùng |
@@ -137,4 +137,4 @@
 - Áp dụng rate limit cho `/places/*`, `/weather`, `/exchange-rate` để tránh vượt quota free-tier của API bên thứ 3 (kết hợp cache Redis, xem `03-architecture`).
 
 ## 8. Tài liệu API tự động
-- Dùng **Swagger/OpenAPI** (`@nestjs/swagger`) sinh doc tự động từ decorator trong code — tránh viết doc API thủ công dễ lệch với code thật. Truy cập `/api/docs` ở môi trường dev.
+- Dùng **FastAPI automatic OpenAPI** — FastAPI tự sinh OpenAPI spec từ Pydantic models và route decorators, truy cập tại `/docs` (Swagger UI) và `/redoc` (ReDoc) ở mọi môi trường. Không cần viết doc API thủ công.
