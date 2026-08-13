@@ -69,25 +69,25 @@ model User {
   avatarUrl     String?      @map("avatar_url")
   provider      AuthProvider @default(LOCAL)
   role          SystemRole   @default(USER)        // Quyền hệ thống (USER/ADMIN)
-  status        UserStatus   @default(ACTIVE)      // Phục vụ Admin quản lý user
-  createdAt     DateTime     @default(now()) @map("created_at")
+  status        UserStatus   @default(ACTIVE)      // [CHƯA CODE]
+  createdAt     DateTime     @default(now()) @map("created_at") // [CHƯA CODE]
 
   // Relations
   eventMembers        EventMember[]
-  savedPlaces         SavedPlace[]
-  createdPlans        Plan[]
-  notifications       Notification[]
-  votedPlans          PlanVote[]
-  sentInvitations     Invitation[]            @relation("InvitationsSent")
-  receivedInvitations Invitation[]            @relation("InvitationsReceived")
-  createdChecklistItems ChecklistItem[]
-  chatMessages          ChatMessage[]
+  savedPlaces         SavedPlace[]            // [CHƯA CODE]
+  createdPlans        Plan[]                  // [CHƯA CODE]
+  notifications       Notification[]          // [CHƯA CODE]
+  votedPlans          PlanVote[]              // [CHƯA CODE]
+  sentInvitations     Invitation[]            @relation("InvitationsSent") // [CHƯA CODE]
+  receivedInvitations Invitation[]            @relation("InvitationsReceived") // [CHƯA CODE]
+  createdChecklistItems ChecklistItem[]         // [CHƯA CODE]
+  chatMessages          ChatMessage[]           // [CHƯA CODE]
   
   // Financial Relations (Quản lý tài chính 3 bảng tối ưu)
-  paidExpenses        Expense[]               @relation("ExpensesPaid")
-  expenseSplits       ExpenseSplit[]
-  settlementsFrom     Settlement[]            @relation("SettlementsFrom")
-  settlementsTo       Settlement[]            @relation("SettlementsTo")
+  paidExpenses        Expense[]               @relation("ExpensesPaid") // [CHƯA CODE]
+  expenseSplits       ExpenseSplit[]          // [CHƯA CODE]
+  settlementsFrom     Settlement[]            @relation("SettlementsFrom") // [CHƯA CODE]
+  settlementsTo       Settlement[]            @relation("SettlementsTo") // [CHƯA CODE]
 
   @@map("users")
 }
@@ -120,18 +120,18 @@ model Event {
   location    String?
   startDate   DateTime  @map("start_date")
   endDate     DateTime  @map("end_date")
-  createdAt   DateTime  @default(now()) @map("created_at")
+  createdAt   DateTime  @default(now()) @map("created_at") // [CHƯA CODE]
 
   // Relations
   members           EventMember[]
-  plans             Plan[]
-  invitations       Invitation[]
-  checklistItems    ChecklistItem[]
-  chatMessages      ChatMessage[]
+  plans             Plan[]                    // [CHƯA CODE]
+  invitations       Invitation[]              // [CHƯA CODE]
+  checklistItems    ChecklistItem[]           // [CHƯA CODE]
+  chatMessages      ChatMessage[]             // [CHƯA CODE]
   
   // Financial Relations
-  expenses          Expense[]
-  settlements       Settlement[]
+  expenses          Expense[]                 // [CHƯA CODE]
+  settlements       Settlement[]              // [CHƯA CODE]
 
   @@map("events")
 }
@@ -150,7 +150,7 @@ model EventMember {
   eventId  String    @map("event_id")
   userId   String    @map("user_id")
   role     EventRole @default(MEMBER)
-  joinedAt DateTime  @default(now()) @map("joined_at")
+  joinedAt DateTime  @default(now()) @map("joined_at") // [CHƯA CODE]
 
   event    Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
   user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -169,20 +169,21 @@ enum EventRole {
 // 3. PLAN & ITINERARY (AI DỰ TOÁN CHI PHÍ)
 // ==========================================
 
+
 model Plan {
   id            String     @id @default(uuid())
   eventId       String     @map("event_id")
   title         String
-  status        PlanStatus @default(DRAFT)
+  status        PlanStatus @default(DRAFT)          // [CHƯA CODE]
   isAiGenerated Boolean    @default(false) @map("is_ai_generated")
   totalBudget   Decimal?   @map("total_budget")   // AI Cost Agent ghi tổng dự toán ngân sách
   createdById   String?    @map("created_by_id")
-  createdAt     DateTime   @default(now()) @map("created_at")
+  createdAt     DateTime   @default(now()) @map("created_at") // [CHƯA CODE]
 
-  event         Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  createdBy     User?      @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  event         Event      @relation(fields: [eventId], references: [id], onDelete: Cascade) // [CHƯA CODE]
+  createdBy     User?      @relation(fields: [createdById], references: [id], onDelete: SetNull) // [CHƯA CODE]
   stops         PlanStop[]
-  votes         PlanVote[]
+  votes         PlanVote[]                          // [CHƯA CODE]
 
   @@map("plans")
 }
@@ -210,7 +211,7 @@ model PlanStop {
   metadata        Json?
 
   plan            Plan          @relation(fields: [planId], references: [id], onDelete: Cascade)
-  expenses        Expense[]     // Liên kết các chi phí thực tế phát sinh tại điểm dừng này
+  expenses        Expense[]     // [CHƯA CODE] Liên kết các chi phí thực tế phát sinh tại điểm dừng này
 
   @@map("plan_stops")
 }
@@ -264,11 +265,11 @@ model Expense {
   splitType   SplitType     @default(EQUAL) @map("split_type")
   note        String?                            
   receiptUrl  String?       @map("receipt_url")  
-  createdAt   DateTime      @default(now()) @map("created_at")
+  createdAt   DateTime      @default(now()) @map("created_at") // [CHƯA CODE]
 
-  event       Event         @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  planStop    PlanStop?     @relation(fields: [planStopId], references: [id], onDelete: SetNull)
-  paidBy      User          @relation("ExpensesPaid", fields: [paidById], references: [id], onDelete: Cascade)
+  event       Event         @relation(fields: [eventId], references: [id], onDelete: Cascade) // [CHƯA CODE]
+  planStop    PlanStop?     @relation(fields: [planStopId], references: [id], onDelete: SetNull) // [CHƯA CODE]
+  paidBy      User          @relation("ExpensesPaid", fields: [paidById], references: [id], onDelete: Cascade) // [CHƯA CODE]
   splits      ExpenseSplit[]                     // Chi tiết những ai thụ hưởng khoản này
 
   @@index([eventId])
@@ -294,7 +295,7 @@ model ExpenseSplit {
   amount    Decimal                       // Gánh bao nhiêu tiền trong hóa đơn này
 
   expense   Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade) // [CHƯA CODE]
 
   @@unique([expenseId, userId])
   @@map("expense_splits")
@@ -322,6 +323,7 @@ model Settlement {
 // 5. CHECKLIST, NOTIFICATION, CHAT & LOGS
 // ==========================================
 
+// [CHƯA CODE - SẼ LÀM Ở TASK SAU]
 model SavedPlace {
   id         String  @id @default(uuid())
   userId     String  @map("user_id")
@@ -334,6 +336,7 @@ model SavedPlace {
 
   @@map("saved_places")
 }
+
 
 model Invitation {
   id            String           @id @default(uuid())
@@ -359,6 +362,7 @@ enum InvitationStatus {
   EXPIRED
 }
 
+// [CHƯA CODE - SẼ LÀM Ở TASK SAU]
 model ChecklistItem {
   id            String   @id @default(uuid())
   eventId       String   @map("event_id")
@@ -374,6 +378,7 @@ model ChecklistItem {
   @@map("checklist_items")
 }
 
+// [CHƯA CODE - SẼ LÀM Ở TASK SAU]
 model Notification {
   id             String   @id @default(uuid())
   userId         String   @map("user_id")
@@ -388,6 +393,7 @@ model Notification {
   @@map("notifications")
 }
 
+// [CHƯA CODE - SẼ LÀM Ở TASK SAU]
 model ChatMessage {
   id        String   @id @default(uuid())
   eventId   String   @map("event_id")
