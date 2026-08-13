@@ -1,6 +1,5 @@
 fastapi
 uvicorn[standard]
-<<<<<<< Updated upstream
 sqlalchemy[asyncio]
 asyncpg
 alembic
@@ -9,5 +8,3 @@ pydantic-settings
 passlib[bcrypt]
 pyjwt
 python-dotenv
-=======
->>>>>>> Stashed changes
