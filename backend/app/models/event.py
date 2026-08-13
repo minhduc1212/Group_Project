@@ -2,7 +2,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, Enum, ForeignKey, UniqueConstraint, DateTime
 from typing import List, Optional
 from datetime import datetime
-from backend.app.models.user import User
+# from backend.app.models.user import User
 from .base import Base
 from .enums import EventType, EventRole
 
