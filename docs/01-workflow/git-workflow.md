@@ -25,13 +25,14 @@ main                    → luôn deployable, bảo vệ (protected branch)
    ```
 3. **Code + commit** theo [commit-convention.md](commit-convention.md), commit nhỏ, thường xuyên.
 4. **Viết/chạy test** trước khi push (xem [testing-guide.md](../02-standards/testing-guide.md)). Không push code fail test.
-5. **Rebase lên develop mới nhất** trước khi mở PR để tránh conflict lớn:
+5. **Cập nhật tài liệu (Post-Task Docs)**: Tra cứu [post-task-documentation.md](post-task-documentation.md) để cập nhật API spec, DB schema, ADR, và tick `[x]` hoàn thành task trên Task Board tương ứng trong cùng branch/PR.
+6. **Rebase lên develop mới nhất** trước khi mở PR để tránh conflict lớn:
    ```bash
    git fetch origin
    git rebase origin/develop
    ```
-6. **Push & mở Pull Request**, dùng template `.github/PULL_REQUEST_TEMPLATE.md`, gắn label đúng nhóm (`group-2`, `ai`, `security`,...), link Issue (`Closes #23`).
-7. **CI chạy tự động** (lint, test, build). PR không được merge nếu CI fail.
+7. **Push & mở Pull Request**, dùng template `.github/PULL_REQUEST_TEMPLATE.md`, điền mục Updated Docs, gắn label đúng nhóm (`group-2`, `ai`, `security`,...), link Issue (`Closes #23`).
+8. **CI chạy tự động** (lint, test, build). PR không được merge nếu CI fail hoặc thiếu docs.
 8. **Code review**: tối thiểu 1 approve theo [code-review-checklist.md](code-review-checklist.md). Có comment "changes requested" → tác giả sửa, không tự merge khi chưa resolve hết comment.
 9. **Merge**: dùng **Squash and merge** vào `develop` (giữ lịch sử `main` sạch, 1 PR = 1 commit log rõ ràng). Xoá branch sau khi merge.
 10. **Release lên `main`**: PR từ `develop` → `main` theo lịch (VD cuối mỗi sprint), tag version theo [Semantic Versioning](https://semver.org/) (`v0.1.0`, `v0.2.0`...).

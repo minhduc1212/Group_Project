@@ -26,9 +26,10 @@ pnpm run dev
 2. Tạo branch: `git checkout -b feature/n<x>-mo-ta-ngan` (xem [branch-naming.md](docs/01-workflow/branch-naming.md)).
 3. Code theo chuẩn ở [coding-conventions.md](docs/02-standards/coding-conventions.md) và [naming-conventions.md](docs/02-standards/naming-conventions.md).
 4. Viết test theo [testing-guide.md](docs/02-standards/testing-guide.md), chạy `ruff check . && pytest` trước khi push.
-5. Commit theo [commit-convention.md](docs/01-workflow/commit-convention.md).
-6. Mở PR bằng template, xin review theo [code-review-checklist.md](docs/01-workflow/code-review-checklist.md).
-7. Merge bằng **Squash and merge** sau khi có ít nhất 1 approve + CI xanh.
+5. Cập nhật tài liệu theo [post-task-documentation.md](docs/01-workflow/post-task-documentation.md) (API spec, DB schema, ADR, tick `[x]` task board).
+6. Commit theo [commit-convention.md](docs/01-workflow/commit-convention.md).
+7. Mở PR bằng template, điền mục Updated Docs, xin review theo [code-review-checklist.md](docs/01-workflow/code-review-checklist.md).
+8. Merge bằng **Squash and merge** sau khi có ít nhất 1 approve + CI xanh + Docs đầy đủ.
 
 ## Muốn thêm tính năng mới giữa chừng?
 Xem quy trình chi tiết ở [cross-team-collaboration.md](docs/01-workflow/cross-team-collaboration.md), tóm tắt nhanh:

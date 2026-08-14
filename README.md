@@ -14,6 +14,7 @@
 
 ### 01 — Quy trình làm việc (Workflow)
 - [Contract-First Workflow](docs/01-workflow/contract-first-workflow.md) — **Cơ chế cốt lõi để 6 người chạy song song** không bị block nhau (đọc trước tiên)
+- [Post-Task Documentation Workflow](docs/01-workflow/post-task-documentation.md) — **Quy trình viết tài liệu sau khi hoàn thành task** (cách viết, vị trí file, templates & checklists)
 - [Cross-Team Collaboration](docs/01-workflow/cross-team-collaboration.md) — **Thêm tính năng giữa chừng & nhảy vào code của nhau không conflict**
 - [Git Workflow](docs/01-workflow/git-workflow.md) — Mô hình branching, quy trình từ task → PR → merge
 - [Branch Naming](docs/01-workflow/branch-naming.md) — Quy tắc đặt tên nhánh
