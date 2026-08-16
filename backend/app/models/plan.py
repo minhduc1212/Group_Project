@@ -33,5 +33,8 @@ class PlanStop(Base):
     start_time: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     duration_minutes: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     metadata_: Mapped[Optional[Dict[str, Any]]] = mapped_column("metadata", JSON, nullable=True)
+
+    # Allows you to instantly access all the votes cast on a specific itinerary
+    votes: Mapped[List["PlanVote"]] = relationship("PlanVote", cascade="all, delete-orphan")
         
     plan: Mapped["Plan"] = relationship("Plan", back_populates="stops")

@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import String, Enum, ForeignKey, DateTime
+from sqlalchemy import String, Enum, ForeignKey, DateTime, CheckConstraint
 from typing import Optional
 from datetime import datetime
 from .base import Base
@@ -15,4 +15,10 @@ class Invitation(Base):
  ondelete="SET NULL"), nullable=True)
     status: Mapped[InvitationStatus] = mapped_column(Enum(InvitationStatus),default=InvitationStatus.PENDING)
     expires_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    __table_args__ = (
+        CheckConstraint(
+            'email IS NOT NULL OR invited_user_id IS NOT NULL', 
+            name='chk_invite_target_exists'
+        ),
+    )
 

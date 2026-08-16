@@ -3,6 +3,8 @@ from sqlalchemy import String, Enum, ForeignKey, Numeric, UniqueConstraint
 from typing import List, Optional
 from .base import Base
 from .enums import ExpenseType, SplitType, StopCategory
+from decimal import Decimal
+from sqlalchemy.types import Numeric
     
 class Expense(Base):
     __tablename__ = "expenses"
@@ -13,7 +15,7 @@ index=True)
 ondelete="SET NULL"), nullable=True)
     paid_by_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
     title: Mapped[str] = mapped_column(String)
-    amount: Mapped[float] = mapped_column(Numeric)
+    amount: Mapped[Decimal] = mapped_column(Numeric(precision=10, scale=2))
     type: Mapped[ExpenseType] = mapped_column(Enum(ExpenseType), default=ExpenseType.
 PAYMENT)
     category: Mapped[Optional[StopCategory]] = mapped_column(Enum(StopCategory),
