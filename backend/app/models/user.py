@@ -12,6 +12,9 @@ class User(Base):
     avatar_url: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     provider: Mapped[str] = mapped_column(String, default="LOCAL")
     role: Mapped[SystemRole] = mapped_column(Enum(SystemRole), default=SystemRole.USER) 
-    
+
+    # Allows you to see a user's entire voting history
+    votes: Mapped[List["PlanVote"]] = relationship("PlanVote", cascade="all, delete-orphan")
+
     event_members: Mapped[List["EventMember"]] = relationship("EventMember",back_populates="user")
   
