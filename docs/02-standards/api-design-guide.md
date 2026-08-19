@@ -148,3 +148,6 @@
 
 ## 8. Tài liệu API tự động
 - Dùng **FastAPI automatic OpenAPI** — FastAPI tự sinh OpenAPI spec từ Pydantic models và route decorators, truy cập tại `/docs` (Swagger UI) và `/redoc` (ReDoc) ở mọi môi trường. Không cần viết doc API thủ công.
+
+> **Lưu ý (Sprint 0)**: Toàn bộ chi tiết Request/Response của API đã được định nghĩa trong Pydantic Schemas. Xin vui lòng tham khảo Swagger UI tại http://localhost:8000/docs.
+

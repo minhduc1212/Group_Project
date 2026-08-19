@@ -7,12 +7,21 @@ router = APIRouter(tags=["plans"])
 
 @router.post("/events/{event_id}/plans", response_model=PlanResponse)
 async def create_plan(event_id: str, plan:PlanCreate):
+    """
+    API endpoint skeleton.
+    """
     raise HTTPException(status_code=501, detail="Not Implemented")
 
 @router.patch("/events/{event_id}/plans/{plan_id}/stops", response_model=List[PlanStopResponse])
 async def update_plan_stops(event_id:str, plan_id:str, stops:List[PlanStopCreate]):
+    """
+    API endpoint skeleton.
+    """
     raise HTTPException(status_code=501, detail="Not Implemented")
 
 @router.patch("/events/{event_id}/plans/{plan_id}/status", response_model=PlanResponse)
 async def update_plan_status(event_id: str,plan_id:str,status:PlanStatus):
-     raise HTTPException(status_code=501, detail="Not Implemented")
+    """
+    API endpoint skeleton.
+    """
+    raise HTTPException(status_code=501, detail="Not Implemented")
