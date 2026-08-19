@@ -7,7 +7,7 @@ router = APIRouter(prefix="/auth",tags=["auth"])
 async def register(user: UserCreate):
     raise HTTPException(status_code=501, detail="Not Implemented")
 @router.post("/login/google",response_model=UserResponse)
-async def register(user: UserCreate):
+async def login_google(user: UserCreate):
     raise HTTPException(status_code=501, detail="Not Implemented")
 @router.post("/refresh-token")
 async def refresh_token():
@@ -15,9 +15,9 @@ async def refresh_token():
 @router.post("/forgot-password")
 async def forgot_password(email: str):
     raise HTTPException(status_code=501, detail="Not Implemented")
-@router.post("/users/me", response_model=UserResponse)
+@router.get("/users/me", response_model=UserResponse)
 async def get_profile():
     raise HTTPException(status_code=501, detail="Not Implemented")
-@router.post("/users/me", response_model=UserResponse)
+@router.patch("/users/me", response_model=UserResponse)
 async def update_profile():
     raise HTTPException(status_code=501, detail="Not Implemented")
