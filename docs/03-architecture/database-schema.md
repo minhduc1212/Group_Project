@@ -183,7 +183,7 @@ model Plan {
   event         Event      @relation(fields: [eventId], references: [id], onDelete: Cascade) // [CHƯA CODE]
   createdBy     User?      @relation(fields: [createdById], references: [id], onDelete: SetNull) // [CHƯA CODE]
   stops         PlanStop[]
-  votes         PlanVote[]                          // [CHƯA CODE]
+  votes         PlanVote[]                          
 
   @@map("plans")
 }

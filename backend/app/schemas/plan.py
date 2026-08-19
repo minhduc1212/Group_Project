@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict, Field
-from typing import Optional, Any, Dict
+from typing import Optional, Any, Dict, List
 from datetime import datetime
 from app.models.enums import PlanStatus, StopCategory
 from decimal import Decimal
@@ -20,7 +20,7 @@ class PlanResponse(PlanBase):
     created_at: datetime
 
     # URGENT: Added nested stops so the frontend can render the timeline
-    stops: list[PlanStopResponse] = []
+    stops: List[PlanStopResponse] = []
 
     model_config = ConfigDict(from_attributes=True)
 
