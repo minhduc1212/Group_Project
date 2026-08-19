@@ -22,7 +22,7 @@
 ## 🛠️ Detailed Sprint Backlog
 
 ### Sprint 0 — Contract Session (Phụ trách: Phạm Đình Ánh Dương)
-- [ ] **`TASK-002`** `[BE-Services - Phạm Đình Ánh Dương]` **FastAPI APIRouter Skeleton**
+- [X] **`TASK-002`** `[BE-Services - Phạm Đình Ánh Dương]` **FastAPI APIRouter Skeleton**
   - **Feature**: N/A (Contract)
   - **Target Files**: `backend/app/api/v1/` (`auth.py`, `events.py`, `plans.py`, `votes.py`, `invitations.py`)
   - **Acceptance Criteria**: Routes return `501 Not Implemented` with matching Pydantic response models. Swagger accessible at `/docs`.

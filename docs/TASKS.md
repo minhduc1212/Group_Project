@@ -38,7 +38,7 @@
   - **Feature**: N/A (Sprint 0 Contract)
   - **Target Files**: `backend/app/models/` (`user.py`, `event.py`, `plan.py`, `vote.py`, `invitation.py`, `log.py`, **`expense.py`, `settlement.py`**), `backend/app/schemas/`
   - **Acceptance Criteria**: Full support for `EventType`, `StopCategory`, `metadata` JSON, `Invitation`, `PlanStatus`. Đủ 3 bảng tài chính trong [database-schema.md](03-architecture/database-schema.md): `expenses`, `expense_splits`, `settlements` (thu quỹ = `Expense.type=ADVANCE`, số dư member tính bằng SQL GROUP BY — không cần bảng MemberBalance) + `total_budget` trên Plan / `estimated_cost` trên PlanStop. Migration passes clean via Alembic.
-- [ ] **TASK-002** `[BE-Services]` **FastAPI APIRouter Skeleton**
+- [X] **TASK-002** `[BE-Services]` **FastAPI APIRouter Skeleton**
   - **Feature**: N/A (Contract)
   - **Target Files**: `backend/app/api/v1/` (`auth.py`, `events.py`, `plans.py`, `votes.py`, `invitations.py`, `places.py`, `ai.py`)
   - **Acceptance Criteria**: Routes return `501 Not Implemented` with matching Pydantic response models. Swagger accessible at `http://localhost:8000/docs`.
