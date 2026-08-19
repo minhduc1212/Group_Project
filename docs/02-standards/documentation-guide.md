@@ -4,6 +4,7 @@
 - Toàn bộ tài liệu sống trong repo dưới dạng Markdown (`/docs`), **được review qua PR** giống code.
 - Không dùng Google Docs/Notion rời rạc cho tài liệu kỹ thuật lâu dài (chỉ dùng cho brainstorm tạm thời) — vì dễ lệch với code thực tế theo thời gian.
 - Thay đổi ảnh hưởng kiến trúc/API/schema **bắt buộc** cập nhật doc tương ứng trong cùng PR với code.
+- **Quy trình chi tiết bắt buộc**: Xem [post-task-documentation.md](../01-workflow/post-task-documentation.md) để biết ma trận vị trí file cần cập nhật và các template mẫu sau mỗi task.
 
 ## 2. README cấp module/service
 Mỗi service (`backend/`, `frontend/`, `ai-service/` nếu tách riêng) có 1 `README.md` gốc gồm tối thiểu:

@@ -13,3 +13,7 @@ app.include_router(places.router,prefix="/api/v1")
 app.include_router(plans.router,prefix="/api/v1")
 app.include_router(votes.router,prefix="/api/v1")
 app.include_router(ai.router,prefix="/api/v1")
+
+@app.get("/")
+def root():
+   return{"status": "ok"}

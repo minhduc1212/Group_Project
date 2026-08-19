@@ -3,10 +3,10 @@
 ## Dành cho tác giả PR (tự kiểm tra trước khi request review)
 - [ ] PR chỉ giải quyết **1 vấn đề/task**, diff lý tưởng < 400 dòng (nếu lớn hơn, cân nhắc tách nhỏ)
 - [ ] Đã tự chạy lint + test local, CI xanh
-- [ ] Đã cập nhật doc liên quan nếu đổi API/schema/kiến trúc (`03-architecture/`, `02-standards/api-design-guide.md`)
+- [ ] Đã cập nhật doc liên quan nếu đổi API/schema/kiến trúc theo chuẩn [post-task-documentation.md](post-task-documentation.md) (`03-architecture/`, `02-standards/api-design-guide.md`, `04-tasks/`)
 - [ ] Không còn `console.log`/code debug thừa, không có TODO không giải thích
 - [ ] Không commit secrets/`.env`/API key (xem [security-guidelines.md](../05-security/security-guidelines.md))
-- [ ] Đã điền đầy đủ template PR, mô tả rõ "làm gì" + "tại sao"
+- [ ] Đã điền đầy đủ template PR, liệt kê rõ các file Docs đã sửa trong mục Updated Docs
 - [ ] Đã tự review lại diff của chính mình trên GitHub trước khi gắn reviewer
 
 ## Dành cho reviewer
@@ -37,7 +37,7 @@
 
 ### Kiến trúc & Docs
 - [ ] Thay đổi có phá vỡ hợp đồng API với FE/Agent khác không? Đã thông báo team chưa?
-- [ ] Docs liên quan đã được cập nhật trong cùng PR chưa?
+- [ ] Docs liên quan đã được cập nhật đúng vị trí theo [post-task-documentation.md](post-task-documentation.md) chưa? (Bắt buộc reject PR nếu thiếu docs).
 
 ## Mức độ comment khi review
 | Prefix | Ý nghĩa |

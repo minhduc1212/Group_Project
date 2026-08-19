@@ -3,7 +3,7 @@ from sqlalchemy import String, Enum, ForeignKey, Boolean, Numeric, Float, JSON, 
 from typing import List, Optional, Any, Dict
 from datetime import datetime
 from .base import Base
-from .enums import PlanStatus, StopCategory
+from .enums import StopCategory
 
 
 class Plan(Base):
@@ -32,6 +32,9 @@ class PlanStop(Base):
     category: Mapped[Optional[StopCategory]] = mapped_column(Enum(StopCategory),nullable=True)
     start_time: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     duration_minutes: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
-    metadata_: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON, nullable=True)
+    metadata_: Mapped[Optional[Dict[str, Any]]] = mapped_column("metadata", JSON, nullable=True)
+
+    # Allows you to instantly access all the votes cast on a specific itinerary
+    votes: Mapped[List["PlanVote"]] = relationship("PlanVote", cascade="all, delete-orphan")
         
     plan: Mapped["Plan"] = relationship("Plan", back_populates="stops")
