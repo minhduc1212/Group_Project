@@ -11,7 +11,7 @@
 
 | Sprint | Task Count | Người phụ trách | Done | Status |
 |---|---|---|---|---|
-| **Sprint 0** | 1 Task | Phạm Đình Ánh Dương | 0/1 | 🔲 To Do |
+| **Sprint 0** | 1 Task | Phạm Đình Ánh Dương | 0/1 | ✅ Done  |
 | **Sprint 1** | 7 Tasks | Hà Đăng Huy (2) + Phạm Đình Ánh Dương (5) | 0/7 | 🔲 To Do |
 | **Sprint 2** | 5 Tasks | Hà Đăng Huy (4) + Phạm Đình Ánh Dương (1) | 0/5 | 🔲 To Do |
 | **Sprint 3** | 3 Tasks | Phạm Đình Ánh Dương | 0/3 | 🔲 To Do |
@@ -22,7 +22,7 @@
 ## 🛠️ Detailed Sprint Backlog
 
 ### Sprint 0 — Contract Session (Phụ trách: Phạm Đình Ánh Dương)
-- [ ] **`TASK-002`** `[BE-Services - Phạm Đình Ánh Dương]` **FastAPI APIRouter Skeleton**
+- [X] **`TASK-002`** `[BE-Services - Phạm Đình Ánh Dương]` **FastAPI APIRouter Skeleton**
   - **Feature**: N/A (Contract)
   - **Target Files**: `backend/app/api/v1/` (`auth.py`, `events.py`, `plans.py`, `votes.py`, `invitations.py`)
   - **Acceptance Criteria**: Routes return `501 Not Implemented` with matching Pydantic response models. Swagger accessible at `/docs`.
