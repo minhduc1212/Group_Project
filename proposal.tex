@@ -6,9 +6,9 @@
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage[T1]{fontenc}
-\usepackage{charter} % Elegant Charter font for a professional executive look
-\usepackage[scaled=0.88]{beramono} % Clean monospace
-\usepackage[a4paper,top=2.3cm,bottom=2.3cm,left=2.2cm,right=2.2cm]{geometry}
+\usepackage{charter} % Professional Charter font
+\usepackage[scaled=0.88]{beramono} % Monospace font
+\usepackage[a4paper,top=2.2cm,bottom=2.2cm,left=2.2cm,right=2.2cm]{geometry}
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs,tabularx,multirow}
 \usepackage{xcolor}
@@ -21,28 +21,28 @@
 \usepackage[hidelinks,colorlinks=true,linkcolor=navyblue,citecolor=slateteal,urlcolor=navyblue]{hyperref}
 
 % ==========================================
-% PROFESSIONAL CORPORATE & ACADEMIC THEME
+% PROFESSIONAL PALETTE
 % ==========================================
-\definecolor{navyblue}{RGB}{20, 45, 85}      % Deep Oxford / Navy Blue
-\definecolor{slateteal}{RGB}{35, 100, 140}   % Refined Slate Teal
-\definecolor{charcoal}{RGB}{45, 55, 72}      % Soft Black / Dark Charcoal
-\definecolor{bordergray}{RGB}{226, 232, 240} % Light separator gray
-\definecolor{subtlegray}{RGB}{248, 250, 252} % Slate background tint
+\definecolor{navyblue}{RGB}{20, 45, 85}      % Oxford Navy
+\definecolor{slateteal}{RGB}{35, 100, 140}   % Slate Teal
+\definecolor{charcoal}{RGB}{45, 55, 72}      % Soft Black
+\definecolor{bordergray}{RGB}{226, 232, 240} % Border gray
+\definecolor{subtlegray}{RGB}{248, 250, 252} % Soft background
 
 % ==========================================
-% HEADER & FOOTER CONFIGURATION
+% HEADER & FOOTER
 % ==========================================
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\small\color{charcoal}\textsc{TripMate AI} — Project Idea Proposal}
-\fancyhead[R]{\small\color{slateteal}\textbf{Multi-Agent Group Planning}}
-\fancyfoot[L]{\small\color{gray}Confidential — Prepared for Academic Supervisor}
+\fancyhead[L]{\small\color{charcoal}\textsc{TripMate AI} — Project Proposal}
+\fancyhead[R]{\small\color{slateteal}\textbf{Platform Features \& Architecture}}
+\fancyfoot[L]{\small\color{gray}Project Idea \& Technical Concept}
 \fancyfoot[R]{\small\color{charcoal}\thepage}
-\renewcommand{\headrulewidth}{0.6pt}
+\renewcommand{\headrulewidth}{0.5pt}
 \renewcommand{\footrulewidth}{0.3pt}
 
 % ==========================================
-% SECTION FORMATTING (CLEAN & FORMAL)
+% SECTION FORMATTING
 % ==========================================
 \titleformat{\section}
   {\Large\bfseries\color{navyblue}}{\thesection.}{0.6em}{}[\color{bordergray}\titlerule]
@@ -51,8 +51,8 @@
 \titleformat{\subsubsection}
   {\normalsize\bfseries\color{charcoal}}{\thesubsubsection.}{0.4em}{}
 
-\titlespacing*{\section}{0pt}{14pt}{6pt}
-\titlespacing*{\subsection}{0pt}{10pt}{4pt}
+\titlespacing*{\section}{0pt}{13pt}{5pt}
+\titlespacing*{\subsection}{0pt}{9pt}{3pt}
 
 \setlist[itemize]{noitemsep,topsep=2pt,leftmargin=1.4em}
 \setlist[enumerate]{noitemsep,topsep=2pt,leftmargin=1.4em}
@@ -60,12 +60,12 @@
 \begin{document}
 
 % ==========================================
-% DOCUMENT HEADER (MODERN EXECUTIVE TITLE)
+% DOCUMENT HEADER
 % ==========================================
 \begin{center}
-    {\LARGE\bfseries\color{navyblue} TripMate AI: Collaborative Group Activity Planning}\\[0.2cm]
-    {\Large\bfseries\color{slateteal} Powered by an Autonomous Multi-Agent AI Architecture}\\[0.35cm]
-    {\normalsize\textbf{Project Idea \& Technical Concept Proposal for Supervisor}}\\[0.25cm]
+    {\LARGE\bfseries\color{navyblue} TripMate AI: Intelligent Group Activity Planning Platform}\\[0.2cm]
+    {\Large\bfseries\color{slateteal} Powered by a Unified Deep-Reasoning Agent}\\[0.35cm]
+    {\normalsize\textbf{Project Idea, Features \& Technical Architecture Proposal for Supervisor}}\\[0.25cm]
     \rule{\textwidth}{1pt}\\[0.25cm]
     {\small \textbf{Project Team (6 Members):} Ta Quang Huy \quad Ha Dang Huy \quad Pham Dinh Anh Duong \quad Nguyen Minh Duc \quad Nguyen Tung Duong \quad Dinh Tien Luan}
 \end{center}
@@ -73,64 +73,32 @@
 \vspace{0.15cm}
 
 % ==========================================
-% 1. PROJECT OVERVIEW & CORE IDEA
+% 1. INTRODUCTION & PROJECT IDEA
 % ==========================================
-\section{Project Overview \& Core Idea}
+\section{Introduction \& Project Idea}
 
-\subsection{The Elevator Pitch}
-\textbf{TripMate AI} is an intelligent, real-time collaborative web application engineered to eliminate the friction, indecision, and organizational fatigue inherent in group decision-making. Whether coordinating multi-day vacations, finding the perfect dinner spot, organizing a cafe hangout, or planning entertainment outings, TripMate AI transforms chaotic discussions into an actionable, consensus-driven plan in \textbf{under 15 minutes}.
-
-\subsection{The Core Paradigm: Democratic Human-in-the-Loop AI}
-Unlike standard AI chatbots that generate disconnected text responses, TripMate AI integrates an autonomous \textbf{Multi-Agent AI System (LangGraph Python)} directly into a structured collaborative planning pipeline:
-\begin{center}
-    \textbf{1. Event Creation} $\longrightarrow$ \textbf{2. AI/Manual Proposal} $\longrightarrow$ \textbf{3. Democratic Voting} $\longrightarrow$ \textbf{4. Owner Confirmation} $\longrightarrow$ \textbf{5. Debt Settlement}
-\end{center}
-The platform operates on a strict \textbf{Human-in-the-Loop} principle: the AI acts as an expert research assistant producing structured, modifiable \texttt{DRAFT} plans, while humans retain complete democratic authority through voting, granular modifications, and owner sign-off.
-
-\subsection{Key Value Propositions}
+\subsection{The Problem: The Friction of Group Planning}
+Organizing activities for 3 to 10+ people (whether an international vacation, weekend road trip, dining out, or casual social hangout) consistently suffers from severe real-world bottlenecks:
 \begin{itemize}
-    \item \textbf{Autonomous Multi-Agent Intelligence:} Specialized sub-agents automatically search live locations via Google Places, extract verified restaurant menus and activity pricing, compute optimal route sequences, and balance budgets.
-    \item \textbf{DeepSeek-V4 Next-Gen Reasoning:} Integrates the latest \textbf{DeepSeek-V4} model family, utilizing high-throughput tool calling for data retrieval and deep reasoning tokens to resolve split-vote deadlocks among members.
-    \item \textbf{Automated 3-Table Financial Settlement:} Eliminates post-trip financial headaches with an algorithm that tracks pool advances vs. actual spending and computes the minimum peer-to-peer bank transfers needed.
+    \item \textbf{Exhausting \& Time-Consuming Manual Research:} Planners must browse dozens of disparate platforms (blogs, Google Maps, review sites, booking portals, flight aggregators) to compile opening hours, ticket pricing, and transit routes---wasting days or even weeks of tedious manual effort.
+    \item \textbf{High Friction in Satisfying Everyone's Tastes:} Manually modifying an itinerary whenever a member expresses dissatisfaction is agonizingly slow and complex; adjusting a single stop triggers a chain reaction across transit routes, timing, and group budget, making it nearly impossible to manually tailor a plan that pleases everyone.
+    \item \textbf{Fragmented \& Messy Group Chats:} Travel ideas, photo links, and flight screenshots get buried under hundreds of unstructured messages on Zalo, Messenger, or WhatsApp, causing critical information to be lost.
+    \item \textbf{Organizer Burnout \& Single Point of Failure:} Typically, a single organizer bears the entire cognitive and emotional load of researching, polling members, and making compromises, only to face complaints if the group is unsatisfied.
+    \item \textbf{Complex Schedule Overlaps ($\pm\delta$ Tolerance):} Member A is free from the 10th to the 20th ($\pm 1$ day), while Member B is available from the 15th to the 25th ($\pm 2$ days). Manually determining the optimal intersecting window that maximizes attendance is a painful combinatorial puzzle.
+    \item \textbf{Conflicting Preferences \& Decision Deadlocks:} When half the group desires active mountain trekking while the other half seeks relaxed beach resorts, the group falls into decision paralysis, often leading to canceled plans.
+    \item \textbf{Accommodation \& Room Booking Bottlenecks:} Finding and coordinating suitable room configurations (bed layouts, group room blocks, cancelation policies) for large parties across multiple booking sites is cumbersome and prone to booking errors.
+    \item \textbf{Group Dining Logistics \& Split Debt Friction:} Finding venues that handle large-party seating while catering to diverse dietary constraints (allergens, vegetarian, halal) is difficult, and manually calculating post-trip shared debts creates social awkwardness.
 \end{itemize}
 
-% ==========================================
-% 2. PROBLEM STATEMENT & INDUSTRY MOTIVATION
-% ==========================================
-\section{Problem Statement \& Motivation}
-
-Group planning among 3 to 10 participants consistently breaks down across four major pain points:
-\begin{enumerate}[label=\textbf{\arabic*.}]
-    \item \textbf{Endless Debates \& Information Fragmentation:} Casual questions like \textit{''Where are we eating tonight?''} spawn hundreds of unstructured messages across messaging apps (Zalo, Messenger), causing crucial details to get buried.
-    \item \textbf{Single Organizer Overload:} One person typically bears the entire burden of reading reviews, checking opening hours, comparing hotels, estimating transit times, and individually polling each friend.
-    \item \textbf{Voting Deadlocks \& Conflicting Preferences:} When members have opposing tastes (e.g., budget vs. luxury, Japanese cuisine vs. BBQ), tied votes cause inertia and frequently result in canceled plans.
-    \item \textbf{Post-Event Expense Splitting Friction:} Tracking who paid for specific stops and manually calculating uneven debts creates social awkwardness and accounting errors.
+\subsection{The Solution: A Synchronized Group Room with Human-in-the-Loop AI}
+\textbf{TripMate AI} transforms group planning into a streamlined, consensus-driven workflow in \textbf{under 15 minutes}:
+\begin{enumerate}
+    \item \textbf{Collaborative Room Chat (Freeform Brainstorming):} All members join a shared room to discuss rough travel wishes, general preferences (e.g., ''a warm getaway in autumn'' without requiring strict dates upfront), and personal profile constraints.
+    \item \textbf{One-Click Handoff \& Proactive AI Clarification (Q\&A Loop):} The organizer submits the room's collective discussion to the \textbf{Unified Trip Intelligence Agent}. If any critical parameters are missing or ambiguous (e.g., date flexibility, passport status, specific dietary details, budget limits), the Agent proactively posts targeted follow-up questions directly in the chat room to gather full details from members.
+    \item \textbf{Autonomous Multi-Source Research:} Once fully informed, the Agent resolves schedule overlaps, checks live places/menus, evaluates visa/legal guidelines, and constructs an optimized itinerary.
+    \item \textbf{Granular Leg-by-Leg Voting:} The plan is presented with \textbf{stop-by-stop interactive voting} (UP/DOWN/Alternative Proposal). If a specific stop is rejected, the Agent immediately swaps it without breaking the rest of the schedule.
+    \item \textbf{Group Final Consensus \& Debt Settlement:} The entire group conducts a final vote to democratically lock the finalized itinerary once consensus is reached, after which automated algorithms simplify all group debts into minimum peer-to-peer transfers.
 \end{enumerate}
-
-\begin{table}[htbp]
-\centering
-\small
-\caption{Comparative analysis: TripMate AI vs. existing market solutions}
-\label{tab:comparison}
-\begin{tabularx}{\textwidth}{lccc}
-\toprule
-\textbf{Planning Tool} & \textbf{Core Limitations} & \textbf{TripMate AI Solution} \\
-\midrule
-\textbf{Group Chats (Zalo/Messenger)} & Unstructured, noisy, no poll integration & Structured timeline with interactive voting \\
-\textbf{Shared Docs (Notion/Sheets)} & Static, manual data entry, no live data & Autonomous live place lookups \& menu retrieval \\
-\textbf{Generic AI (ChatGPT/Claude)} & Prone to hallucination, single-user only & Real-world Google Places API + multi-user sync \\
-\textbf{Traditional Travel Apps} & Limited to multi-day trips, no conflict AI & Supports 6 event types + AI conflict resolution \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-% ==========================================
-% 3. SYSTEM ARCHITECTURE & MULTI-EVENT WORKFLOW
-% ==========================================
-\section{System Architecture \& Collaborative Workflow}
-
-\subsection{End-to-End Collaborative Lifecycle}
-TripMate AI formalizes group planning into five seamless stages:
 
 \begin{figure}[htbp]
 \centering
@@ -139,10 +107,10 @@ TripMate AI formalizes group planning into five seamless stages:
     stepbox/.style={rectangle, draw=navyblue, fill=subtlegray, rounded corners=2mm, minimum width=2.6cm, minimum height=1cm, align=center, font=\scriptsize\bfseries},
     arrow/.style={-{Latex[length=2.2mm]}, thick, color=navyblue}
 ]
-    \node[stepbox] (s1) {1. Create Event\\{\tiny (Choose Event Type)}};
-    \node[stepbox, right=of s1] (s2) {2. Generate Plan\\{\tiny (AI Agent or Manual)}};
-    \node[stepbox, right=of s2] (s3) {3. Group Voting\\{\tiny (UP / DOWN / Neutral)}};
-    \node[stepbox, right=of s3] (s4) {4. Confirm Plan\\{\tiny (Owner Final Approval)}};
+    \node[stepbox] (s1) {1. Group Room Chat\\{\tiny (Freeform Ideas \& Chat)}};
+    \node[stepbox, right=of s1] (s2) {2. Submit \& AI Q\&A\\{\tiny (Proactive Clarification)}};
+    \node[stepbox, right=of s2] (s3) {3. Leg-by-Leg Voting\\{\tiny (Per-Stop Consensus)}};
+    \node[stepbox, right=of s3] (s4) {4. Group Final Vote\\{\tiny (Democratic Consensus)}};
     \node[stepbox, right=of s4] (s5) {5. Settle Debts\\{\tiny (Optimal P2P Transfer)}};
 
     \draw[arrow] (s1) -- (s2);
@@ -150,101 +118,203 @@ TripMate AI formalizes group planning into five seamless stages:
     \draw[arrow] (s3) -- (s4);
     \draw[arrow] (s4) -- (s5);
 \end{tikzpicture}
-\caption{End-to-end collaborative planning workflow}
+\caption{The end-to-end collaborative planning workflow}
 \label{fig:lifecycle}
 \end{figure}
 
-\subsection{Multi-EventType Support: Beyond Just Vacations}
-Rather than focusing exclusively on multi-day travel, TripMate AI optimizes search heuristics and UI cards for six distinct daily group scenarios:
+% ==========================================
+% 2. PLATFORM FEATURES & CORE FUNCTIONALITIES
+% ==========================================
+\section{Platform Features \& Core Functionalities}
+
+TripMate AI delivers a comprehensive suite of web features tailored specifically for group collaboration:
+
+\subsection{1. Collaborative Group Room \& Profile Onboarding}
 \begin{itemize}
-    \item \textbf{1. Dining (\texttt{DINING}):} Curates restaurants, extracts signature dishes/menus, checks dietary restrictions, and provides price per person.
-    \item \textbf{2. Cafe \& Catch-ups (\texttt{HANGOUT}):} Finds coffee shops filtered by vibe (quiet for work, aesthetic photo spots, rooftop lounges).
-    \item \textbf{3. Entertainment (\texttt{ENTERTAINMENT}):} Suggests recreational spots (karaoke, bowling, escape rooms, arcade) with ticket costs and capacity limits.
-    \item \textbf{4. Sightseeing (\texttt{SIGHTSEEING}):} Identifies cultural landmarks, museums, and exhibitions with operating hours and parking tips.
-    \item \textbf{5. Multi-Day Travel (\texttt{TRAVEL}):} Sequences multi-day itineraries, optimizes travel routes, and compares accommodations.
-    \item \textbf{6. Custom Events (\texttt{CUSTOM}):} Provides open-ended collaborative planning for birthdays, picnics, or team-building events.
+    \item \textbf{Live Gathering Room:} A shared room where members join via invite link or email, chat freely, brainstorm destinations, and input individual profiles (dietary constraints, budgets, rough availability) without needing locked dates upfront.
+    \item \textbf{Interactive Agent Q\&A Intake:} When submitted, the Agent actively prompts the room with quick interactive clarifying questions to fill in any missing data before generating plans.
+    \item \textbf{6 Tailored Event Types:} Built-in templates for Multi-Day Travel (\texttt{TRAVEL}), Dining Out (\texttt{DINING}), Cafe Hangouts (\texttt{HANGOUT}), Entertainment \& Arcade (\texttt{ENTERTAINMENT}), Cultural Sightseeing (\texttt{SIGHTSEEING}), and Custom Events (\texttt{CUSTOM}).
+    \item \textbf{Role-Based Permissions (RBAC):} Distinct permissions for \textbf{Host/Organizer} (creates event, invites members), \textbf{Member} (chats, inputs preferences, votes on stops, and participates in final plan locking vote), and \textbf{Viewer} (read-only access).
+\end{itemize}
+
+\subsection{2. AI-Powered Planning \& Research Hub}
+\begin{itemize}
+    \item \textbf{1-Click AI Generation:} Instant proposal generation from room chat context using DeepSeek-V4.
+    \item \textbf{Destination Profiling:} Deep introductions to destinations (e.g., exploring Da Nang's iconic bridges, Ba Na Hills, cultural heritage, and local specialties).
+    \item \textbf{Live Inventory \& Price Lookup:} Real-time flight search, hotel comparisons, attraction tickets, and tour packages via Amadeus, Booking.com, and Klook APIs.
+    \item \textbf{Group Dining Planner:} Filters restaurants by party size capacity, accommodates allergens/dietary restrictions (Halal, vegan), and suggests family-style banquet menus.
+    \item \textbf{International Visa \& Legal Briefing:} Automatic passport validity check ($\ge 6$ months), e-Visa guidance, reputable visa agency recommendations, local cultural etiquette, and scam advisories.
+\end{itemize}
+
+\subsection{3. Democratic Voting \& Plan Customization}
+\begin{itemize}
+    \item \textbf{Granular Leg-by-Leg Voting:} Independent voting cards on every stop (Hotel, Lunch, Activity) with instant 1-click alternative proposals.
+    \item \textbf{Conflict Resolver:} Automatically proposes balanced compromise alternatives when votes are split or tastes are polarized (e.g., Mountain vs. Beach hybrid schedules).
+    \item \textbf{Streaming AI Chat Assistant:} Real-time conversation with the AI via WebSockets/SSE to modify itinerary cards on the fly.
+    \item \textbf{Manual Drag-and-Drop Plan Builder:} Autocomplete place search via Google Places, auto-calculating route travel times and hotel rates for manual planners.
+\end{itemize}
+
+\subsection{4. Interactive Map \& Smart Utilities}
+\begin{itemize}
+    \item \textbf{Interactive Mapview (Mapbox GL JS):} Visualizes timeline stops, routing paths, transit durations, and categorized map pins.
+    \item \textbf{Weather-Aware Packing Checklist:} Auto-generates tailored packing items based on OpenWeatherMap destination forecasts and event types.
+    \item \textbf{1-Click PDF Export (WeasyPrint):} Generates a polished PDF booklet containing full daily timelines, map snapshots, hotel reservations, and emergency contacts.
+    \item \textbf{Bilingual Interface (i18n):} Seamless instant switching between Vietnamese and English.
+\end{itemize}
+
+\subsection{5. Shared Expense Splitting \& Debt Settlement}
+\begin{itemize}
+    \item \textbf{Expense Tracking:} Records pool pre-funding (\texttt{ADVANCE}) and real expenses (\texttt{PAYMENT}).
+    \item \textbf{Flexible Split Types:} Supports equal split (\texttt{EQUAL}), exact amounts (\texttt{EXACT}), or percentages (\texttt{PERCENTAGE}).
+    \item \textbf{Automated Debt Settlement:} A greedy matching algorithm computes net balances and outputs the minimum number of peer-to-peer bank transfers needed.
 \end{itemize}
 
 % ==========================================
-% 4. NEXT-GEN AI MULTI-AGENT ARCHITECTURE
+% 3. THE INTELLIGENT AI AGENT (DEEPSEEK-V4)
 % ==========================================
-\section{Next-Gen AI Multi-Agent Architecture (DeepSeek-V4)}
+\section{The Unified AI Agent Architecture \& Detailed Operational Flow}
 
-\subsection{Orchestrator--Worker Pattern on LangGraph Python}
-The AI architecture utilizes an \textbf{Orchestrator--Worker Pattern} deployed directly within the Python backend:
+\subsection{Single Unified Agent Architecture}
+Rather than dividing context among multiple fragmented sub-agents, TripMate AI uses a **Single Unified Trip Intelligence Agent** equipped with a comprehensive toolset and powered by the **DeepSeek-V4** model hierarchy:
 
 \begin{figure}[htbp]
 \centering
 \begin{tikzpicture}[
     node distance=0.7cm and 1.1cm,
-    mainbox/.style={rectangle, draw=navyblue, fill=navyblue!8!white, rounded corners=2mm, minimum width=3.4cm, minimum height=0.9cm, align=center, font=\small\bfseries},
-    agentbox/.style={rectangle, draw=slateteal, fill=subtlegray, rounded corners=2mm, minimum width=3cm, minimum height=0.75cm, align=center, font=\scriptsize\bfseries},
-    llmbox/.style={rectangle, draw=navyblue, fill=slateteal!15!white, rounded corners=2mm, minimum width=3.2cm, minimum height=0.75cm, align=center, font=\scriptsize\bfseries},
-    arrow/.style={-{Latex[length=2mm]}, thick, color=navyblue}
+    mainagent/.style={rectangle, draw=navyblue, fill=navyblue!10!white, rounded corners=2.5mm, minimum width=4cm, minimum height=1.1cm, align=center, font=\small\bfseries},
+    toolgroup/.style={rectangle, draw=slateteal, fill=subtlegray, rounded corners=2mm, minimum width=3.4cm, minimum height=0.85cm, align=center, font=\scriptsize\bfseries},
+    llmbox/.style={rectangle, draw=navyblue, fill=slateteal!15!white, rounded corners=2mm, minimum width=3.5cm, minimum height=0.85cm, align=center, font=\scriptsize\bfseries},
+    arrow/.style={-{Latex[length=2.2mm]}, thick, color=navyblue}
 ]
-    % Orchestrator
-    \node[mainbox] (orch) {Orchestrator Agent\\{\tiny (LangGraph State Graph)}};
+    % Central Agent
+    \node[mainagent] (agent) {Unified Trip Intelligence Agent\\{\tiny (Group Context, Reasoning \& Tool Calling)}};
 
-    % Sub-agents
-    \node[agentbox, above right=0.3cm and 1.1cm of orch] (loc) {Location Agent\\{\tiny (Google Places + Redis)}};
-    \node[agentbox, right=1.1cm of orch] (res) {Research Agent\\{\tiny (Menus, Reviews, Prices)}};
-    \node[agentbox, below right=0.3cm and 1.1cm of orch] (plan) {Plan Agent\\{\tiny (Route Optimization)}};
-    \node[agentbox, below=0.35cm of plan] (conf) {Conflict Resolver Agent\\{\tiny (Deadlock Compromise Synthesis)}};
+    % Models
+    \node[llmbox, above left=0.6cm and 0.5cm of agent] (flash) {DeepSeek-V4 Flash\\{\tiny (Fast Chat, Room Parsing, Tool Calling)}};
+    \node[llmbox, above right=0.6cm and 0.5cm of agent] (pro) {DeepSeek-V4 Pro\\{\tiny (Deep Reasoning, Constraint Solver)}};
 
-    % LLMs
-    \node[llmbox, right=1.1cm of loc] (v4chat) {DeepSeek-V4 Chat\\{\tiny (Fast Action \& Tool Calling)}};
-    \node[llmbox, right=1.1cm of plan] (v4reason) {DeepSeek-V4 Reasoner\\{\tiny (Deep Reasoning Tokens)}};
+    % Tool Ecosystem
+    \node[toolgroup, below left=0.7cm and 1.8cm of agent] (t1) {Places \& Maps Suite\\{\tiny Google Places, Mapbox, OSM}};
+    \node[toolgroup, below left=0.7cm and -1.6cm of agent] (t2) {Booking \& Price Suite\\{\tiny Amadeus, Booking.com, Skyscanner}};
+    \node[toolgroup, below right=0.7cm and -1.6cm of agent] (t3) {Visa \& Legal Suite\\{\tiny Passport Index, Agency/e-Visa}};
+    \node[toolgroup, below right=0.7cm and 1.8cm of agent] (t4) {Weather \& Currency\\{\tiny OpenWeatherMap, FX Rates}};
 
-    % Links
-    \draw[arrow] (orch) |- (loc);
-    \draw[arrow] (orch) -- (res);
-    \draw[arrow] (orch) |- (plan);
-    \draw[arrow] (orch) |- (conf);
-    \draw[arrow, dashed] (loc) -- (v4chat);
-    \draw[arrow, dashed] (res) -- (v4chat);
-    \draw[arrow, dashed] (plan) -- (v4reason);
-    \draw[arrow, dashed] (conf) -- (v4reason);
+    % Connections
+    \draw[arrow, dashed] (flash) -- (agent);
+    \draw[arrow, dashed] (pro) -- (agent);
+    \draw[arrow, <->] (agent) -- (t1);
+    \draw[arrow, <->] (agent) -- (t2);
+    \draw[arrow, <->] (agent) -- (t3);
+    \draw[arrow, <->] (agent) -- (t4);
 \end{tikzpicture}
-\caption{Orchestrator-Worker Multi-Agent Architecture with DeepSeek-V4}
-\label{fig:ai_arch}
+\caption{Unified AI Agent tooling ecosystem powered by DeepSeek-V4}
+\label{fig:agent_arch}
 \end{figure}
 
-\subsection{DeepSeek-V4 Dual-Engine Strategy}
 \begin{itemize}
-    \item \textbf{DeepSeek-V4 Conversational Engine:} Executes intent classification, multi-lingual natural language chat, and high-frequency tool calling (Google Places, OpenWeatherMap) with exceptional throughput and minimal latency.
-    \item \textbf{DeepSeek-V4 Advanced Reasoning Engine:} Employs reasoning tokens to solve complex combinatorial scheduling problems, respect spatial-temporal constraints, and analyze vote feedback to synthesize compromise solutions.
+    \item \textbf{DeepSeek-V4 Flash:} Handles high-throughput conversational chat, real-time group chat parsing, streaming responses via WebSocket/SSE, and rapid schema validation for API tool execution.
+    \item \textbf{DeepSeek-V4 Pro:} Utilizes deep reasoning tokens for complex multidimensional constraint solving, itinerary sequencing under budget limits, and conflict synthesis for divergent member tastes.
 \end{itemize}
 
-% ==========================================
-% 5. KEY TECHNICAL INNOVATIONS
-% ==========================================
-\section{Key Technical Innovations}
+\subsection{Detailed Step-by-Step Agent Operational Flow}
+The internal execution lifecycle of the Unified Agent proceeds through six precise sequential phases upon receiving the group's request:
 
-\begin{itemize}
-    \item \textbf{AI Conflict Resolver Agent:} When group votes are split (e.g., 3 votes for Japanese vs. 3 votes for BBQ), the agent analyzes members' comments and budget criteria to generate an optimal compromise (e.g., a venue serving both styles or re-sequencing the stops across dinner and late-night supper).
-    \item \textbf{Real-Time Interactive AI Chat:} Members can brainstorm directly with the AI assistant via WebSocket/SSE streaming, instantly converting suggested locations into draft timeline cards.
-    \item \textbf{Optimal 3-Table Debt Settlement Engine:} Eliminates messy calculations with a mathematically minimal 3-table schema (\texttt{expenses}, \texttt{expense\_splits}, \texttt{settlements}). Net individual balance is computed directly:
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    node distance=0.55cm and 0.6cm,
+    flowbox/.style={rectangle, draw=navyblue, fill=subtlegray, rounded corners=2mm, minimum width=4.8cm, minimum height=0.9cm, align=left, font=\scriptsize},
+    actionbox/.style={rectangle, draw=slateteal, fill=slateteal!10!white, rounded corners=2mm, minimum width=4.8cm, minimum height=0.9cm, align=left, font=\scriptsize},
+    arrow/.style={-{Latex[length=2mm]}, thick, color=navyblue}
+]
+    \node[flowbox] (p1) {\textbf{Phase 1: Ingestion \& Q\&A Loop (V4 Flash)}\\$\bullet$ Extract profiles, poll group for missing info};
+    \node[actionbox, below=of p1] (p2) {\textbf{Phase 2: Constraint Solver (V4 Pro)}\\$\bullet$ Calculate optimal date window $[T_{\text{start}}, T_{\text{end}}]$};
+    \node[flowbox, below=of p2] (p3) {\textbf{Phase 3: Parallel Tool Execution}\\$\bullet$ Call Places, Booking, Visa, Weather APIs};
+    
+    \node[actionbox, right=1.2cm of p1] (p4) {\textbf{Phase 4: Synthesis \& Conflict Resolution}\\$\bullet$ Beach vs Mountain hybrid + Banquet menus};
+    \node[flowbox, right=1.2cm of p2] (p5) {\textbf{Phase 5: Pydantic Validation \& Streaming}\\$\bullet$ Stream Proposal Cards + Leg Voting widget};
+    \node[actionbox, right=1.2cm of p3] (p6) {\textbf{Phase 6: Interactive Feedback \& Locking}\\$\bullet$ 1-Click downvote replacement $\rightarrow$ Final consensus};
+
+    \draw[arrow] (p1) -- (p2);
+    \draw[arrow] (p2) -- (p3);
+    \draw[arrow] (p3.south) -- ++(0,-0.3) -| (p4.north);
+    \draw[arrow] (p4) -- (p5);
+    \draw[arrow] (p5) -- (p6);
+\end{tikzpicture}
+\caption{Detailed internal state machine and operational lifecycle of the Unified Agent}
+\label{fig:agent_flow}
+\end{figure}
+
+\begin{enumerate}[label=\textbf{Step \arabic*:}]
+    \item \textbf{Ingestion, Context Extraction \& Proactive Q\&A Loop (DeepSeek-V4 Flash):} The Agent parses the chat room stream to extract attendee profiles, general wishes, budget bounds, and date windows $[S_i, E_i] \pm \delta_i$. If essential constraints are missing or ambiguous (such as unstated date ranges, passport/visa status, or dietary specifics), the Agent proactively triggers interactive clarification prompts in the room chat to gather complete information before advancing to heavy computation.
+    \item \textbf{Mathematical Schedule Optimization (DeepSeek-V4 Pro):} Evaluates overlapping availability intervals to determine the global trip dates $[T_{\text{start}}, T_{\text{end}}]$ maximizing total attendance:
     \begin{equation}
-        \text{Net Balance}_u = \sum \text{Paid Amount}_u - \sum \text{Owed Share}_u
+        \max_{T_{\text{start}}, T_{\text{end}}} \sum_{i=1}^{N} w_i \cdot \mathbb{I}\left( [T_{\text{start}}, T_{\text{end}}] \subseteq [S_i - \delta_i, E_i + \delta_i] \right)
     \end{equation}
-    An automated greedy matching algorithm then calculates the minimum peer-to-peer transfers required to clear all balances.
-    \item \textbf{High-Performance Integration Layer:} Redis caching layer guarantees sub-200ms location lookups and shields external APIs from quota limits.
+    \item \textbf{Parallel Multi-API Tool Calling:}
+    \begin{itemize}
+        \item \textit{Place Intelligence:} Queries Google Places/Mapbox for destination profiling, geocoordinates, and transit durations.
+        \item \textit{Live Pricing:} Queries Amadeus, Booking.com, and Klook for flights, hotel room blocks, and entry tickets.
+        \item \textit{Cross-Border Intelligence:} Checks passport validity ($\ge 6$ months), e-Visa portals, visa agencies, local laws, and cultural taboos.
+        \item \textit{Climate Intelligence:} Fetches OpenWeatherMap forecasts to adapt indoor/outdoor activity allocations.
+    \end{itemize}
+    \item \textbf{Preference Reconciliation \& Itinerary Synthesis (DeepSeek-V4 Pro):}
+    \begin{itemize}
+        \item \textit{Divergent Taste Compromise:} Balances conflicting interests (e.g., hybrid mountain-trekking + beach relaxation schedule).
+        \item \textit{Group Dining \& Allergen Management:} Identifies venues with large-party seating and crafts family-style banquet menus compliant with all dietary needs (Halal, vegan, allergen-free).
+    \end{itemize}
+    \item \textbf{Schema Validation \& Streaming Delivery:} Formats output into strict \textbf{Pydantic v2} JSON schemas and streams real-time Proposal Cards to the frontend via WebSockets / SSE.
+    \item \textbf{Granular Voting Loop \& Localized Repair:} If members downvote a specific leg (e.g., Day 2 Lunch), the Agent immediately invokes a localized tool call to fetch 3 alternative options without recalculating or disrupting the overall itinerary. Once consensus is reached, the plan is locked democratically.
+\end{enumerate}
+
+% ==========================================
+% 4. BACKEND ARCHITECTURE & DATA FLOW
+% ==========================================
+\section{Backend Architecture \& Data Flow}
+
+\subsection{Tech Stack \& Monorepo Structure}
+\begin{itemize}
+    \item \textbf{Runtime \& Framework:} Python 3.11+ with \textbf{FastAPI} (high-speed ASGI, native async/await, automated OpenAPI documentation at \texttt{/docs}).
+    \item \textbf{Database \& ORM:} \textbf{PostgreSQL} paired with \textbf{SQLAlchemy 2.0 (Async)} and \textbf{Alembic} migrations for type-safe database versioning.
+    \item \textbf{Caching \& Message Broker:} \textbf{Redis} for caching external API lookups (TTL 6--24h), rate-limiting, and WebSocket Pub/Sub synchronization.
+    \item \textbf{Background Tasks \& Export:} FastAPI BackgroundTasks / Celery for async PDF generation (\textbf{WeasyPrint}) and email delivery (aiosmtplib).
+\end{itemize}
+
+\subsection{Optimal 3-Table Financial Settlement Engine}
+Rather than maintaining complex accounting ledgers, the backend computes debts using 3 relational tables (\texttt{expenses}, \texttt{expense\_splits}, \texttt{settlements}). A greedy matching algorithm computes net balances ($\text{Net}_u = \sum \text{Paid}_u - \sum \text{Owed}_u$) and produces the minimum number of peer-to-peer bank transfers.
+
+% ==========================================
+% 5. FRONTEND USER EXPERIENCE
+% ==========================================
+\section{Frontend User Experience}
+
+Built with **React 18 + Vite + TypeScript**, styled with **Tailwind CSS + shadcn/ui**, and managed via **Zustand** (global state) and **TanStack Query** (caching and optimistic UI updates). The frontend delivers responsive, accessible experiences across mobile, tablet, and desktop viewports.
+
+% ==========================================
+% 6. DEPLOYMENT, DEVOPS & SECURITY
+% ==========================================
+\section{Deployment, DevOps \& Security}
+
+\begin{itemize}
+    \item \textbf{Deployment Pipeline:} Standardized **Docker Compose** for local/staging environments, **Vercel** for Frontend global edge CDN, **Render / Cloud VPS** for Backend Uvicorn workers, and **GitHub Actions** for automated CI testing.
+    \item \textbf{Security \& Data Protection:} Password hashing using \texttt{bcrypt}, dual-token authentication (short-lived JWT Access Tokens + Redis Refresh Token rotation), strict Role-Based Access Control (RBAC), \texttt{bleach} input sanitization, and \textbf{Pydantic v2} output schema validation.
+    \item \textbf{API Rate Limiting \& Token Audit:} Redis-backed rate limiting on external and AI endpoints; token usage is recorded in \texttt{agent\_logs} for complete auditability.
 \end{itemize}
 
 % ==========================================
-% 6. EXPECTED IMPACT & CONCLUSION
+% 7. EXPECTED IMPACT & CONCLUSION
 % ==========================================
-\section{Expected Impact \& Value Proposition}
+\section{Expected Impact \& Conclusion}
 
 \begin{itemize}
-    \item \textbf{Substantial Time Savings:} Slashes group planning time from 2--3 days of back-and-forth messaging down to \textbf{under 15 minutes}.
-    \item \textbf{Democratic Alignment:} Combines public voting, transparent budgeting, and AI conflict resolution to prevent social friction and keep group outings enjoyable.
-    \item \textbf{Technical \& Scientific Value:} Serves as a state-of-the-art implementation of Multi-Agent LangGraph orchestration, Dual-Engine DeepSeek-V4 integration, and real-time collaborative web engineering.
+    \item \textbf{15-Minute Planning Velocity:} Replaces days of messy discussions with an AI-driven, consensus-backed itinerary in under 15 minutes.
+    \item \textbf{Stress-Free Group Harmony:} Eliminates organizer fatigue, resolves schedule and taste deadlocks mathematically, and ensures fair democratic alignment.
+    \item \textbf{Engineering Rigor:} Combines cutting-edge DeepSeek-V4 reasoning, deep API tool integrations, real-time reactive frontend architecture, and robust security standards into an industry-grade software solution.
 \end{itemize}
 
 \vspace{0.3cm}
 \begin{center}
-    \small\color{navyblue}\textit{TripMate AI transforms group planning from an exhausting chore into an enjoyable, collaborative experience.}
+    \small\color{navyblue}\textit{TripMate AI turns the chaos of group planning into a seamless, collaborative, and intelligent experience.}
 \end{center}
 
 \end{document}
