@@ -149,7 +149,7 @@ TripMate AI delivers a comprehensive suite of web features tailored specifically
 \subsection{3. Democratic Voting \& Plan Customization}
 \begin{itemize}
     \item \textbf{Granular Leg-by-Leg Voting:} Independent voting cards on every stop (Hotel, Lunch, Activity) with instant 1-click alternative proposals.
-    \item \textbf{Conflict Resolver:} Automatically proposes balanced compromise alternatives when votes are split or tastes are polarized (e.g., Mountain vs. Beach hybrid schedules).
+    \item \textbf{Adaptive Conflict Resolver \& Mediation:} When automated algorithms cannot find an obvious overlap (e.g., zero intersecting dates, diametric budget or travel style conflicts), the Agent engages in targeted, individual-specific Q\&A to negotiate trade-offs and uncover viable middle-ground directions.
     \item \textbf{Streaming AI Chat Assistant:} Real-time conversation with the AI via WebSockets/SSE to modify itinerary cards on the fly.
     \item \textbf{Manual Drag-and-Drop Plan Builder:} Autocomplete place search via Google Places, auto-calculating route travel times and hotel rates for manual planners.
 \end{itemize}
@@ -247,10 +247,11 @@ The internal execution lifecycle of the Unified Agent proceeds through six preci
 
 \begin{enumerate}[label=\textbf{Step \arabic*:}]
     \item \textbf{Ingestion, Context Extraction \& Proactive Q\&A Loop (DeepSeek-V4 Flash):} The Agent parses the chat room stream to extract attendee profiles, general wishes, budget bounds, and date windows $[S_i, E_i] \pm \delta_i$. If essential constraints are missing or ambiguous (such as unstated date ranges, passport/visa status, or dietary specifics), the Agent proactively triggers interactive clarification prompts in the room chat to gather complete information before advancing to heavy computation.
-    \item \textbf{Mathematical Schedule Optimization (DeepSeek-V4 Pro):} Evaluates overlapping availability intervals to determine the global trip dates $[T_{\text{start}}, T_{\text{end}}]$ maximizing total attendance:
+    \item \textbf{Schedule Optimization \& Individualized Date Mediation (DeepSeek-V4 Pro):} Evaluates overlapping availability intervals to determine optimal trip dates:
     \begin{equation}
         \max_{T_{\text{start}}, T_{\text{end}}} \sum_{i=1}^{N} w_i \cdot \mathbb{I}\left( [T_{\text{start}}, T_{\text{end}}] \subseteq [S_i - \delta_i, E_i + \delta_i] \right)
     \end{equation}
+    \textit{Deadlock Mediation Fallback:} If no overlapping window satisfies the group (zero intersection), the Agent isolates the blocking constraints and initiates \textbf{Targeted Individual Inquiries} (e.g., asking Member A if shifting departures by half a day is feasible, or proposing staggered attendance where Member C joins for a partial segment).
     \item \textbf{Parallel Multi-API Tool Calling:}
     \begin{itemize}
         \item \textit{Place Intelligence:} Queries Google Places/Mapbox for destination profiling, geocoordinates, and transit durations.
@@ -258,14 +259,22 @@ The internal execution lifecycle of the Unified Agent proceeds through six preci
         \item \textit{Cross-Border Intelligence:} Checks passport validity ($\ge 6$ months), e-Visa portals, visa agencies, local laws, and cultural taboos.
         \item \textit{Climate Intelligence:} Fetches OpenWeatherMap forecasts to adapt indoor/outdoor activity allocations.
     \end{itemize}
-    \item \textbf{Preference Reconciliation \& Itinerary Synthesis (DeepSeek-V4 Pro):}
+    \item \textbf{Preference Reconciliation \& Adaptive Idea Negotiation (DeepSeek-V4 Pro):}
     \begin{itemize}
-        \item \textit{Divergent Taste Compromise:} Balances conflicting interests (e.g., hybrid mountain-trekking + beach relaxation schedule).
+        \item \textit{Individualized Negotiation on Ideological Deadlocks:} If tastes are sharply polarized (e.g., Beach vs. Mountain, High-Pace Nightlife vs. Quiet Nature), the Agent queries conflicting members individually to diagnose underlying motivations (e.g., discovering someone avoids mountains due to trekking fatigue) and proposes creative compromises (e.g., luxury mountain cable-car resort with spa + nearby coast).
         \item \textit{Group Dining \& Allergen Management:} Identifies venues with large-party seating and crafts family-style banquet menus compliant with all dietary needs (Halal, vegan, allergen-free).
     \end{itemize}
     \item \textbf{Schema Validation \& Streaming Delivery:} Formats output into strict \textbf{Pydantic v2} JSON schemas and streams real-time Proposal Cards to the frontend via WebSockets / SSE.
     \item \textbf{Granular Voting Loop \& Localized Repair:} If members downvote a specific leg (e.g., Day 2 Lunch), the Agent immediately invokes a localized tool call to fetch 3 alternative options without recalculating or disrupting the overall itinerary. Once consensus is reached, the plan is locked democratically.
 \end{enumerate}
+
+\subsection{Deep Reasoning: Adaptive Individualized Mediation \& Deadlock Resolution}
+A core innovation of TripMate AI is its ability to handle scenarios where standard mathematical optimization fails to find an obvious solution:
+\begin{itemize}
+    \item \textbf{Zero-Intersection Date Deadlocks:} When members have rigid, non-overlapping date availability, the Agent does not output an error. Instead, DeepSeek-V4 Pro reasons over the constraint matrix, detects the specific bottleneck individuals, and generates personalized compromise questions directly in the group chat (e.g., \textit{''@Alex, if we shift the departure to Friday evening instead of Thursday, could you attend?''} or \textit{''@Sarah, would joining the group for the first 3 days work for your schedule?''}).
+    \item \textbf{Deep Motivation Probing for Idea Conflicts:} When group members clash over destinations or activities (e.g., Budget Backpacker vs. Luxury Comfort, Mountain vs. Ocean), the Agent conducts targeted inquiries to uncover root preferences and synthesizes hybrid options that address each member's core desires without alienating anyone.
+    \item \textbf{Continuous Consensus Convergence:} Through multi-turn empathetic mediation, the Agent iteratively refines proposals until the entire group converges on a mutually satisfying direction.
+\end{itemize}
 
 % ==========================================
 % 4. BACKEND ARCHITECTURE & DATA FLOW
