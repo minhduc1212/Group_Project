@@ -76,18 +76,18 @@
 \section{Introduction \& Project Idea}
 
 \subsection{The Problem}
-Organizing activities for a group of 3--10+ people (a trip, a dinner, a weekend hangout) is painful in practice:
+Organizing group activities --- ranging from a half-day city hangout (cafe hopping, casual dining, entertainment) to a multi-day self-guided vacation --- is painful in practice:
 \begin{itemize}
-\item \textbf{Manual research} across maps, booking sites and reviews takes days.
+\item \textbf{Manual research} across maps, social reviews and booking sites takes hours.
 \item \textbf{Schedule overlap} across members with different free windows ($\pm\delta$ tolerance) is a combinatorial puzzle.
-\item \textbf{Conflicting preferences} (beach vs. mountain, budget vs. comfort) lead to decision paralysis.
-\item \textbf{Fragmented chat} on Zalo/Messenger buries plans and links.
+\item \textbf{Conflicting preferences} (chill cafe vs. lively pub, budget street food vs. upscale dining, nature vs. city spots) lead to decision paralysis.
+\item \textbf{Fragmented chat} on Zalo/Messenger buries plans, locations and links.
 \item \textbf{One organizer} carries the entire load and gets blamed if the group is unhappy.
-\item \textbf{Expense splitting} after the trip is tedious and awkward.
+\item \textbf{Expense splitting} after the outing or trip is tedious and awkward.
 \end{itemize}
 
 \subsection{The Solution}
-\textbf{TripMate AI} turns group planning into a guided, consensus-driven flow in under 15 minutes: members chat freely in a shared room $\rightarrow$ an AI agent asks clarifying questions $\rightarrow$ the agent researches and proposes an itinerary $\rightarrow$ the group votes leg-by-leg $\rightarrow$ the plan is locked and expenses are auto-settled.
+\textbf{TripMate AI} turns group planning into a guided, consensus-driven flow in under 15 minutes, supporting both \textbf{City Hangouts} (single-day cafe, dining, and entertainment routes) and \textbf{Multi-Day Travel Trips} (intercity getaways, homestays, and vacations): members chat freely in a shared room $\rightarrow$ an AI agent asks clarifying questions $\rightarrow$ the agent researches and proposes a tailored itinerary $\rightarrow$ the group votes leg-by-leg $\rightarrow$ the plan is locked and expenses are auto-settled.
 
 \begin{figure}[htbp]
 \centering
@@ -116,8 +116,13 @@ arrow/.style={-{Latex[length=2.2mm]}, thick, color=navyblue}
 \section{Platform Features}
 
 \begin{itemize}
-\item \textbf{Group Room:} Shared chat room, invite by link. Members chat freely --- budget, dietary needs, dates and preferences are shared naturally in conversation or collected by the agent when it detects they are needed. 6 event types: \texttt{TRAVEL}, \texttt{DINING}, \texttt{HANGOUT}, \texttt{ENTERTAINMENT}, \texttt{SIGHTSEEING}, \texttt{CUSTOM}. Roles: Host, Member, Viewer.
-\item \textbf{AI Planning Hub:} One-click itinerary generation, live flight/hotel/ticket lookup, dietary-aware dining suggestions, visa/passport checks.
+\item \textbf{Dual Planning Scopes with Shared Micro-Granularity:}
+  \begin{itemize}
+    \item \textit{City Hangouts \& Day Outings:} Rapid curation of micro-spots (specialty cafes, local eateries, cinemas, workshops, chill spots) with real-time traffic avoidance.
+    \item \textit{Multi-Day Travel Itineraries:} Macro-planning across multiple days (homestays/hotels, intercity transit), where \textbf{each individual day is planned with the exact same high-resolution micro-detail} (specific cafes, lunch spots, afternoon activities, and evening hangouts).
+  \end{itemize}
+\item \textbf{Group Room:} Shared chat room, invite by link. Members chat freely --- budget, dietary needs, dates and vibe preferences are shared naturally in conversation or collected by the agent when it detects they are needed. 6 event types: \texttt{TRAVEL}, \texttt{DINING}, \texttt{HANGOUT}, \texttt{ENTERTAINMENT}, \texttt{SIGHTSEEING}, \texttt{CUSTOM}. Roles: Host, Member, Viewer.
+\item \textbf{AI Planning Hub:} One-click itinerary generation, curated cafe \& dining suggestions, local activity/lodging lookup, and smart sequence optimization for self-guided groups.
 \item \textbf{Voting \& Customization:} Leg-by-leg UP/DOWN voting with instant alternatives, live AI chat to tweak the plan, manual drag-and-drop editor.
 \item \textbf{Map \& Utilities:} Interactive map (Mapbox), weather-based packing checklist, PDF export, Vietnamese/English UI.
 \item \textbf{Expense Splitting:} Tracks advances and payments, supports equal/exact/percentage splits, computes minimum peer-to-peer settlements.
@@ -136,65 +141,71 @@ The agent is powered by \textbf{DeepSeek-V4}, utilizing two operational tiers wi
 \end{itemize}
 
 \subsection{Tools (External Capabilities)}
-Tools are typed callable functions providing real-time data:
+Tools are typed callable functions providing real-time data for both local outings and multi-day travel:
 \begin{center}
 \small
 \begin{tabularx}{\textwidth}{@{}l X l@{}}
 \toprule
 \textbf{Tool} & \textbf{Function \& Parameters $\rightarrow$ Output} & \textbf{Provider} \\
 \midrule
-\texttt{search\_places} & query, location, radius $\rightarrow$ POIs, ratings, opening hours & Google Places \\
-\texttt{search\_flights} & origin, destination, dates, pax $\rightarrow$ flight schedules \& fares & Amadeus \\
-\texttt{search\_hotels} & location, dates, guests $\rightarrow$ lodging options \& rates & Booking.com \\
-\texttt{search\_activities} & location, category $\rightarrow$ tickets, tours \& activities & Klook \\
-\texttt{check\_visa} & nationality, destination $\rightarrow$ visa \& passport requirements & Passport Index \\
+\texttt{search\_places} & query, location, radius $\rightarrow$ cafes, eateries, chill spots, POIs, ratings, hours & Google Places \\
+\texttt{search\_activities} & location, category $\rightarrow$ entertainment, workshops, local experiences & Klook \\
+\texttt{search\_hotels} & location, dates, guests $\rightarrow$ homestays, hotels \& lodging rates & Booking.com \\
+\texttt{search\_transit} & origin, destination, dates, pax $\rightarrow$ flight / train / intercity transit options & Amadeus / Transit \\
 \texttt{get\_weather} & location, date range $\rightarrow$ forecast \& weather alerts & OpenWeatherMap \\
 \texttt{get\_route} & origin, destination, mode, departure\_time $\rightarrow$ duration, distance & Mapbox \\
 \bottomrule
 \end{tabularx}
 \end{center}
-\textbf{Execution policy:} Independent tool calls (e.g., weather + flights + hotels) run \textbf{in parallel}; dependent calls (e.g., routing between chosen POIs) execute sequentially. All calls are logged in \texttt{agent\_logs}.
+\textbf{Execution policy:} Independent tool calls (e.g., weather + lodging + spots) run \textbf{in parallel}; dependent calls (e.g., routing between chosen spots) execute sequentially. All calls are logged in \texttt{agent\_logs}.
 
 \subsection{Agent Skills}
 Internal capabilities governing agent behavior beyond raw API querying:
 \begin{itemize}
 \item \textbf{Research skill:} contextual query formulation, multi-source retrieval, and candidate ranking (Section~\ref{sec:research}).
-\item \textbf{Clarification skill:} extracts stated preferences from chat; only queries missing critical parameters without repetitive intake forms.
-\item \textbf{Conflict-mediation skill:} negotiates compromises for conflicting preferences (e.g., beach vs. mountain) through hybrid options.
+\item \textbf{Clarification skill:} extracts stated preferences from chat (budget, dietary rules, vibe/culinary tastes, transport mode); only queries missing critical parameters without repetitive intake forms.
+\item \textbf{Conflict-mediation skill:} negotiates compromises for conflicting preferences (e.g., chill cafe vs. energetic workshop) through hybrid options.
 \item \textbf{Local-repair skill:} patches downvoted itinerary legs with pre-scored alternatives without full re-planning.
 \item \textbf{Validation skill:} verifies feasibility (prices $> 0$, dates within window, valid opening hours) before presenting options.
 \end{itemize}
 
-\subsection{Research Skill: Finding Places, Hotels \& Restaurants}
+\subsection{Research Skill: Finding Places, Cafes \& Restaurants}
 \label{sec:research}
 The Research skill transforms group preferences into vetted, ranked candidates through a streamlined process:
 \begin{enumerate}
-  \item \textbf{Contextual Querying:} Embeds dietary needs, group size, and location proximity into queries (e.g., \texttt{search\_places("halal seafood restaurant", near=Hotel, party=6)}).
-  \item \textbf{Multi-Source Retrieval:} Queries relevant APIs (Google Places for POIs/dining, Booking.com for hotels, Klook for activities).
-  \item \textbf{Hard Filtering:} Eliminates candidates exceeding group budget cap, violating dietary rules, lacking capacity, or closed during visit slots.
-  \item \textbf{Heuristic Scoring:} Ranks viable options via a weighted utility score:
+  \item \textbf{Contextual Querying:} Embeds dietary needs, group size, and location proximity into queries (e.g., \texttt{search\_places("spacious cafe with parking and power outlets", near=MeetingPoint, party=6)}).
+  \item \textbf{Multi-Source Retrieval:} Queries relevant APIs (Google Places for cafes/dining/POIs, Klook for local experiences, Booking.com for homestays/hotels).
+  \item \textbf{Hard Filtering:} Eliminates candidates exceeding group budget cap, violating dietary rules, lacking party capacity, or closed during target visit slots.
+  \item \textbf{Heuristic Scoring:} Evaluates each surviving candidate using a multi-factor score:
   \[
-  \text{Score}(c) = w_1 \cdot \text{Rating} + w_2 \cdot \text{PriceFit} + w_3 \cdot \text{Proximity} + w_4 \cdot \text{PreferenceMatch}
+  \text{Score}(c) = w_1 \cdot \text{Rating}(c) + w_2 \cdot \text{PriceFit}(c) + w_3 \cdot \text{Proximity}(c) + w_4 \cdot \text{PreferenceMatch}(c)
   \]
-  where weights $w_i$ adapt to chat cues (e.g., higher $w_2$ for budget constraints; negative penalties for previously rejected attributes).
+  \textbf{Plain-Language Explanation of Terms:}
+  \begin{itemize}
+    \item $\text{Rating}(c)$: Platform rating and quality score from real user reviews ($0\text{--}1$).
+    \item $\text{PriceFit}(c)$: Affordability relative to group budget per person (higher score for budget-friendly spots; penalized if exceeding cap).
+    \item $\text{Proximity}(c)$: Closeness to the current cluster or anchor point (e.g., hotel, meeting point), minimizing transit time.
+    \item $\text{PreferenceMatch}(c)$: How well the venue matches stated vibes and tastes (e.g., quiet work cafe, outdoor rooftop, vegan dish) minus penalties if similar styles were previously rejected.
+    \item \textit{Dynamic Weights ($w_1\text{--}w_4$):} Importance sliders that auto-tune based on chat (e.g., mentioning ``cheap eats'' boosts $w_2$; wanting ``somewhere nearby'' boosts $w_3$).
+  \end{itemize}
   \item \textbf{Selection \& Standbys:} The top candidate forms the proposed leg, while 2--3 next-best options are retained as instant voting alternatives.
 \end{enumerate}
 
-\subsection{Destination Discovery: Unset Destinations}
+\subsection{Destination Discovery: Unset Destinations \& Outing Themes}
 \label{sec:discovery}
-When the destination is unspecified (e.g., \textit{``warm place near Hanoi, 3 days, hike + beach, \$150/pax''}):
+When the destination or plan is unspecified (e.g., \textit{``somewhere cool for weekend getaway, 2--3 days, \$100/pax''} or \textit{``a fun Saturday city tour with cafes and boardgames near district center''}):
 \begin{itemize}
-  \item \textbf{Stage A (Candidate Generation):} LLM analyzes constraints (duration $\leq$ 3 days $\rightarrow$ travel $\leq$ 2h; budget \$150 $\rightarrow$ domestic; hike + beach $\rightarrow$ Cat Ba / Ha Long shortlist).
-  \item \textbf{Stage B (Live Validation):} Parallel tool checks verify weather (\texttt{get\_weather}), flight/travel costs (\texttt{search\_flights}), and attraction accessibility. Surviving top 2--3 destinations are presented to the group for a preliminary consensus vote before detailed itinerary planning.
+  \item \textbf{Stage A (Candidate Generation):} LLM analyzes constraints and intent (multi-day travel $\rightarrow$ shortlist destinations like Tam Dao, Ninh Binh, Cat Ba, Da Lat; city hangout $\rightarrow$ cluster themes like Old Quarter cafe hop, West Lake sunset dining, or entertainment hub).
+  \item \textbf{Stage B (Live Validation):} Parallel tool checks verify weather (\texttt{get\_weather}), transit feasibility (\texttt{search\_transit} or \texttt{get\_route}), and spot density (\texttt{search\_places}). Surviving top 2--3 concepts are presented to the group for a preliminary vote.
 \end{itemize}
 
 \subsection{Place Selection Reasoning: Spatial \& Temporal Coherence}
 \label{sec:place_select}
-Individual scores do not guarantee a smooth schedule. The agent selects places based on geographic feasibility, realistic travel times, and logical flow:
+Individual scores do not guarantee a smooth schedule. Whether organizing a standalone 1-day city tour or Day 3 of a vacation, the agent sequences places into logical, high-detail daily blocks:
 \begin{itemize}
-  \item \textbf{Geographic Clustering:} Groups candidate POIs into spatial clusters relative to an anchor (e.g., hotel). The agent favors cluster-coherent choices (e.g., picking a restaurant 400\,m from the morning attraction over a slightly higher-rated one 14\,km away to avoid wasted transit).
-  \item \textbf{Half-Day Time Blocks:} Partitions days into Morning, Afternoon, and Evening blocks. Stops within a block are restricted to the same geographic cluster.
-  \item \textbf{Anti-Zigzag Optimization:} Analyzes route geometry and applies nearest-neighbor sequencing to flexible stops, preventing backtracking across the city.
+  \item \textbf{Geographic Clustering:} Groups candidate spots (morning coffee $\rightarrow$ lunch specialty dining $\rightarrow$ afternoon activity $\rightarrow$ evening hangout) into spatial clusters relative to an anchor (e.g., hotel or meeting spot). Choosing places within the same cluster saves hours of transit.
+  \item \textbf{Half-Day Time Blocks:} Partitions the day into Morning, Afternoon, and Evening blocks. Stops within each block are strictly co-located in the same neighborhood.
+  \item \textbf{Anti-Zigzag Optimization:} Analyzes route geometry and applies nearest-neighbor sequencing to flexible stops, preventing backtracking across town.
 \end{itemize}
 
 \subsection{Spatial Planning: Routing, Distance, Time \& Transport}
@@ -202,7 +213,11 @@ Individual scores do not guarantee a smooth schedule. The agent selects places b
 Spatial planning validates that the itinerary is physically feasible within group time budgets:
 \begin{enumerate}
   \item \textbf{Realistic Transit \& Timing:} Computes real road distance and travel time via \texttt{get\_route} with departure timestamps. Peak-hour transitions (7--9 am, 5--7 pm) automatically include a 30--50\% traffic buffer.
-  \item \textbf{Feasibility Checks:} Enforces $\text{Arrival} + \text{Duration} \leq \text{Closing Time}$ with $\ge 15$\,min connection slack. Preserves fixed meal slots (lunch 11:30--13:30, dinner 18:00--20:30) and anchors timed-entry attractions.
+  \item \textbf{Feasibility Checks:} Validates time windows for every stop using the condition:
+  \[
+  \text{Arrival Time} + \text{Visit Duration} + \text{Slack} \le \text{Closing Time}
+  \]
+  \textbf{Plain-Language Explanation:} Ensures the group reaches the venue, enjoys it for the planned duration (e.g., 60\,min for a cafe, 90\,min for lunch), and departs before closing time, while maintaining a safety buffer ($\text{Slack} \ge 15$\,min) for unexpected traffic. Fixed meal slots (lunch 11:30--13:30, dinner 18:00--20:30) are preserved.
   \item \textbf{Transport Mode Selection:} Chooses optimal transit based on group size, distance, and context:
 \end{enumerate}
 
@@ -216,19 +231,19 @@ $< 1.5$ km & Walking & Zero cost, walkable in dense areas, no waiting time. \\
 2--15 km (flexible / youth) & Motorbike / Scooter & Highly agile in traffic, easy parking, cost-effective, scenic exploration. \\
 2--10 km (groups / rain) & Grab / Taxi & Weather-safe, convenient point-to-point transit for small groups. \\
 10--40 km ($\ge 5$ pax) & Private Van / Car & Keeps group together, lower cost than multi-taxi convoy. \\
-$> 40$ km & Bus / Flight & Optimizes transit duration versus budget limits. \\
+$> 40$ km & Intercity Bus / Flight & Optimizes transit duration versus budget limits. \\
 \bottomrule
 \end{tabularx}
 \end{center}
 \textit{Override:} Modes dynamically adjust if the group specifies a preference (e.g., \textit{``rent motorbikes''}) or during adverse weather.
 
-\textbf{Example Spatial Optimization (Da Nang, 6 pax):} Rather than scheduling distant attractions on the same morning, the agent anchors Bà Nà Hills (35\,km) for the morning with on-site lunch (saving a 70\,km round-trip), returns off-peak at 14:00 by private van, and assigns the nearby beach for sunset. Total daily transit is reduced from 180\,min to 90\,min.
+\textbf{Example Spatial Optimization (Da Nang / Local Day Trip, 6 pax):} Rather than scattering far-apart spots in the same morning, the agent anchors the morning activity and on-site lunch together, returns off-peak at 14:00, and assigns nearby seaside cafes and sunset hangouts for the evening. Total daily transit is reduced from 180\,min to 90\,min.
 
 \subsection{Agentic Reasoning Loop}
 TripMate AI runs an adaptive \textbf{Think $\rightarrow$ Act $\rightarrow$ Observe} loop rather than a rigid pipeline:
 \begin{enumerate}
 \item \textbf{Think:} Evaluates the structured session state (Section 3.9) to choose the single next best action (call a tool, query the group, or emit proposal) using DeepSeek-Pro.
-\item \textbf{Act:} Executes the selected action (e.g., invoke \texttt{search\_hotels} or Clarification skill).
+\item \textbf{Act:} Executes the selected action (e.g., invoke \texttt{search\_places} or Clarification skill).
 \item \textbf{Observe:} Parses output, updates state, and evaluates stop conditions.
 \item \textbf{Stop Condition:} Terminates when the itinerary meets all constraints, consensus is reached, or round limits (Section 3.10) are met.
 \end{enumerate}
@@ -272,26 +287,9 @@ arrow/.style={-{Latex[length=2mm]}, thick, color=navyblue}
 
 \subsection{Learning Feedback Loop}
 \begin{itemize}
-\item Rejection reasons (price, distance, style) are logged in the session state.
+\item Rejection reasons (price, distance, style, vibe) are logged in the session state.
 \item Subsequent candidate proposals filter out attributes matching rejected patterns.
 \item Feedback is strictly session-scoped, resetting for subsequent trips.
-\end{itemize}
-
-\subsection{Worked Examples}
-\textbf{Scenario A --- Known Destination (Da Nang, 3 days, 6 pax):}
-\begin{itemize}
-\item \textit{Turn 1 (Input):} Dates/destination known; diet (halal) parsed from chat $\rightarrow$ Agent asks only for missing budget.
-\item \textit{Turn 2 (Research):} Parallel lookup (\texttt{search\_hotels}, \texttt{search\_places}, \texttt{get\_weather}) $\rightarrow$ Filters budget/capacity, selects top hotel + 2 backups.
-\item \textit{Turn 3 (Spatial Planning):} Clusters POIs $\rightarrow$ Anchors Bà Nà Hills (35\,km) to Day 2 morning, separates Marble Mountains to Day 3 to prevent zigzagging.
-\item \textit{Turn 4 (Routing):} \texttt{get\_route} assigns Grab van (6 pax), applies peak-hour buffers $\rightarrow$ Validates opening hours $\rightarrow$ Generates proposal cards.
-\item \textit{Turn 5 (Repair):} Member downvotes lunch spot $\rightarrow$ Local-repair immediately injects pre-scored halal alternative.
-\end{itemize}
-
-\textbf{Scenario B --- Unset Destination (``Warm, near Hanoi, 3 days, hike + beach''):}
-\begin{itemize}
-\item \textit{Turn 1 (Discovery):} LLM generates candidate shortlist (Cat Ba, Ha Long, Ninh Binh) balancing hike/beach criteria.
-\item \textit{Turn 2 (Validation):} Checks weather and travel costs in parallel $\rightarrow$ Drops high-rain candidate $\rightarrow$ Presents top 2 to group vote.
-\item \textit{Turn 3 onwards:} Group selects Cat Ba $\rightarrow$ Resumes standard itinerary research and spatial planning.
 \end{itemize}
 
 % ==========================================
@@ -303,7 +301,11 @@ arrow/.style={-{Latex[length=2mm]}, thick, color=navyblue}
 \item \textbf{Database:} PostgreSQL + SQLAlchemy 2.0 (async) + Alembic migrations.
 \item \textbf{Cache/Broker:} Redis --- caches tool results, rate-limits, WebSocket pub/sub.
 \item \textbf{Background jobs:} Celery / BackgroundTasks for PDF export (WeasyPrint) and email.
-\item \textbf{Settlement engine:} 3 tables (\texttt{expenses}, \texttt{expense\_splits}, \texttt{settlements}); greedy matching on net balances $\text{Net}_u = \sum \text{Paid}_u - \sum \text{Owed}_u$ minimizes transfer count.
+\item \textbf{Settlement engine:} 3 tables (\texttt{expenses}, \texttt{expense\_splits}, \texttt{settlements}). It computes net balances for each member:
+\[
+\text{Net}_u = \sum \text{Paid}_u - \sum \text{Owed}_u
+\]
+\textbf{Plain-Language Explanation:} For each member $u$, $\text{Net}_u$ is total money paid upfront minus their fair share. Positive means the group owes them money; negative means they owe the group. A greedy matching algorithm iteratively pairs the largest debtor with the largest creditor, settling all debts in the minimum number of direct transfers ($N$ members require at most $N-1$ transactions).
 \end{itemize}
 
 % ==========================================
@@ -313,13 +315,13 @@ arrow/.style={-{Latex[length=2mm]}, thick, color=navyblue}
 React 18 + Vite + TypeScript, Tailwind CSS + shadcn/ui, Zustand for state, TanStack Query for caching/optimistic updates. Responsive across mobile, tablet, desktop.
 
 % ==========================================
-% 6. DEPLOYMENT & SECURITY
+% 6. DEPLOYMENT \& SECURITY
 % ==========================================
 \section{Deployment \& Security}
 \begin{itemize}
 \item \textbf{Pipeline:} Docker Compose (local/staging), Vercel (frontend CDN), Render/VPS (backend), GitHub Actions (CI).
 \item \textbf{Security:} bcrypt password hashing, JWT access + Redis-rotated refresh tokens, RBAC, \texttt{bleach} sanitization, Pydantic v2 schema validation on all AI output.
-\item \textbf{Data privacy:} all trip-specific information (dietary needs, budget, passport details) lives only in the session chat and the agent's session state; it is not stored in permanent user profiles. Access is scoped by RBAC and not shared outside the room.
+\item \textbf{Data privacy:} all trip-specific information (dietary needs, budget, preferences) lives only in the session chat and the agent's session state; it is not stored in permanent user profiles. Access is scoped by RBAC and not shared outside the room.
 \item \textbf{Rate limiting \& audit:} Redis-backed limits on external and AI endpoints; all tool calls and token usage logged in \texttt{agent\_logs}.
 \end{itemize}
 
