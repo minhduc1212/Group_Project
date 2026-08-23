@@ -129,302 +129,110 @@ arrow/.style={-{Latex[length=2.2mm]}, thick, color=navyblue}
 \section{The AI Agent: Tools, Skills \& Operational Flow}
 
 \subsection{Model Layer}
-The agent is powered by \textbf{DeepSeek-V4}, used in two modes rather than two separate agents:
+The agent is powered by \textbf{DeepSeek-V4}, utilizing two operational tiers within a unified context:
 \begin{itemize}
-\item \textbf{Flash} --- fast chat, room-message parsing, tool-call formatting.
-\item \textbf{Pro} --- deep reasoning for constraint solving and preference conflicts.
+\item \textbf{Flash} --- fast chat interaction, room message parsing, and tool-call formatting.
+\item \textbf{Pro} --- deep reasoning for constraint solving, spatial planning, and preference arbitration.
 \end{itemize}
-One agent, one shared context, two model tiers chosen per sub-task by complexity.
 
-\subsection{Tools (external capabilities)}
-Each tool is a typed function the agent can call. This is the concrete contract, not just a diagram box:
-
+\subsection{Tools (External Capabilities)}
+Tools are typed callable functions providing real-time data:
 \begin{center}
 \small
 \begin{tabularx}{\textwidth}{@{}l X l@{}}
 \toprule
-\textbf{Tool} & \textbf{Purpose \& key inputs $\rightarrow$ output} & \textbf{Provider} \\
+\textbf{Tool} & \textbf{Function \& Parameters $\rightarrow$ Output} & \textbf{Provider} \\
 \midrule
-\texttt{search\_places} & query, location $\rightarrow$ list of POIs, geo, hours & Google Places \\
-\texttt{search\_flights} & origin, dest, dates, pax $\rightarrow$ flight options + price & Amadeus \\
-\texttt{search\_hotels} & location, dates, room needs $\rightarrow$ hotel + rate options & Booking.com \\
-\texttt{search\_activities} & location, category $\rightarrow$ tickets/tours & Klook \\
-\texttt{check\_visa} & nationality, destination $\rightarrow$ visa requirement, passport rule & Passport Index \\
-\texttt{get\_weather} & location, date range $\rightarrow$ forecast & OpenWeatherMap \\
-\texttt{get\_route} & origin, dest, mode $\rightarrow$ duration, distance & Mapbox \\
+\texttt{search\_places} & query, location, radius $\rightarrow$ POIs, ratings, opening hours & Google Places \\
+\texttt{search\_flights} & origin, destination, dates, pax $\rightarrow$ flight schedules \& fares & Amadeus \\
+\texttt{search\_hotels} & location, dates, guests $\rightarrow$ lodging options \& rates & Booking.com \\
+\texttt{search\_activities} & location, category $\rightarrow$ tickets, tours \& activities & Klook \\
+\texttt{check\_visa} & nationality, destination $\rightarrow$ visa \& passport requirements & Passport Index \\
+\texttt{get\_weather} & location, date range $\rightarrow$ forecast \& weather alerts & OpenWeatherMap \\
+\texttt{get\_route} & origin, destination, mode, departure\_time $\rightarrow$ duration, distance & Mapbox \\
 \bottomrule
 \end{tabularx}
 \end{center}
+\textbf{Execution policy:} Independent tool calls (e.g., weather + flights + hotels) run \textbf{in parallel}; dependent calls (e.g., routing between chosen POIs) execute sequentially. All calls are logged in \texttt{agent\_logs}.
 
-\textbf{Tool-call rules:} every tool call and its raw result is logged (\texttt{agent\_logs}) for audit. Calls that are independent (e.g. flights + hotels + weather) run \textbf{in parallel}; calls that depend on a prior result (e.g. route depends on chosen hotel) run sequentially.
-
-\subsection{Skills (internal behaviors, not just APIs)}
-Beyond calling external tools, the agent has defined internal skills that govern \emph{how} it behaves:
+\subsection{Agent Skills}
+Internal capabilities governing agent behavior beyond raw API querying:
 \begin{itemize}
-\item \textbf{Research skill:} knows \emph{what} to search, \emph{how} to read raw API results, and \emph{how} to rank and select the best options for this specific group --- not just "call the API and paste the output" (see Section~\ref{sec:research} for detail).
-\item \textbf{Clarification skill:} reads the group chat to extract what members have already stated (dates, budget, dietary needs, passport status, preferences); only asks a follow-up question when a specific piece of information is genuinely missing \emph{and} required to proceed. Never runs a generic intake form; never asks for something already mentioned in the chat.
-\item \textbf{Conflict-mediation skill:} when preferences clash (beach vs.\ mountain) or dates don't overlap, probes individual members for underlying reasons and proposes a hybrid compromise instead of picking a side.
-\item \textbf{Local-repair skill:} when one leg is downvoted, patches only that leg in the existing itinerary object instead of regenerating the whole plan.
-\item \textbf{Validation skill:} before showing any tool result to users, checks it against basic sanity rules (price $>$ 0, dates within trip window, place still open) and drops or re-queries invalid results.
+\item \textbf{Research skill:} contextual query formulation, multi-source retrieval, and candidate ranking (Section~\ref{sec:research}).
+\item \textbf{Clarification skill:} extracts stated preferences from chat; only queries missing critical parameters without repetitive intake forms.
+\item \textbf{Conflict-mediation skill:} negotiates compromises for conflicting preferences (e.g., beach vs. mountain) through hybrid options.
+\item \textbf{Local-repair skill:} patches downvoted itinerary legs with pre-scored alternatives without full re-planning.
+\item \textbf{Validation skill:} verifies feasibility (prices $> 0$, dates within window, valid opening hours) before presenting options.
 \end{itemize}
 
-\subsection{Research Skill: How the Agent Finds Places, Hotels \& Restaurants}
+\subsection{Research Skill: Finding Places, Hotels \& Restaurants}
 \label{sec:research}
+The Research skill transforms group preferences into vetted, ranked candidates through a streamlined process:
+\begin{enumerate}
+  \item \textbf{Contextual Querying:} Embeds dietary needs, group size, and location proximity into queries (e.g., \texttt{search\_places("halal seafood restaurant", near=Hotel, party=6)}).
+  \item \textbf{Multi-Source Retrieval:} Queries relevant APIs (Google Places for POIs/dining, Booking.com for hotels, Klook for activities).
+  \item \textbf{Hard Filtering:} Eliminates candidates exceeding group budget cap, violating dietary rules, lacking capacity, or closed during visit slots.
+  \item \textbf{Heuristic Scoring:} Ranks viable options via a weighted utility score:
+  \[
+  \text{Score}(c) = w_1 \cdot \text{Rating} + w_2 \cdot \text{PriceFit} + w_3 \cdot \text{Proximity} + w_4 \cdot \text{PreferenceMatch}
+  \]
+  where weights $w_i$ adapt to chat cues (e.g., higher $w_2$ for budget constraints; negative penalties for previously rejected attributes).
+  \item \textbf{Selection \& Standbys:} The top candidate forms the proposed leg, while 2--3 next-best options are retained as instant voting alternatives.
+\end{enumerate}
 
-Calling a tool is just one step. The Research skill is the \emph{full sequence} the agent runs to turn raw API responses into a meaningful, group-tailored selection. It is not hardcoded per category --- the agent applies the same reasoning pattern whether it is searching for a restaurant, a hotel, or a tourist attraction.
-
-\subsubsection*{Step 1: Form a targeted query from group context}
-Before calling any tool, the agent reads the structured state and constructs a \emph{specific} query, not a generic one.
-\begin{itemize}
-\item Bad (generic): \texttt{search\_places("restaurant", "Da Nang")}
-\item Good (context-aware): \texttt{search\_places("halal seafood restaurant large party Da Nang beach", location=\{lat, lng\}, radius=2km, open\_on="2025-04-12 19:00")}
-\end{itemize}
-The difference is that the good query encodes diet constraints, group size, location proximity to the chosen hotel, and the specific evening from the itinerary.
-
-\subsubsection*{Step 2: Call the right tool(s), sometimes multiple}
-For some categories the agent needs more than one source to get a confident answer:
-\begin{itemize}
-\item \textbf{Hotels:} \texttt{search\_hotels} (Booking.com) for price/availability + \texttt{search\_places} (Google Places) for rating, photos and walking distance to attractions.
-\item \textbf{Restaurants:} \texttt{search\_places} for rating/hours/cuisine + (optionally) a web search if the group wants a locally famous spot that APIs miss.
-\item \textbf{Attractions/activities:} \texttt{search\_activities} (Klook) for ticketed venues + \texttt{search\_places} for free or non-ticketed POIs.
-\item \textbf{Maps \& routing:} \texttt{get\_route} called once per consecutive leg pair to compute real transit time (walking, driving, taxi), not straight-line distance --- because a hotel 1 km away but across a river can mean 20 minutes by road.
-\end{itemize}
-
-\subsubsection*{Step 3: Filter by hard constraints (automatic disqualifiers)}
-The agent drops any result that violates a hard constraint before scoring:
-\begin{center}
-\small
-\begin{tabularx}{\textwidth}{@{}l X@{}}
-\toprule
-\textbf{Constraint} & \textbf{Disqualifier} \\
-\midrule
-Budget & price per person $>$ group budget cap \\
-Diet & restaurant cannot accommodate a stated allergen or dietary rule \\
-Capacity & venue does not seat the full party size \\
-Timing & place is closed during the planned visit slot \\
-Visa / legal & activity requires a permit the group cannot get in time \\
-\bottomrule
-\end{tabularx}
-\end{center}
-
-\subsubsection*{Step 4: Score and rank remaining candidates}
-After filtering, the agent scores each surviving candidate using a weighted formula derived from the group's stated priorities:
-\[
-\text{score}(c) = w_1 \cdot \text{rating}(c) + w_2 \cdot \text{price\_fit}(c) + w_3 \cdot \text{proximity}(c) + w_4 \cdot \text{preference\_match}(c)
-\]
-where weights $w_1\text{--}w_4$ are inferred from what the group has said in the current chat session (e.g.\ a group that mentions ``cheap'' or ``tight budget'' gets high $w_2$; one that says ``comfortable'' or ``don't want to be tired'' gets high $w_1$ and $w_3$). Weights default to equal if no signal is present. $\text{preference\_match}$ also checks the Feedback log: options similar to what the group already rejected this session are penalised.
-
-\subsubsection*{Step 5: Select the top option and keep 2--3 alternatives}
-The highest-scoring candidate becomes the proposed leg. The next 2--3 become the instant-swap alternatives shown on the voting card, so when a member downvotes the main choice, the agent does \emph{not} re-search from scratch --- the alternatives are already scored and ready.
-
-\subsubsection*{Step 6: Pin to the map}
-Each selected place is geocoded (lat/lng from the tool result or \texttt{search\_places}) and added to the Mapbox layer so the group can visually verify the spatial arrangement of the itinerary --- e.g.\ catching that the Day 2 restaurant and Day 2 attraction are on opposite sides of the city.
-
-\subsection{Destination Discovery: When the Group Does Not Know Where to Go}
+\subsection{Destination Discovery: Unset Destinations}
 \label{sec:discovery}
-
-This is the harder case and the one most users actually face. The group says something like \textit{``somewhere warm, 3 days, not too far from Hanoi, budget \$150/person, half the group wants to hike, the other half wants the beach''} --- no specific destination yet.
-
-The agent runs a two-stage process before any hotel or restaurant is searched:
-
-\subsubsection*{Stage A: Generate candidate destinations (model reasoning, no API yet)}
-The agent reasons over the constraints purely from its own knowledge first, without calling any tool, because broad destination thinking is cheaper and faster as a language model inference step:
+When the destination is unspecified (e.g., \textit{``warm place near Hanoi, 3 days, hike + beach, \$150/pax''}):
 \begin{itemize}
-  \item Parse the soft signals: ``warm'' + ``not far from Hanoi'' + ``hike + beach'' $\rightarrow$ shortlist: Ha Long Bay, Ninh Binh + Cat Ba, Phong Nha, Da Nang.
-  \item Apply hard filters immediately: trip duration 3 days $\rightarrow$ flight or drive $\leq$ 2h from Hanoi (otherwise transit eats the trip); budget \$150/person $\rightarrow$ drop international destinations.
-  \item Conflict signal detected (hike vs.\ beach) $\rightarrow$ flag for Conflict-mediation skill, but also note that Cat Ba island (limestone karst + beach) could satisfy both --- keep it as the synthesis candidate.
+  \item \textbf{Stage A (Candidate Generation):} LLM analyzes constraints (duration $\leq$ 3 days $\rightarrow$ travel $\leq$ 2h; budget \$150 $\rightarrow$ domestic; hike + beach $\rightarrow$ Cat Ba / Ha Long shortlist).
+  \item \textbf{Stage B (Live Validation):} Parallel tool checks verify weather (\texttt{get\_weather}), flight/travel costs (\texttt{search\_flights}), and attraction accessibility. Surviving top 2--3 destinations are presented to the group for a preliminary consensus vote before detailed itinerary planning.
 \end{itemize}
-Output: a ranked shortlist of 3--5 destinations with a one-line rationale for each.
 
-\subsubsection*{Stage B: Validate each candidate with real data}
-Now the agent calls tools --- one parallel batch per candidate to check that the reasoning holds up against live data:
-\begin{itemize}
-  \item \texttt{get\_weather(destination, trip\_dates)} --- rule out candidates with bad weather on those dates (typhoon season, heavy rain).
-  \item \texttt{search\_flights(HAN, destination, dates, pax)} --- check actual flight availability and price; if no flight fits the budget, drop the destination.
-  \item \texttt{search\_places(destination, "hike OR beach OR nature")} --- confirm the activity types exist and are accessible (not seasonally closed).
-  \item \texttt{check\_visa(nationalities, destination)} --- for international options.
-\end{itemize}
-Candidates that fail any check are dropped. Surviving candidates are re-scored and the top 2--3 are presented to the group as a \textbf{Destination Vote} before any detailed itinerary is planned. This avoids wasting research effort on a destination the group rejects.
-
-\subsubsection*{Once a destination is chosen}
-The full Research Skill (Section~\ref{sec:research}) then runs on the confirmed destination: searching hotels, restaurants, and activities within it, forming context-aware queries, filtering and scoring --- exactly as described above.
-
-\subsection{Place Selection Reasoning: Why the Agent Picks One Place Over Another}
+\subsection{Place Selection Reasoning: Spatial \& Temporal Coherence}
 \label{sec:place_select}
-
-Scoring candidates (Section~\ref{sec:research}, Step 4) tells the agent \emph{which individual place ranks highest}, but does not account for \emph{how places interact with each other} in a full day. The agent runs an additional Place Selection Reasoning pass after individual scoring to make the final selection spatially and temporally coherent.
-
-\subsubsection*{Cluster grouping}
-The agent groups all high-scoring candidates (hotels, restaurants, attractions) by geographic cluster before picking the combination to put in the itinerary. The goal is to minimise total daily travel rather than pick the highest-rated individual items regardless of location.
-
+Individual scores do not guarantee a smooth schedule. The agent selects places based on geographic feasibility, realistic travel times, and logical flow:
 \begin{itemize}
-  \item Each candidate receives a cluster label based on its geo-coordinates (e.g.\ ``Da Nang Beach North'', ``Son Tra Peninsula'', ``Da Nang City Centre'').
-  \item The agent then selects a \textbf{cluster-coherent combination}: if the best-rated restaurant is 14 km from the best-rated morning attraction, but the second-rated restaurant is 400 m away, the agent picks the second restaurant --- because the travel saved (14 km $\times$ two trips = 28 km) outweighs the small rating difference.
-  \item Hotels are selected first because they anchor the spatial layout of the day: a hotel in Cluster A makes all Cluster A places ``close'' and all Cluster B places ``far''. The agent explicitly reasons about this anchor effect before committing to a hotel.
+  \item \textbf{Geographic Clustering:} Groups candidate POIs into spatial clusters relative to an anchor (e.g., hotel). The agent favors cluster-coherent choices (e.g., picking a restaurant 400\,m from the morning attraction over a slightly higher-rated one 14\,km away to avoid wasted transit).
+  \item \textbf{Half-Day Time Blocks:} Partitions days into Morning, Afternoon, and Evening blocks. Stops within a block are restricted to the same geographic cluster.
+  \item \textbf{Anti-Zigzag Optimization:} Analyzes route geometry and applies nearest-neighbor sequencing to flexible stops, preventing backtracking across the city.
 \end{itemize}
 
-\subsubsection*{Half-day block planning}
-A day is split into natural blocks (Morning / Afternoon / Evening) rather than planning stop-by-stop from 8 am to 10 pm. The agent assigns a cluster to each block, so all stops within a block are geographically co-located.
-
-\begin{center}
-\small
-\begin{tabularx}{\textwidth}{@{}l l X@{}}
-\toprule
-\textbf{Block} & \textbf{Cluster assigned} & \textbf{Agent reasoning} \\
-\midrule
-Morning & Son Tra Peninsula & outdoor activities best done early, before heat and crowds \\
-Afternoon & Da Nang City Centre & museums/shopping open all day; also closest to hotel \\
-Evening & Han River riverside & dinner + night market; walkable from City Centre \\
-\bottomrule
-\end{tabularx}
-\end{center}
-
-Switching clusters between blocks is acceptable; switching \emph{within} a block triggers a warning and the agent tries to eliminate the cross-cluster hop before finalising.
-
-\subsubsection*{Explicit anti-zigzag check}
-After assembling the full-day stop list, the agent computes the total travel distance and compares it against the convex hull of the same stops (the minimum possible travel if ordered optimally). If the ratio exceeds 1.6$\times$, the day is flagged as inefficient and a nearest-neighbour reorder is applied on the flexible stops (fixed-time anchors are not moved).
-
-\subsection{Spatial Planning: Routing, Distance, Traffic \& Time}
+\subsection{Spatial Planning: Routing, Distance, Time \& Transport}
 \label{sec:spatial}
-
-After place selection, the agent runs a Spatial Planning pass to make the schedule physically feasible --- checking that the group can actually get from A to B to C within the day's time budget.
-
-\subsubsection*{What the agent computes per day}
-
-For each day in the itinerary, the agent models the day as an ordered sequence of stops $S_1 \rightarrow S_2 \rightarrow \cdots \rightarrow S_n$ and computes:
-
+Spatial planning validates that the itinerary is physically feasible within group time budgets:
 \begin{enumerate}
-  \item \textbf{Real road distance and travel time} via \texttt{get\_route(origin, dest, mode, departure\_time)}.
-    The \texttt{departure\_time} parameter is critical: the Mapbox Directions API returns \emph{time-of-day-aware} travel time, so a 10-minute drive at 10 am becomes 35 minutes at 5 pm in a congested city. The agent always passes the actual planned departure time, not a generic estimate.
-  \item \textbf{Time budget per stop}: arrival time = departure from previous stop + transit time. The agent checks that \texttt{arrival\_time + min\_visit\_duration $\leq$ closing\_time} for every stop.
-  \item \textbf{Slack time}: the gap between end of one stop and start of next. If slack $<$ 15 minutes on any transition, the agent flags it as a tight connection and either compresses the visit at the earlier stop or proposes swapping the order.
+  \item \textbf{Realistic Transit \& Timing:} Computes real road distance and travel time via \texttt{get\_route} with departure timestamps. Peak-hour transitions (7--9 am, 5--7 pm) automatically include a 30--50\% traffic buffer.
+  \item \textbf{Feasibility Checks:} Enforces $\text{Arrival} + \text{Duration} \leq \text{Closing Time}$ with $\ge 15$\,min connection slack. Preserves fixed meal slots (lunch 11:30--13:30, dinner 18:00--20:30) and anchors timed-entry attractions.
+  \item \textbf{Transport Mode Selection:} Chooses optimal transit based on group size, distance, and context:
 \end{enumerate}
-
-\subsubsection*{Transport mode selection}
-
-The agent picks a transport mode based on distance and group size --- not just the fastest option:
 
 \begin{center}
 \small
 \begin{tabularx}{\textwidth}{@{}l l X@{}}
 \toprule
-\textbf{Distance} & \textbf{Default mode} & \textbf{Agent reasoning} \\
+\textbf{Distance / Context} & \textbf{Default Mode} & \textbf{Rationale} \\
 \midrule
-$< 1$ km & Walking & Avoids traffic, free, no wait time. \\
-1--5 km & Grab / taxi & Faster than walking, cheaper than private car for small group. \\
-5--30 km & Private van (if $\geq 6$ pax) & Taxi convoy for large groups is slower and costs more; a rented van keeps the group together. \\
-$> 30$ km & Flight or intercity bus & Agent checks if a short domestic flight is cheaper than 5+ hours on a bus given the group's time value. \\
+$< 1.5$ km & Walking & Zero cost, walkable in dense areas, no waiting time. \\
+2--15 km (flexible / youth) & Motorbike / Scooter & Highly agile in traffic, easy parking, cost-effective, scenic exploration. \\
+2--10 km (groups / rain) & Grab / Taxi & Weather-safe, convenient point-to-point transit for small groups. \\
+10--40 km ($\ge 5$ pax) & Private Van / Car & Keeps group together, lower cost than multi-taxi convoy. \\
+$> 40$ km & Bus / Flight & Optimizes transit duration versus budget limits. \\
 \bottomrule
 \end{tabularx}
 \end{center}
+\textit{Override:} Modes dynamically adjust if the group specifies a preference (e.g., \textit{``rent motorbikes''}) or during adverse weather.
 
-The agent overrides this default if the group has mentioned a transport preference in the chat (e.g.\ ``we want to rent motorbikes'') or if real pricing from \texttt{search\_flights} makes a different mode clearly better.
+\textbf{Example Spatial Optimization (Da Nang, 6 pax):} Rather than scheduling distant attractions on the same morning, the agent anchors Bà Nà Hills (35\,km) for the morning with on-site lunch (saving a 70\,km round-trip), returns off-peak at 14:00 by private van, and assigns the nearby beach for sunset. Total daily transit is reduced from 180\,min to 90\,min.
 
-\subsubsection*{Schedule re-ordering}
-
-If the initial stop order is spatially inefficient (e.g.\ the agent placed a lunch spot that requires backtracking 8 km), it applies a simple nearest-neighbour re-order on stops within the same half-day block, then re-checks all transit times. Fixed-time constraints (a museum that only has a 10 am slot, or a dinner reservation) are anchored and re-ordering only moves the flexible stops around them.
-
-\subsubsection*{Traffic \& congestion flags}
-
-For city legs (Hanoi, Ho Chi Minh City, Da Nang downtown), the agent knows that morning rush (7--9 am) and evening rush (5--7 pm) can double travel time. It:
-\begin{itemize}
-  \item Avoids scheduling cross-city transitions during peak hours where possible.
-  \item If unavoidable, pads the transit slot with a +50\% time buffer and notes this explicitly on the itinerary card so the group is not surprised.
-  \item Uses the \texttt{departure\_time}-aware route call to get the actual congested estimate rather than guessing.
-\end{itemize}
-
-\subsubsection*{Meal timing and opening-hour awareness}
-
-Restaurants and attractions have hard open/close windows. The agent checks:
-\begin{itemize}
-  \item Lunch slot is pinned to 11:30--13:30; dinner to 18:00--20:30. If the proposed lunch restaurant does not open until 11:00 and the previous attraction ends at 10:45, the agent inserts a 45-minute free buffer (e.g.\ walking the beach) rather than leaving a dead gap that confuses the group.
-  \item For attractions with timed entry (e.g.\ Ba Na Hills cable car, museum slots), the agent anchors the entire day around that fixed time and plans all other stops backwards/forwards from it.
-  \item If a must-see attraction closes at 17:00, the agent ensures the group arrives by 15:00 (not 16:45) to allow adequate visit time, and builds backwards from there.
-\end{itemize}
-
-\subsubsection*{Worked spatial example}
-
-\textit{Scenario}: 6-person group, Da Nang, Day 2. Candidate stops after scoring: Marble Mountains (09:00 open), Bà Nà Hills (cable car 08:00--17:00, 35 km from city), My Khe Beach (free, 4 km from hotel), Han Market lunch (city centre, 11:00 open).
-
-\textit{Agent spatial reasoning:}
+\subsection{Agentic Reasoning Loop}
+TripMate AI runs an adaptive \textbf{Think $\rightarrow$ Act $\rightarrow$ Observe} loop rather than a rigid pipeline:
 \begin{enumerate}
-  \item Bà Nà Hills is 35 km away and requires a full half-day minimum $\rightarrow$ anchor it to Morning block, depart hotel 07:30.
-  \item Marble Mountains (09:00 open, 10 km from city) conflicts with Bà Nà Hills in the Morning block $\rightarrow$ cannot do both. Agent places Marble Mountains in Afternoon on a different day.
-  \item Han Market for lunch: city centre, opens 11:00 $\rightarrow$ tight if returning from Bà Nà Hills by 13:00; agent pads transit to 12:30 and suggests lunch at a Bà Nà Hills on-site restaurant instead (saves 35 km return trip before lunch).
-  \item My Khe Beach: 4 km from hotel, no time constraint $\rightarrow$ Evening block, after group returns from Bà Nà Hills, sunset walk.
+\item \textbf{Think:} Evaluates the structured session state (Section 3.9) to choose the single next best action (call a tool, query the group, or emit proposal) using DeepSeek-Pro.
+\item \textbf{Act:} Executes the selected action (e.g., invoke \texttt{search\_hotels} or Clarification skill).
+\item \textbf{Observe:} Parses output, updates state, and evaluates stop conditions.
+\item \textbf{Stop Condition:} Terminates when the itinerary meets all constraints, consensus is reached, or round limits (Section 3.10) are met.
 \end{enumerate}
-\textit{Result}: Day 2 is Bà Nà Hills (all morning, lunch on-site) $\rightarrow$ return to city (Grab van, 40 min at 14:00, off-peak) $\rightarrow$ hotel rest $\rightarrow$ My Khe Beach sunset. Total travel: 90 min vs.\ the na\"{i}ve order which would have been 180 min.
-
-\subsubsection*{Output to the itinerary}
-
-Each leg in the final itinerary object carries: \texttt{\{place\_id, lat, lng, arrive\_at, depart\_at, transit\_to\_next: \{mode, duration\_min, distance\_km, congestion\_buffer\_min, via\}\}}
-
-This is what the Mapbox layer renders as the route line between stops, and what the PDF export uses to print ``Grab van 40 min (peak: +20 min buffer) $\rightarrow$ Hotel'' between timeline entries.
-
-\subsection{Agentic Reasoning Loop (not a fixed pipeline)}
-A common failure mode is describing an ``agent'' that is really just a hardcoded sequence of steps. TripMate AI's agent does not execute Step 1 $\rightarrow$ 2 $\rightarrow$ 3 blindly; at every turn it runs a \textbf{Think $\rightarrow$ Act $\rightarrow$ Observe} loop over the current state:
-
-\begin{enumerate}
-\item \textbf{Think:} given the structured state (Section 3.5), decide the single best next action --- call a tool, invoke a skill, ask the group a question, or produce the final proposal. This decision is made by the model itself (Pro for the decision, Flash for cheap sub-steps), not by an \texttt{if/else} script.
-\item \textbf{Act:} execute that one action (e.g. call \texttt{search\_hotels}, or run the Conflict-mediation skill).
-\item \textbf{Observe:} read the result, update the structured state, and loop back to Think.
-\item \textbf{Stop condition:} loop ends when the state is complete enough to propose a plan, or the group has reached consensus, or a retry/round cap (Section 3.7) is hit.
-\end{enumerate}
-
-This means the order of actions is \textbf{decided at runtime, per group}, e.g.:
-\begin{itemize}
-\item If dates, budget and diet are already stated clearly in the first messages, the agent \textbf{skips} the Clarification skill entirely and goes straight to tool calls --- it does not force a Q\&A step just because the diagram has one.
-\item If \texttt{check\_visa} unexpectedly returns ``passport expires in 3 months'', the agent \textbf{inserts} a new clarifying question on the spot, even though the group already passed the ``official'' Q\&A phase.
-\item Tool calls are chosen and ordered by \textbf{data dependency}, not by a fixed list: \texttt{get\_route} only fires after a hotel is chosen; \texttt{search\_flights}, \texttt{search\_hotels} and \texttt{get\_weather} fire together only when nothing later depends on their order.
-\item If preferences already agree (no conflict detected), the Conflict-mediation skill is never invoked.
-\end{itemize}
-
-The \textbf{5 UX phases} shown in Figure~\ref{fig:lifecycle} (chat $\rightarrow$ Q\&A $\rightarrow$ voting $\rightarrow$ lock $\rightarrow$ settle) are checkpoints exposed to the \emph{frontend} so humans always know where they are in the process --- they are not the agent's internal execution order, which stays a dynamic loop underneath.
-
-\subsection{Context Management}
-Group chats can run to hundreds of messages, which will not fit (or is wasteful) in a single prompt every turn:
-\begin{itemize}
-\item The agent keeps a \textbf{running structured summary} (JSON: constraints and preferences stated in this session, decisions made so far) updated after each turn, instead of replaying full chat history. This summary is built fresh from the current trip's chat --- nothing is assumed from past sessions.
-\item Raw chat is stored in the database; only the structured summary + last $N$ messages are sent to the model.
-\item The current itinerary is kept as a \textbf{stateful object} (list of legs with IDs) so votes and edits reference a leg ID, not free text --- this is what makes local repair (Step above) possible.
-\end{itemize}
-
-\subsection{Retry \& Error Handling}
-\begin{itemize}
-\item Each external tool call: up to \textbf{2 retries} with exponential backoff on timeout/5xx.
-\item If a provider is still failing, the agent falls back to \textbf{cached results} (Redis, TTL 6--24h) for that query and flags the data as ``may be outdated'' to the user.
-\item If a tool has no usable result at all, the agent tells the group plainly what it could not check, instead of guessing or hallucinating a price/availability.
-\item A Q\&A loop is capped at \textbf{3 rounds}; if members don't respond, the agent proceeds with reasonable defaults and marks assumptions in the proposal for the group to correct.
-\end{itemize}
-
-\subsection{Learning Feedback Loop}
-Within a session, the agent adapts to the group's revealed preferences rather than repeating the same mistakes:
-\begin{itemize}
-\item Every downvote is stored with its reason (price, location, style) in the session state.
-\item Before proposing an alternative, the agent checks this feedback log and excludes options matching a pattern the group already rejected (e.g. ``too far from center'').
-\item Feedback is session-scoped: it accumulates within the current planning session and is discarded afterwards. Each new trip starts fresh --- the agent does not assume a group's preferences from a past trip carry over to this one.
-\end{itemize}
-
-\subsection{Worked Example: the Loop in Action}
-
-\textbf{Scenario A --- group already knows the destination (Da Nang, 3 days, 6 pax):}
-\begin{itemize}
-\item \textit{Turn 1} --- Think: ``destination and dates stated in chat; budget not mentioned; dietary needs not mentioned but group has a halal member who stated it just now'' $\rightarrow$ Act: Clarification skill detects budget is missing and needed; asks one question: ``What is the rough per-person budget for this trip?'' (diet already extracted from chat, no need to ask) $\rightarrow$ Observe: budget received, session state updated.
-\item \textit{Turn 2} --- Think: ``state complete, run Research skill for hotels'' $\rightarrow$ Act: form context-aware query (halal, 6 pax, beach-side, \$80/night cap), call \texttt{search\_hotels} + \texttt{search\_places} + \texttt{get\_weather} in parallel; hotel API times out $\rightarrow$ retry, succeeds; filter by budget + capacity, score 8 candidates, pick top 1 + keep 2 alts $\rightarrow$ Observe: hotel and weather written to state.
-\item \textit{Turn 3} --- Think: ``hotel anchored to Beach North cluster; now research and cluster-group all attractions/restaurants'' $\rightarrow$ Act: Research skill fetches candidates; Place Selection Reasoning groups by cluster (Beach North, City Centre, Son Tra, Bà Nà Hills); detects Bà Nà Hills (35 km) conflicts with Marble Mountains (12 km from city) in same morning block $\rightarrow$ moves Marble Mountains to Day 3; assigns half-day blocks per cluster; anti-zigzag check passes $\rightarrow$ Observe: spatially coherent draft itinerary written to state.
-\item \textit{Turn 4} --- Think: ``stops ordered, compute real transit times'' $\rightarrow$ Act: call \texttt{get\_route} with actual \texttt{departure\_time} per leg (07:30 hotel $\rightarrow$ Bà Nà Hills: 40 min off-peak; 17:30 city return: 55 min peak $+$ 50\% buffer = 82 min flagged); pick Grab van for group of 6 (5--30 km rule) $\rightarrow$ Observe: transit times, modes and congestion buffers appended; map layer updated.
-\item \textit{Turn 5} --- Think: ``all data present and valid'' $\rightarrow$ Act: Validation skill, then stream Proposal Cards. Stop condition reached.
-\item \textit{Turn 6 (later)} --- Member downvotes Day 2 Lunch (too expensive). Think: ``single leg rejected'' $\rightarrow$ Act: Local-repair skill, check Feedback log (exclude ``expensive'' options), surface pre-scored alternatives $\rightarrow$ Observe: new option accepted. Loop ends for this leg.
-\end{itemize}
-
-\textbf{Scenario B --- group does not know where to go (``somewhere warm, near Hanoi, 3 days, hike + beach''):}
-\begin{itemize}
-\item \textit{Turn 1} --- Think: ``no destination, only soft signals'' $\rightarrow$ Act: Destination Discovery Stage A --- reason from model knowledge, produce shortlist: Ha Long Bay, Cat Ba, Ninh Binh+coast, Phong Nha. Flag hike/beach conflict, note Cat Ba as synthesis candidate $\rightarrow$ Observe: candidate list in state.
-\item \textit{Turn 2} --- Think: ``must validate candidates with real data'' $\rightarrow$ Act: Destination Discovery Stage B --- call \texttt{get\_weather} + \texttt{search\_flights(HAN, candidate, dates)} in parallel for all 4 candidates; one candidate has typhoon risk $\rightarrow$ dropped; one flight is over budget $\rightarrow$ dropped; Cat Ba and Ninh Binh survive $\rightarrow$ Observe: 2 validated candidates.
-\item \textit{Turn 3} --- Think: ``present Destination Vote to group'' $\rightarrow$ Act: emit 2 Destination Cards with rationale $\rightarrow$ Observe: group votes Cat Ba.
-\item \textit{Turn 4 onwards} --- same as Scenario A (Research + Spatial Planning on Cat Ba).
-\end{itemize}
-No two groups take the same path through this loop --- the sequences above are example runs, not scripts.
+The 5 UX stages in Figure~\ref{fig:lifecycle} provide user-facing checkpoints, while internal execution remains dynamic and dependency-driven.
 
 \begin{figure}[htbp]
 \centering
@@ -445,9 +253,46 @@ arrow/.style={-{Latex[length=2mm]}, thick, color=navyblue}
 \draw[arrow] (stop) -- node[left,font=\tiny]{no} (think);
 \draw[arrow] (stop) -- node[right,font=\tiny]{yes} (out);
 \end{tikzpicture}
-\caption{Internal Think-Act-Observe loop: the agent decides its own next action every turn, bounded only by the retry/round caps and stop condition (Section 3.7)}
+\caption{Internal Think-Act-Observe loop: the agent dynamically determines actions each turn until constraints and consensus are satisfied (Section 3.10)}
 \label{fig:agent_loop}
 \end{figure}
+
+\subsection{Context Management}
+\begin{itemize}
+\item Maintains a running \textbf{structured JSON state} (extracted constraints, budget, booked legs) updated each turn, avoiding bloated token re-transmission.
+\item The itinerary is maintained as a stateful object of uniquely ID'd legs, enabling atomic local repairs.
+\end{itemize}
+
+\subsection{Retry \& Error Handling}
+\begin{itemize}
+\item External API calls allow up to \textbf{2 retries} with exponential backoff before falling back to cached data (Redis, TTL 6--24h) with an ``outdated'' indicator.
+\item Unresolvable tool failures are stated transparently to avoid hallucinations.
+\item Clarification interactions are capped at \textbf{3 rounds}; unaddressed inputs default to sensible heuristics.
+\end{itemize}
+
+\subsection{Learning Feedback Loop}
+\begin{itemize}
+\item Rejection reasons (price, distance, style) are logged in the session state.
+\item Subsequent candidate proposals filter out attributes matching rejected patterns.
+\item Feedback is strictly session-scoped, resetting for subsequent trips.
+\end{itemize}
+
+\subsection{Worked Examples}
+\textbf{Scenario A --- Known Destination (Da Nang, 3 days, 6 pax):}
+\begin{itemize}
+\item \textit{Turn 1 (Input):} Dates/destination known; diet (halal) parsed from chat $\rightarrow$ Agent asks only for missing budget.
+\item \textit{Turn 2 (Research):} Parallel lookup (\texttt{search\_hotels}, \texttt{search\_places}, \texttt{get\_weather}) $\rightarrow$ Filters budget/capacity, selects top hotel + 2 backups.
+\item \textit{Turn 3 (Spatial Planning):} Clusters POIs $\rightarrow$ Anchors Bà Nà Hills (35\,km) to Day 2 morning, separates Marble Mountains to Day 3 to prevent zigzagging.
+\item \textit{Turn 4 (Routing):} \texttt{get\_route} assigns Grab van (6 pax), applies peak-hour buffers $\rightarrow$ Validates opening hours $\rightarrow$ Generates proposal cards.
+\item \textit{Turn 5 (Repair):} Member downvotes lunch spot $\rightarrow$ Local-repair immediately injects pre-scored halal alternative.
+\end{itemize}
+
+\textbf{Scenario B --- Unset Destination (``Warm, near Hanoi, 3 days, hike + beach''):}
+\begin{itemize}
+\item \textit{Turn 1 (Discovery):} LLM generates candidate shortlist (Cat Ba, Ha Long, Ninh Binh) balancing hike/beach criteria.
+\item \textit{Turn 2 (Validation):} Checks weather and travel costs in parallel $\rightarrow$ Drops high-rain candidate $\rightarrow$ Presents top 2 to group vote.
+\item \textit{Turn 3 onwards:} Group selects Cat Ba $\rightarrow$ Resumes standard itinerary research and spatial planning.
+\end{itemize}
 
 % ==========================================
 % 4. BACKEND ARCHITECTURE
