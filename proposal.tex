@@ -296,23 +296,49 @@ arrow/.style={-{Latex[length=2mm]}, thick, color=navyblue}
 % 4. BACKEND ARCHITECTURE
 % ==========================================
 \section{Backend Architecture}
+
+TripMate AI adopts an asynchronous, modular backend in Python 3.11+, unifying RESTful services and AI reasoning pipelines within a single codebase:
+
 \begin{itemize}
-\item \textbf{Runtime:} Python 3.11+, FastAPI (async, auto OpenAPI docs).
-\item \textbf{Database:} PostgreSQL + SQLAlchemy 2.0 (async) + Alembic migrations.
-\item \textbf{Cache/Broker:} Redis --- caches tool results, rate-limits, WebSocket pub/sub.
-\item \textbf{Background jobs:} Celery / BackgroundTasks for PDF export (WeasyPrint) and email.
-\item \textbf{Settlement engine:} 3 tables (\texttt{expenses}, \texttt{expense\_splits}, \texttt{settlements}). It computes net balances for each member:
+\item \textbf{Framework \& API Layer:} Built with \textbf{FastAPI} (ASGI/Uvicorn) for high-throughput asynchronous I/O, automatic OpenAPI 3.1 documentation (`/docs`), and native \textbf{Pydantic v2} request/response validation. Routers are modularly segmented (\texttt{/api/v1/auth}, \texttt{/events}, \texttt{/plans}, \texttt{/votes}, \texttt{/places}, \texttt{/expenses}, \texttt{/ai}).
+\item \textbf{Database \& ORM Layer:} \textbf{PostgreSQL} paired with \textbf{SQLAlchemy 2.0 (Async)} and \textbf{Alembic} migrations. The schema models core entities (\texttt{User}, \texttt{Event}, \texttt{EventMember}, \texttt{Plan}, \texttt{PlanStop}, \texttt{PlanVote}, \texttt{ChatMessage}, \texttt{Expense}, \texttt{Settlement}) with JSONB fields for flexible AI metadata and \texttt{pgvector} indexing.
+\item \textbf{Real-Time \& Caching Layer:} 
+  \begin{itemize}
+    \item \textbf{Redis (Async):} Multi-tier caching for external APIs (Google Places TTL 6--24h, Weather TTL 1--3h), session store, and sliding-window rate limiting.
+    \item \textbf{WebSockets / SSE:} Powers bi-directional room chat, live voting status broadcasts, and low-latency token streaming for AI reasoning outputs.
+  \end{itemize}
+\item \textbf{Background Processing:} \textbf{Celery / FastAPI BackgroundTasks} handles long-running asynchronous jobs including PDF itinerary compilation (WeasyPrint) and email notifications (aiosmtplib).
+\item \textbf{Expense Settlement Engine:} Built on 3 core tables (\texttt{expenses}, \texttt{expense\_splits}, \texttt{settlements}). Calculates net balances:
 \[
 \text{Net}_u = \sum \text{Paid}_u - \sum \text{Owed}_u
 \]
-\textbf{Plain-Language Explanation:} For each member $u$, $\text{Net}_u$ is total money paid upfront minus their fair share. Positive means the group owes them money; negative means they owe the group. A greedy matching algorithm iteratively pairs the largest debtor with the largest creditor, settling all debts in the minimum number of direct transfers ($N$ members require at most $N-1$ transactions).
+\textbf{Plain-Language Explanation:} For each member $u$, $\text{Net}_u$ is total money paid upfront minus their fair share. Positive means the group owes them money; negative means they owe the group. A greedy matching algorithm pairs the largest debtor with the largest creditor iteratively, settling all debts in the minimum number of direct transfers ($N$ members require at most $N-1$ transactions).
 \end{itemize}
 
 % ==========================================
-% 5. FRONTEND
+% 5. FRONTEND ARCHITECTURE
 % ==========================================
-\section{Frontend}
-React 18 + Vite + TypeScript, Tailwind CSS + shadcn/ui, Zustand for state, TanStack Query for caching/optimistic updates. Responsive across mobile, tablet, desktop.
+\section{Frontend Architecture}
+
+The frontend is structured as a reactive, type-safe Single Page Application (SPA) designed for responsive real-time collaboration:
+
+\begin{itemize}
+\item \textbf{Core Stack:} \textbf{React 18 + Vite + TypeScript} with Strict Mode, ensuring sub-second HMR during development and full type synchronization with backend Pydantic schemas.
+\item \textbf{UI System \& Accessibility:} \textbf{Tailwind CSS + shadcn/ui} (Radix UI primitives), enforcing WCAG AA contrast standards, mobile-first responsiveness, and cohesive design tokens across all views.
+\item \textbf{State Management \& Data Syncing:}
+  \begin{itemize}
+    \item \textbf{Zustand:} Lightweight global store for client-side authentication, active room session, and UI drawer states.
+    \item \textbf{TanStack Query v5:} Handles server-state caching, automatic background re-fetching, request deduplication, and optimistic updates for instant voting and expense feedback.
+    \item \textbf{React Hook Form + Zod:} Provides high-performance, client-side form validation mirroring API contracts.
+  \end{itemize}
+\item \textbf{Key Feature Modules:}
+  \begin{itemize}
+    \item \textbf{Real-Time AI Workspace:} Live SSE chat streaming interface, interactive Proposal Cards with instant-swap buttons, and dynamic prompt-chip suggestions.
+    \item \textbf{Visual Plan \& Map Canvas:} \textbf{Mapbox GL JS} integration rendering geocoded stop pins, route polylines, and drag-and-drop stop reordering.
+    \item \textbf{Consensus \& Voting Dashboard:} Real-time UP/DOWN voting progress bars, leg-level discussion threads, and compromise suggestion previews.
+    \item \textbf{Financials \& Utilities:} Multi-mode bill split calculator (equal/custom/ratio), settlement QR/bank transfer cards, weather-adaptive packing checklist, and bilingual support (\textbf{react-i18next} for VI/EN).
+  \end{itemize}
+\end{itemize}
 
 % ==========================================
 % 6. DEPLOYMENT \& SECURITY
