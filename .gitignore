@@ -49,3 +49,5 @@ Thumbs.db
 *.log
 *.sql
 *.dump
+
+test
