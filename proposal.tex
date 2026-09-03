@@ -15,6 +15,7 @@
 \usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage{enumitem}
+\usepackage{float}
 \usepackage{fancyhdr}
 \usepackage{titlesec}
 \usepackage{tikz}
@@ -102,7 +103,6 @@ To keep the project clear, realistic, and focused on software engineering, \text
 \item \textbf{Target Users:} Groups of friends, university students, young families, and coworkers planning leisure hangouts, dining, or trips together.
 \item \textbf{Scope (No Visa Hassles):} We focus strictly on trips where users \textbf{already have the right to travel} (domestic trips in Vietnam, visa-free trips in ASEAN countries, or travelers who already hold valid tourist visas).
 \end{itemize}
-\textit{Supervisor Rationale:} Dealing with embassy paperwork, visa applications, and passport rules is legally complicated and distracts from software development. By assuming travelers are ready to explore, TripMate AI focuses 100\% on its core strengths: \textbf{smart itinerary building, finding real-world spots, booking options, and easy group voting}.
 
 \subsection{The Solution: Two-Stage Consensus Planning Flow}
 \textbf{TripMate AI} makes planning simple through a shared room with a helpful AI travel guide:
@@ -150,13 +150,13 @@ arrow/.style={-{Latex[length=2.3mm]}, thick, color=primaryblue!85}
 \subsection{Two Flexible Planning Scopes}
 \begin{itemize}
 \item \textbf{City Hangouts \& Day Outings:} Quick plans for spontaneous weekend activities (for example: \textit{``specialty cafe $\rightarrow$ board game lounge $\rightarrow$ hotpot dinner''}). Focuses on places open right now with short travel distances.
-\item \textbf{Multi-Day Vacations:} Full travel itineraries (for example: \textit{``4 days in Da Nang \& Hoi An''}). Combines hotel recommendations and travel routes while **planning every single day in detail** (breakfast spots, morning sights, scenic cafes, dinner, and evening entertainment).
+\item \textbf{Multi-Day Vacations:} Full travel itineraries (for example: \textit{``4 days in Da Nang \& Hoi An''}). Combines hotel recommendations and travel routes while \textbf{planning every single day in detail} (breakfast spots, morning sights, scenic cafes, dinner, and evening entertainment).
 \end{itemize}
 
 \subsection{Shared Group Room \& Saved User Data}
 \begin{itemize}
 \item \textbf{Simple Link Access:} Friends join instantly through a shareable link. Roles include \textit{Host} (can lock the plan and manage members), \textit{Member} (can chat, vote on stops, swap places), and \textit{Viewer} (read-only).
-\item \textbf{Persistent Group Chat:} Friends talk naturally in chat; user messages, individual food preferences (vegetarian, seafood allergies), and budget limits are **saved directly into PostgreSQL** so the AI never forgets them.
+\item \textbf{Persistent Group Chat:} Friends talk naturally in chat; user messages, individual food preferences (vegetarian, seafood allergies), and budget limits are \textbf{saved directly into PostgreSQL} so the AI never forgets them.
 \item \textbf{Event Categories:} \texttt{TRAVEL}, \texttt{DINING}, \texttt{HANGOUT}, \texttt{ENTERTAINMENT}, \texttt{SIGHTSEEING}, and \texttt{CUSTOM}.
 \end{itemize}
 
@@ -182,10 +182,10 @@ The group always makes decisions together in two simple stages:
 \section{The AI Agent: Architecture, Workflow \& Storage}
 
 \subsection{Single Unified AI Agent: DeepSeek-V4 with Tool Calling}
-Instead of managing multiple disconnected bots, TripMate AI uses a **single, unified AI Agent powered by DeepSeek-V4**:
+Instead of managing multiple disconnected bots, TripMate AI uses a \textbf{single, unified AI Agent powered by DeepSeek-V4}:
 \begin{itemize}
 \item \textbf{Unified Intelligence:} One cohesive agent handles the entire planning lifecycle. It reads member messages, understands group preferences, creates the high-level roadmap, and calls external tools to find venues.
-\item \textbf{LangGraph State Management:} Built with Python's **LangGraph**, the agent tracks the conversation state step by step, ensuring context is never lost across browser refreshes.
+\item \textbf{LangGraph State Management:} Built with Python's \textbf{LangGraph}, the agent tracks the conversation state step by step, ensuring context is never lost across browser refreshes.
 \item \textbf{Tool Calling \& Anti-Zigzag Routing:} The agent uses function calling to query external travel APIs and clusters venues within a 2--3 km radius per half-day block so groups do not waste time traveling back and forth across town.
 \end{itemize}
 
@@ -236,8 +236,7 @@ dirarrow/.style={-{Latex[length=2.2mm]}, thick, color=primaryblue!85}
   \begin{itemize}
     \item \textbf{User Inputs Saved to DB:} Chat messages, budget limits, dietary needs, and votes are safely stored in PostgreSQL tables (\texttt{chat\_messages}, \texttt{event\_members}, \texttt{votes}).
     \item \textbf{Session Checkpoints:} LangGraph's \texttt{AsyncPostgresSaver} saves conversation memory and plan drafts under \texttt{event\_id}.
-    \item \textbf{Relational Itineraries:} Plans are saved in clean relational tables:
-      $$\text{events} \longrightarrow \text{plans} \longrightarrow \text{plan\_days} \longrightarrow \text{plan\_stops}$$
+    \item \textbf{Relational Itineraries:} Saved in normalized tables (\texttt{events} $\rightarrow$ \texttt{plans} $\rightarrow$ \texttt{plan\_days} $\rightarrow$ \texttt{plan\_stops}).
     \item \textbf{Live Atomic Updates:} Each venue is stored as its own row in \texttt{plan\_stops}, so the agent can quickly update a single stop without re-creating the entire plan.
   \end{itemize}
 \item \textbf{External Research APIs \& Local Knowledge:}
@@ -251,40 +250,155 @@ dirarrow/.style={-{Latex[length=2.2mm]}, thick, color=primaryblue!85}
   \end{itemize}
 \end{enumerate}
 
-\subsection{Step-by-Step Workflow: From General Idea to Detailed Spots}
+\subsection{Group Planning Workflow: Activity Diagram \& Concrete Example}
 \label{sec:workflow_steps}
-The agent guides the group through a clear, predictable workflow:
-\begin{enumerate}[label=\textbf{Step \arabic*:}]
-\item \textbf{Conversational Intake:} The AI asks only for key missing details: destination, dates, budget tier, and group vibe. All answers are saved to PostgreSQL.
-\item \textbf{Macro Plan Overview (Big Picture First):} The AI first proposes daily themes (for example: \textit{Day 1: Arrival \& Beach; Day 2: Culture \& Heritage; Day 3: Scenic Tour}).
-\item \textbf{Lock Macro Plan:} The group reviews and agrees on this general roadmap.
-\item \textbf{Detailed Micro Spots (Clustered \& Timed):} The AI fills each day with concrete stops (morning cafe, lunch, afternoon activity, dinner), clustered within a 2--3 km radius to eliminate zigzag travel, including 1--2 backup options per stop.
-\item \textbf{Granular Voting \& Booking Integration:} Members vote on stops and swap places with 1-click alternatives. For complex activities (such as boat transfers, guided excursions, private shuttles), the AI provides direct verified booking links via Klook or Traveloka.
-\item \textbf{Final Plan Lock \& On-the-Go Flexibility:} The Host confirms the finished plan. The schedule remains live-editable in the database anytime (for example: swapping to an indoor cafe if sudden rain occurs during the trip).
-\end{enumerate}
+\vspace{-0.15cm}
+Figure~\ref{fig:activity_diagram} outlines the workflow for a 4-person Da Nang trip across three swimlanes:
+\vspace{-0.25cm}
+
+\begin{figure}[H]
+\centering
+\resizebox{0.94\textwidth}{!}{
+\begin{tikzpicture}[
+  actbox/.style={rectangle, draw=primaryblue!80, fill=subtlegray, rounded corners=2mm, line width=0.8pt, minimum width=4.6cm, minimum height=1.05cm, align=center, font=\scriptsize},
+  agentbox/.style={rectangle, draw=accentteal, fill=badgeteal!35!white, rounded corners=2mm, line width=0.8pt, minimum width=4.6cm, minimum height=1.05cm, align=center, font=\scriptsize},
+  sysbox/.style={rectangle, draw=darkcharcoal!70, fill=white, rounded corners=2mm, line width=0.8pt, minimum width=4.6cm, minimum height=1.05cm, align=center, font=\scriptsize},
+  decision/.style={diamond, aspect=1.5, draw=primaryblue, fill=badgeblue, line width=0.8pt, align=center, font=\scriptsize\bfseries, inner sep=1.5pt},
+  laneheader/.style={rectangle, draw=primaryblue, fill=primaryblue!10!white, rounded corners=1.5mm, line width=0.9pt, minimum width=4.8cm, minimum height=0.7cm, align=center, font=\footnotesize\bfseries},
+  actarrow/.style={-{Latex[length=2.2mm]}, line width=0.85pt, color=primaryblue!85}
+]
+
+% Swimlane Headers
+\node[laneheader] (h1) at (0, 0) {Group Members\\{\scriptsize\color{darkcharcoal}(Host \& Friends)}};
+\node[laneheader] (h2) at (5.3, 0) {TripMate AI Agent\\{\scriptsize\color{accentteal}(LangGraph Engine)}};
+\node[laneheader] (h3) at (10.6, 0) {System \& External APIs\\{\scriptsize\color{darkcharcoal}(FastAPI, DB, Agoda, Klook)}};
+
+% Dividing Dashed Lines
+\draw[dashed, color=bordergray, line width=0.7pt] (2.65, 0.45) -- (2.65, -10.9);
+\draw[dashed, color=bordergray, line width=0.7pt] (7.95, 0.45) -- (7.95, -10.9);
+
+% --- ROW 1: Start & Input (Lane 1) ---
+\node[circle, fill=primaryblue, minimum size=4.5mm] (start) at (0, -0.6) {};
+\node[actbox] (act1) at (0, -1.45) {
+\textbf{Create Room \& Share Desires}\\[0.03cm]
+{\tiny Host: ``3 Days in Da Nang, \$150 budget''}\\
+{\tiny Friends join via link; add preferences}
+};
+\draw[actarrow] (start) -- (act1);
+
+% --- ROW 2: AI Generates Macro Themes (Lane 2) ---
+\node[agentbox] (act2) at (5.3, -2.45) {
+\textbf{Generate Macro Plan Overview}\\[0.03cm]
+{\tiny Parse budget tier, group size, and dates}\\
+{\tiny Suggest daily themes (Beach, Heritage, Tour)}
+};
+\draw[actarrow] (act1.east) -| (act2.north);
+
+% --- ROW 3: Group Macro Review (Lane 1) ---
+\node[actbox] (act3) at (0, -3.45) {
+\textbf{Review Macro Roadmap}\\[0.03cm]
+{\tiny Discuss high-level themes in room chat}\\
+{\tiny Vote on overall trip pace and city stops}
+};
+\draw[actarrow] (act2.south) |- (act3.east);
+
+% --- ROW 4: Macro Decision Diamond (Lane 1) ---
+\node[decision] (dec1) at (0, -4.55) {Macro\\OK?};
+\draw[actarrow] (act3.south) -- (dec1.north);
+
+% Loop back [Revise] to AI Agent
+\draw[actarrow] (dec1.east) -- ++(1.3, 0) node[above,font=\tiny\bfseries\color{primaryblue}]{[Revise]} |- (act2.west);
+
+% --- ROW 5: Curate Micro-Spots (Lane 2 & Lane 3) ---
+\node[agentbox] (act4) at (5.3, -5.75) {
+\textbf{Curate Micro-Spots \& Cluster}\\[0.03cm]
+{\tiny Filter spots within 2--3\,km radius}\\
+{\tiny Select dining, sights, 1--2 backup alternatives}
+};
+\draw[actarrow] (dec1.south) |- node[near start,left=0.06cm,font=\tiny\bfseries\color{accentteal}]{[Approved]} (act4.west);
+
+\node[sysbox] (act4b) at (10.6, -5.75) {
+\textbf{Query Live Providers \& Cache}\\[0.03cm]
+{\tiny \textbf{Agoda / Booking:} Hotel rates \& rooms}\\
+{\tiny \textbf{Google Places:} Hours, ratings, coords}\\
+{\tiny \textbf{Klook / Weather:} Transit \& rain forecast}
+};
+\draw[actarrow] (act4.east) -- node[above,font=\tiny\bfseries]{Tool Query} (act4b.west);
+\draw[actarrow] (act4b.south) |- node[near end,below,font=\tiny\bfseries]{Live Data} (act4.south east);
+
+% --- ROW 6: Stop Voting (Lane 1) ---
+\node[actbox] (act5) at (0, -7.05) {
+\textbf{Granular Stop Voting}\\[0.03cm]
+{\tiny Vote UP/DOWN on scheduled venue cards}\\
+{\tiny Inspect photo previews \& booking links}
+};
+\draw[actarrow] (act4.south) |- (act5.east);
+
+% --- ROW 7: Micro Decision Diamond (Lane 1) ---
+\node[decision] (dec2) at (0, -8.15) {Stops\\OK?};
+\draw[actarrow] (act5.south) -- (dec2.north);
+
+% Loop back [Swap] to AI Agent
+\draw[actarrow] (dec2.east) -- ++(1.3, 0) node[above,font=\tiny\bfseries\color{primaryblue}]{[Swap Stop]} |- (act4.south west);
+
+% --- ROW 8: Persist & Export (Lane 3) ---
+\node[sysbox] (act6) at (10.6, -9.25) {
+\textbf{Persist \& Generate Exports}\\[0.03cm]
+{\tiny Write normalized \texttt{plan\_stops} into PostgreSQL}\\
+{\tiny Build calendar sync (.ics) and PDF summary}
+};
+\draw[actarrow] (dec2.south) |- node[near start,left=0.06cm,font=\tiny\bfseries\color{accentteal}]{[Lock Plan]} (act6.west);
+
+% --- ROW 9: Live Map Sync & End (Lane 1) ---
+\node[actbox] (act7) at (0, -9.95) {
+\textbf{Live Itinerary \& Mapbox Sync}\\[0.03cm]
+{\tiny Route pins \& cards render on all screens}\\
+{\tiny Schedule remains live-editable during trip}
+};
+\draw[actarrow] (act6.south) |- (act7.east);
+
+\node[circle, draw=primaryblue, line width=1pt, minimum size=5.5mm, double, double distance=1.1pt, below=0.25cm of act7] (end) {};
+\node[circle, fill=primaryblue, minimum size=2.8mm] at (end) {};
+\draw[actarrow] (act7.south) -- (end.north);
+
+\end{tikzpicture}
+}
+\vspace{-0.25cm}
+\caption{UML activity diagram: end-to-end group planning workflow with concrete 3-day trip example across user, AI agent, and API partitions}
+\label{fig:activity_diagram}
+\end{figure}
+\vspace{-0.2cm}
+
+The planning session moves through four clear stages:
+\begin{itemize}[noitemsep, topsep=1pt, leftmargin=*]
+\item \textbf{Intake \& Preference Capture:} The Host initiates the room with core criteria (e.g., \textit{``3 Days in Da Nang, \$150 budget''}). Participants join via link and add food or activity preferences.
+\item \textbf{Macro Roadmap Consensus:} The AI proposes daily themes (Day 1: Beach \& Seafood, Day 2: Marble Mountains \& Hoi An, Day 3: Han River \& Cafes). Group members discuss and vote to lock this general roadmap.
+\item \textbf{Micro-Spot Curation \& Granular Voting:} The AI calls external travel APIs to populate daily schedules with concrete venues clustered within a 2--3\,km radius per half-day block. Members vote thumbs UP/DOWN on individual stops, and any downvoted spot offers a 1-click alternative.
+\item \textbf{Confirmation \& Live Sync:} The Host locks the final plan. Normalized records are stored in PostgreSQL, calendar (.ics) and PDF summaries are generated, and interactive Mapbox routes appear on all devices.
+\end{itemize}
 
 % ==========================================
 % 4. SYSTEM ARCHITECTURE & OPERATIONAL FLOW
 % ==========================================
 \section{System Architecture \& Operational Flow}
 
-TripMate AI uses an asynchronous, decoupled architecture connecting the React SPA, FastAPI gateway, PostgreSQL storage, the unified LangGraph AI agent, and external travel APIs.
+TripMate AI uses an asynchronous, decoupled architecture connecting the React SPA, FastAPI gateway, PostgreSQL storage, the unified LangGraph AI agent, and external travel APIs. Figure~\ref{fig:system_flow} presents the complete system architecture and highlights the six primary communication interfaces (1)--(6) that coordinate the platform.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \resizebox{0.96\textwidth}{!}{
 \begin{tikzpicture}[
-node distance=0.9cm and 1.6cm,
-layerbox/.style={rectangle, draw=primaryblue!90, fill=subtlegray, rounded corners=3mm, line width=1pt, minimum width=6.4cm, minimum height=2.1cm, align=center, font=\footnotesize},
-topbox/.style={rectangle, draw=primaryblue, fill=primaryblue!8!white, rounded corners=3mm, line width=1.1pt, minimum width=14.4cm, minimum height=1.7cm, align=center, font=\footnotesize},
-flowarrow/.style={-{Latex[length=3mm]}, line width=1.1pt, color=primaryblue!90},
-biarrow/.style={{Latex[length=2.8mm]}-{Latex[length=2.8mm]}, line width=1.1pt, color=primaryblue!90}
+  node distance=1.6cm and 2.0cm,
+  layerbox/.style={rectangle, draw=primaryblue!90, fill=subtlegray, rounded corners=3mm, line width=1pt, minimum width=6.2cm, minimum height=2.2cm, align=center, font=\footnotesize},
+  topbox/.style={rectangle, draw=primaryblue, fill=primaryblue!8!white, rounded corners=3mm, line width=1.1pt, minimum width=15.6cm, minimum height=1.6cm, align=center, font=\footnotesize},
+  flowarrow/.style={-{Latex[length=3mm]}, line width=1.1pt, color=primaryblue!90},
+  biarrow/.style={{Latex[length=2.8mm]}-{Latex[length=2.8mm]}, line width=1.1pt, color=primaryblue!90}
 ]
 
 % Top: Frontend SPA Banner
 \node[topbox] (fe) {
-\textbf{\large 1. Web Frontend (React 18 + TypeScript SPA)}\\[0.15cm]
-\parbox{13.6cm}{\centering \scriptsize
+\textbf{\large 1. Web Frontend (React 18 + TypeScript SPA)}\\[0.12cm]
+\parbox{14.8cm}{\centering \scriptsize
 \textbf{Live Room Chat:} Real-time chat drawer \& group messaging \quad$\vert$\quad
 \textbf{Interactive Timeline:} Stop cards, vote UP/DOWN, 1-click swap\\
 \textbf{Mapbox GL Canvas:} Geocoded POI pins, route polylines, travel times \quad$\vert$\quad
@@ -293,9 +407,9 @@ biarrow/.style={{Latex[length=2.8mm]}-{Latex[length=2.8mm]}, line width=1.1pt, c
 };
 
 % Middle Row: Backend Gateway (Left) and AI Agent (Right)
-\node[layerbox, below=1.2cm of fe.south west, anchor=north west] (be) {
-\textbf{\normalsize 2. Backend Gateway (FastAPI)}\\[0.12cm]
-\parbox{6.0cm}{\centering \scriptsize
+\node[layerbox, below=1.6cm of fe.south west, anchor=north west] (be) {
+\textbf{\normalsize 2. Backend Gateway (FastAPI)}\\[0.10cm]
+\parbox{5.8cm}{\centering \scriptsize
 $\bullet$ \textbf{WebSocket Server:} Room broadcast \& live synchronization\\
 $\bullet$ \textbf{REST Routers:} Auth (JWT), Event management, Member roles\\
 $\bullet$ \textbf{Pydantic v2:} Request schema guard \& validation\\
@@ -303,9 +417,9 @@ $\bullet$ \textbf{Background Worker:} Celery PDF export \& calendar (.ics)
 }
 };
 
-\node[layerbox, below=1.2cm of fe.south east, anchor=north east] (ai) {
-\textbf{\normalsize 3. AI Agent Layer (LangGraph)}\\[0.12cm]
-\parbox{6.0cm}{\centering \scriptsize
+\node[layerbox, below=1.6cm of fe.south east, anchor=north east] (ai) {
+\textbf{\normalsize 3. AI Agent Layer (LangGraph)}\\[0.10cm]
+\parbox{5.8cm}{\centering \scriptsize
 $\bullet$ \textbf{Unified AI Agent:} Single DeepSeek-V4 decision engine\\
 $\bullet$ \textbf{LangGraph Engine:} Session memory \& state transitions\\
 $\bullet$ \textbf{Macro \& Micro Planning:} Itinerary framework \& venue curation\\
@@ -314,9 +428,9 @@ $\bullet$ \textbf{Tool Execution:} Research dispatch, JSON parsing \& error hand
 };
 
 % Bottom Row: Database (Left) and External APIs & Cache (Right)
-\node[layerbox, below=1.2cm of be] (db) {
-\textbf{\normalsize 4. Database \& Persistence (PostgreSQL 16)}\\[0.12cm]
-\parbox{6.0cm}{\centering \scriptsize
+\node[layerbox, below=1.8cm of be] (db) {
+\textbf{\normalsize 4. Database \& Persistence (PostgreSQL 16)}\\[0.10cm]
+\parbox{5.8cm}{\centering \scriptsize
 $\bullet$ \textbf{User Data:} Accounts, chat messages, preferences, votes\\
 $\bullet$ \textbf{Relational Itineraries:} \texttt{plans} $\rightarrow$ \texttt{plan\_days} $\rightarrow$ \texttt{plan\_stops}\\
 $\bullet$ \textbf{Agent Memory:} LangGraph checkpoints (\texttt{AsyncPostgresSaver})\\
@@ -324,9 +438,9 @@ $\bullet$ \textbf{Curated RAG:} Local hidden gems with \texttt{pgvector} embeddi
 }
 };
 
-\node[layerbox, below=1.2cm of ai] (ext) {
-\textbf{\normalsize 5. Redis Cache \& External Travel APIs}\\[0.12cm]
-\parbox{6.0cm}{\centering \scriptsize
+\node[layerbox, below=1.8cm of ai] (ext) {
+\textbf{\normalsize 5. Redis Cache \& External Travel APIs}\\[0.10cm]
+\parbox{5.8cm}{\centering \scriptsize
 $\bullet$ \textbf{Redis 7 Cache:} Sub-50ms TTL cache (2h--24h) \& rate limiter\\
 $\bullet$ \textbf{Lodging \& Stays:} Agoda, Booking.com, Airbnb\\
 $\bullet$ \textbf{Dining \& Cafes:} Google Places API, TripAdvisor\\
@@ -334,33 +448,152 @@ $\bullet$ \textbf{Tours \& Transit:} Klook, Traveloka, 12Go Asia, OpenWeather
 }
 };
 
-% Big, Clear, Non-Overlapping Arrows
-\draw[biarrow] (be.north) -- node[left=0.2cm,font=\scriptsize\bfseries]{\textbf{(1)} WebSockets / REST} (be.north |- fe.south);
-\draw[biarrow] (be) -- node[above=0.1cm,font=\scriptsize\bfseries]{\textbf{(2)} Async Run / Result} (ai);
-\draw[flowarrow] (be) -- node[left=0.2cm,font=\scriptsize\bfseries]{\textbf{(3)} Save Chat, Auth \& Votes} (db);
-\draw[biarrow] (ai.south west) -- node[above=0.15cm,sloped,font=\scriptsize\bfseries]{\textbf{(4)} Read Context / Write Stops} (db.north east);
-\draw[biarrow] (ai) -- node[right=0.2cm,font=\scriptsize\bfseries]{\textbf{(5)} Tool Query / POI Data} (ext);
-\draw[flowarrow] (db.east) -- node[above=0.1cm,font=\scriptsize\bfseries]{\textbf{(6)} Cache POIs} (ext.west);
+% Clear, Non-Overlapping Connectors (Using Exact Node Anchors)
+\draw[biarrow] (be.north) -- node[left=0.2cm,font=\scriptsize\bfseries,align=right]{\textbf{(1)} WebSockets / REST} (be.north |- fe.south);
+
+\draw[biarrow] (be.east) -- node[above=0.12cm,font=\scriptsize\bfseries,align=center]{\textbf{(2)} Async Task Dispatch} (ai.west);
+
+\draw[flowarrow] (be.south) -- node[left=0.2cm,font=\scriptsize\bfseries,align=right]{\textbf{(3)} Save Chat, Auth \& Votes} (db.north);
+
+\draw[biarrow] (ai.south) -- node[right=0.2cm,font=\scriptsize\bfseries,align=left]{\textbf{(4)} Tool Query / POI Data} (ext.north);
+
+\draw[biarrow] (db.north east) -- node[above=0.08cm,sloped,font=\scriptsize\bfseries,align=center]{\textbf{(5)} Read State / Save Stops} (ai.south west);
+
+\draw[flowarrow] (db.east) -- node[above=0.12cm,font=\scriptsize\bfseries,align=center]{\textbf{(6)} Cache POIs} (ext.west);
 
 \end{tikzpicture}
 }
-\caption{TripMate AI full-stack system architecture: simple, readable, and structured across client, gateway, AI agent, database, and external APIs}
+\caption{TripMate AI system architecture: component layers and operational interfaces (1)--(6)}
 \label{fig:system_flow}
 \end{figure}
 
-\subsection{End-to-End System Flow Across All Components}
+\subsection{End-to-End Operational Flow}
 \label{sec:system_flow}
-The end-to-end operation coordinates all five parts of the web system (Figure~\ref{fig:system_flow}):
-\begin{enumerate}[label=\textbf{Step \arabic*:}]
-\item \textbf{User Action on Frontend (React SPA):} A member types a trip idea or votes on a stop in the room. The React client updates the UI instantly and sends the message over a secure **WebSocket connection**.
-\item \textbf{Gateway Handling \& Persistence (FastAPI):} FastAPI checks user credentials (JWT), validates data with **Pydantic v2**, immediately saves chat messages and votes into PostgreSQL (\texttt{chat\_messages}, \texttt{votes}), and launches an async task for the AI agent.
-\item \textbf{AI Context Loading \& Planning (LangGraph):} LangGraph loads session memory from PostgreSQL via \texttt{AsyncPostgresSaver}. The **DeepSeek-V4 agent** creates the Macro Plan Overview (days/themes). After the group locks the macro roadmap, the agent curates micro spots.
-\item \textbf{Real-Time Research (Redis \& Live APIs):} The AI queries **Agoda / Booking.com** for stays, **Google Places / TripAdvisor** for dining/hours, **Klook / Traveloka** for tours, and **pgvector** for local hidden gems, clustering stops within 2--3 km to prevent zigzag travel.
-\item \textbf{Relational Storage (PostgreSQL 16):} The agent validates the plan and writes normalized records into PostgreSQL:
-  $$\text{events} \longrightarrow \text{plans} \longrightarrow \text{plan\_days} \longrightarrow \text{plan\_stops}$$
-\item \textbf{Real-Time Broadcast \& Map Rendering (Backend $\rightarrow$ Frontend):} FastAPI pushes the updated itinerary event over WebSockets. The React client's TanStack Query cache updates instantly, rendering timeline cards and drawing route lines on **Mapbox GL JS**.
-\item \textbf{On-the-Go Live Modifications:} If unexpected rain occurs during the trip, a user simply chats: \textit{``It's raining, find an indoor cafe nearby''}. The agent updates only the affected \texttt{plan\_stops} row in PostgreSQL, and pushes the live update to everyone's phone screen in real time.
-\end{enumerate}
+
+Figure~\ref{fig:operational_flow_diagram} visualizes the execution lifecycle of interfaces \textbf{(1)--(6)} from the System Architecture (Figure~\ref{fig:system_flow}), explicitly distinguishing sequential dependencies from parallel processing tracks. Table~\ref{tab:system_flow_summary} summarizes each operational stage, execution mode, and target latency.
+
+\begin{figure}[H]
+\centering
+\resizebox{0.96\textwidth}{!}{
+\begin{tikzpicture}[
+  node distance=0.48cm and 0.8cm,
+  banner/.style={rectangle, draw=primaryblue, fill=primaryblue!8!white, rounded corners=2.5mm, line width=1pt, minimum width=15.6cm, text width=15.0cm, minimum height=1.0cm, align=center, font=\footnotesize},
+  splitbar/.style={rectangle, draw=primaryblue!90, fill=primaryblue!15!white, rounded corners=2mm, line width=1pt, minimum width=15.6cm, text width=15.0cm, minimum height=0.65cm, align=center, font=\scriptsize\bfseries},
+  syncbox/.style={rectangle, draw=primaryblue!90, fill=subtlegray, rounded corners=2mm, line width=0.85pt, minimum width=7.4cm, text width=7.0cm, align=center, font=\scriptsize},
+  asyncbox/.style={rectangle, draw=accentteal, fill=badgeteal!25!white, rounded corners=2mm, line width=0.85pt, minimum width=7.4cm, text width=7.0cm, align=center, font=\scriptsize},
+  flowarrow/.style={-{Latex[length=2.5mm]}, line width=0.9pt, color=primaryblue!90}
+]
+
+% 1. TOP BANNER: Client Request (Interface 1)
+\node[banner] (s1) at (0, 0) {
+\textbf{\normalsize Step 1: Client Request (Interface 1)}\\[0.05cm]
+User submits chat message or vote on React SPA $\longrightarrow$ Sent over WebSocket / REST to FastAPI Gateway ($<10$\,ms)
+};
+
+% 2. FORK BANNER
+\node[splitbar, below=0.48cm of s1] (fork) {
+FORK: Parallel Gateway Execution Split \quad$\vert$\quad Left: [SYNC Persistence] \quad Right: [ASYNC AI Task]
+};
+\draw[flowarrow] (s1.south) -- (fork.north);
+
+% ROW 1: Balanced 7.4cm Columns
+% Left: Step 2a (Sync)
+\node[syncbox, minimum height=1.35cm, below=0.55cm of fork.south west, anchor=north west] (step2a) {
+\textbf{Step 2a: Sync Persistence (Interface 3)}\\[0.04cm]
+FastAPI directly writes message/vote to PostgreSQL tables\\
+(\texttt{chat\_messages}, \texttt{votes}) ($<20$\,ms)\\
+\textbf{Guarantee:} Instant durability, zero data loss
+};
+\draw[flowarrow] (fork.south -| step2a.north) -- node[left=0.08cm, font=\tiny\bfseries\color{primaryblue}]{[SYNC]} (step2a.north);
+
+% Right: Steps 2b & 3 (Async)
+\node[asyncbox, minimum height=1.35cm, below=0.55cm of fork.south east, anchor=north east] (step2b) {
+\textbf{Steps 2b \& 3: Async Dispatch \& State (2, 5)}\\[0.04cm]
+$\bullet$ FastAPI launches task via Python \texttt{asyncio} ($<50$\,ms)\\
+$\bullet$ Agent loads session memory via \texttt{AsyncPostgresSaver} ($<30$\,ms)\\
+\textbf{Status:} Non-blocking execution running in background
+};
+\draw[flowarrow] (fork.south -| step2b.north) -- node[right=0.08cm, font=\tiny\bfseries\color{accentteal}]{[ASYNC]} (step2b.north);
+
+% ROW 2: Balanced 7.4cm Columns
+% Left: Client Acknowledgment
+\node[syncbox, minimum height=1.55cm, below=0.48cm of step2a] (ack) {
+\textbf{Immediate Gateway Acknowledgment}\\[0.04cm]
+FastAPI returns status OK to Client ($<10$\,ms)\\
+Browser UI remains 100\% active and responsive\\
+without blocking or waiting for AI generation
+};
+\draw[flowarrow] (step2a.south) -- (ack.north);
+
+% Right: Step 4 Concurrent Research
+\node[asyncbox, minimum height=1.55cm, below=0.48cm of step2b] (step4) {
+\textbf{Step 4: Concurrent Research (Interfaces 4 \& 6)}\\[0.04cm]
+$\bullet$ \textbf{Parallel Queries:} Redis cache (6, $<50$\,ms) $\parallel$ Google Places, Agoda, Klook (4, $0.1$--$1.5$\,s) $\parallel$ \texttt{pgvector} local gems\\
+$\bullet$ \textbf{Geo-Clustering:} 2--3\,km radius anti-zigzag clustering
+};
+\draw[flowarrow] (step2b.south) -- node[right=0.08cm, font=\tiny\bfseries\color{darkcharcoal}]{(Sequential)} (step4.north);
+
+% ROW 3: Balanced 7.4cm Columns
+% Left: Client Awaiting State
+\node[syncbox, minimum height=1.35cm, below=0.48cm of ack] (idle) {
+\textbf{Client Awaiting Live Event}\\[0.04cm]
+React client listens on persistent WebSocket\\
+Ready for instant timeline \& card refresh\\
+upon receiving real-time broadcast
+};
+\draw[flowarrow] (ack.south) -- (idle.north);
+
+% Right: Step 5 Relational Storage
+\node[asyncbox, minimum height=1.35cm, below=0.48cm of step4] (step5) {
+\textbf{Step 5: Relational Storage (Interface 5)}\\[0.04cm]
+Agent writes normalized rows to \texttt{plans} $\rightarrow$ \texttt{plan\_days} $\rightarrow$ \texttt{plan\_stops}\\
+Atomic records in PostgreSQL ($<30$\,ms); cache POIs in Redis (6)
+};
+\draw[flowarrow] (step4.south) -- node[right=0.08cm, font=\tiny\bfseries\color{darkcharcoal}]{(Sequential)} (step5.north);
+
+% 5. JOIN BANNER
+\node[splitbar, anchor=north] (join) at ($(fork.center |- step5.south) + (0, -0.55cm)$) {
+JOIN: Persistence \& AI Processing Complete \quad$\vert$\quad Database Write Confirmed
+};
+\draw[flowarrow] (idle.south) -- (idle.south |- join.north);
+\draw[flowarrow] (step5.south) -- (step5.south |- join.north);
+
+% 6. BOTTOM BANNER: Broadcast (Interface 1)
+\node[banner, below=0.48cm of join] (s6) {
+\textbf{\normalsize Step 6: Real-Time Room Broadcast (Interface 1)}\\[0.05cm]
+FastAPI pushes updated plan event over WebSockets to all members ($<50$\,ms) $\longrightarrow$ React SPA re-renders timeline cards
+};
+\draw[flowarrow] (join.south) -- (s6.north);
+
+\end{tikzpicture}
+}
+\vspace{-0.25cm}
+\caption{End-to-end operational execution flow: sequential progression, parallel fork/join tracks, and interface mappings (1)--(6)}
+\label{fig:operational_flow_diagram}
+\end{figure}
+\vspace{-0.2cm}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{@{}c l c l >{\raggedright\arraybackslash}X c@{}}
+\toprule
+\textbf{Step} & \textbf{Interface Path} & \textbf{Mode} & \textbf{Depends On} & \textbf{Operational Function} & \textbf{Latency} \\
+\midrule
+\textbf{1} & \textbf{(1)} Frontend $\rightarrow$ Gateway & Sync & User action & Transmits message/vote via WebSocket or REST. & $<10$\,ms \\
+\textbf{2a} & \textbf{(3)} Gateway $\rightarrow$ Database & Sync & Step 1 & Persists chat logs and vote counts into PostgreSQL. & $<20$\,ms \\
+\textbf{2b} & \textbf{(2)} Gateway $\rightarrow$ AI Agent & Async & Step 1 (parallel) & Dispatches non-blocking agent task via \texttt{asyncio}. & $<50$\,ms \\
+\textbf{3} & \textbf{(5)} AI Agent $\leftarrow$ Database & Async & Step 2b & Loads session state via \texttt{AsyncPostgresSaver}. & $<30$\,ms \\
+\textbf{4} & \textbf{(4, 6)} AI $\leftrightarrow$ APIs / Redis & Parallel & Step 3 & Checks Redis cache; queries Places, Agoda, Klook concurrently. & 0.1--1.5\,s \\
+\textbf{5} & \textbf{(5)} AI Agent $\rightarrow$ Database & Async & Step 4 & Writes normalized records to \texttt{plan\_stops}. & $<30$\,ms \\
+\textbf{6} & \textbf{(1)} Gateway $\rightarrow$ Frontend & Push & Step 5 & Broadcasts updated itinerary to all members via WebSocket. & $<50$\,ms \\
+\bottomrule
+\end{tabularx}
+\caption{Operational execution flow mapped directly to Figure~\ref{fig:system_flow} interfaces}
+\label{tab:system_flow_summary}
+\end{table}
+
+\textbf{Dynamic On-the-Go Adaptability:} If travel conditions change unexpectedly (e.g., sudden rain), a member sends a simple message such as \textit{``it is raining, find an indoor cafe nearby''}. The system re-executes this exact asynchronous loop: FastAPI logs the request (Step 2a), the agent queries nearby cafes in parallel (Step 4), modifies \textbf{only the affected single row in \texttt{plan\_stops}} in PostgreSQL (Step 5), and pushes the updated pin to all members in under two seconds (Step 6).
 
 \subsection{Technology Stack}
 The technical stack is chosen for speed, reliability, and smooth real-time collaboration:
