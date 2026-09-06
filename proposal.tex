@@ -225,68 +225,74 @@ Figure~\ref{fig:activity_diagram} illustrates the end-to-end user and AI interac
 
 \begin{figure}[H]
 \centering
-\resizebox{0.75\textwidth}{!}{
+\resizebox{0.78\textwidth}{!}{
 \begin{tikzpicture}[
-  userbox/.style={rectangle, draw=primaryblue!80, fill=subtlegray, rounded corners=2mm, line width=0.85pt, minimum width=4.2cm, minimum height=0.82cm, align=center, font=\scriptsize},
-  aibox/.style={rectangle, draw=accentteal, fill=badgeteal!40!white, rounded corners=2mm, line width=0.85pt, minimum width=4.4cm, minimum height=0.82cm, align=center, font=\scriptsize},
-  decision/.style={diamond, aspect=1.6, draw=primaryblue, fill=badgeblue, line width=0.85pt, align=center, font=\scriptsize\bfseries, inner sep=1.5pt},
-  lanehdr/.style={rectangle, draw=primaryblue, fill=primaryblue!10!white, rounded corners=1.5mm, line width=0.9pt, minimum width=4.8cm, minimum height=0.55cm, align=center, font=\footnotesize\bfseries},
+  userbox/.style={rectangle, draw=primaryblue!80, fill=subtlegray, rounded corners=2mm, line width=0.85pt, minimum width=4.3cm, minimum height=0.82cm, align=center, font=\scriptsize},
+  aibox/.style={rectangle, draw=accentteal, fill=badgeteal!40!white, rounded corners=2mm, line width=0.85pt, minimum width=4.5cm, minimum height=0.82cm, align=center, font=\scriptsize},
+  decision/.style={diamond, aspect=1.8, draw=primaryblue, fill=badgeblue, line width=0.85pt, align=center, font=\scriptsize\bfseries, inner sep=1.2pt},
+  lanehdr/.style={rectangle, draw=primaryblue, fill=primaryblue!10!white, rounded corners=1.5mm, line width=0.9pt, minimum width=4.9cm, minimum height=0.55cm, align=center, font=\footnotesize\bfseries},
   actarrow/.style={-{Latex[length=2.5mm,width=1.5mm]}, line width=0.9pt, color=primaryblue!85}
 ]
 
 % 2 Wide Swimlanes
 \node[lanehdr] (h1) at (0, 0) {Group Members (Host \& Friends)};
-\node[lanehdr] (h2) at (6.5, 0) {TripMate AI \& System Engine};
+\node[lanehdr] (h2) at (6.5, 0) {TripMate Platform (AI Agent \& Backend)};
 
 % Central Dividing Line
-\draw[dashed, color=bordergray, line width=0.7pt] (3.25, 0.35) -- (3.25, -9.8);
+\draw[dashed, color=bordergray, line width=0.7pt] (3.25, 0.35) -- (3.25, -12.4);
 
 % 1. Start & Preferences (Lane 1)
-\node[circle, fill=primaryblue, minimum size=3.5mm] (start) at (0, -0.55) {};
-\node[userbox] (act1) at (0, -1.25) {\textbf{Create Room \& Set Preferences}\\[0.02cm]{\tiny Dates, budget tier \& hangout vibes}};
+\node[circle, fill=primaryblue, minimum size=3.5mm] (start) at (0, -0.6) {};
+\node[userbox] (act1) at (0, -1.4) {\textbf{Submit Desires in Room Chat}\\[0.02cm]{\tiny Dates, budget tier \& hangout vibes}};
 \draw[actarrow] (start) -- (act1);
 
 % 2. Phase 1: Macro Planning (Lane 2)
-\node[aibox] (act2) at (6.5, -2.15) {\textbf{Phase 1: Macro Planning}\\[0.02cm]{\tiny Generate daily themes \& pacing roadmap}};
+\node[aibox] (act2) at (6.5, -2.3) {\textbf{Phase 1: Macro Planning}\\[0.02cm]{\tiny Generate daily themes \& pacing roadmap}};
 \draw[actarrow] (act1.east) -| (act2.north);
 
 % 3. Review Macro Plan (Lane 1)
-\node[userbox] (act3) at (0, -3.05) {\textbf{Review Macro Roadmap}\\[0.02cm]{\tiny Group discusses \& votes on themes}};
+\node[userbox] (act3) at (0, -3.3) {\textbf{Review Macro Roadmap}\\[0.02cm]{\tiny Group discusses \& votes on themes}};
 \draw[actarrow] (act2.south) |- (act3.east);
 
-% 4. Decision 1: Macro OK? (Lane 1)
-\node[decision] (dec1) at (0, -3.95) {Macro\\OK?};
+% 4. Decision 1: Macro OK? (Lane 1) - Ample vertical clearance!
+\node[decision] (dec1) at (0, -4.8) {Macro\\OK?};
 \draw[actarrow] (act3.south) -- (dec1.north);
 
-% Loopback [Revise] in Left Margin
-\draw[actarrow] (dec1.west) -- (-2.8, -3.95) node[above=0.02cm,pos=0.4,font=\tiny\bfseries\color{primaryblue},fill=white,inner sep=1pt]{[Revise]} |- (act1.west);
+% Loopback [Revise Desires] in Left Margin
+\draw[actarrow] (dec1.west) -- (-2.6, -4.8) node[above=0.02cm,pos=0.5,font=\tiny\bfseries\color{primaryblue},fill=white,inner sep=1pt]{[Revise Desires]} |- (act1.west);
 
 % 5. Phase 2: Micro Curation (Lane 2)
-\node[aibox] (act4) at (6.5, -4.85) {\textbf{Phase 2: Micro Curation}\\[0.02cm]{\tiny Query live APIs; 2--3\,km geo-clustering}};
-\draw[actarrow] (dec1.east) -| node[above=0.03cm,pos=0.3,font=\tiny\bfseries\color{accentteal},fill=white,inner sep=1.2pt]{[Approved]} (act4.north);
+\node[aibox] (act4) at (6.5, -5.9) {\textbf{Phase 2: Micro Curation}\\[0.02cm]{\tiny Query live APIs; 2--3\,km geo-clustering}};
+\draw[actarrow] (dec1.east) -| node[above=0.03cm,pos=0.3,font=\tiny\bfseries\color{accentteal},fill=white,inner sep=1.2pt]{[Approved / Host Locks]} (act4.north);
 
 % 6. Stop Voting (Lane 1)
-\node[userbox] (act5) at (0, -5.75) {\textbf{Granular Stop Voting}\\[0.02cm]{\tiny Vote UP/DOWN; 1-click swap alternative}};
+\node[userbox] (act5) at (0, -7.0) {\textbf{Granular Stop Voting}\\[0.02cm]{\tiny Vote UP/DOWN per candidate venue}};
 \draw[actarrow] (act4.south) |- (act5.east);
 
-% 7. Decision 2: Stops OK? (Lane 1)
-\node[decision] (dec2) at (0, -6.65) {Stops\\OK?};
+% 7. Decision 2: Stops OK? (Lane 1) - Ample vertical clearance!
+\node[decision] (dec2) at (0, -8.6) {Stops\\OK?};
 \draw[actarrow] (act5.south) -- (dec2.north);
 
-% Loopback [Swap Stop] in Left Margin
-\draw[actarrow] (dec2.west) -- (-2.8, -6.65) node[above=0.02cm,pos=0.4,font=\tiny\bfseries\color{primaryblue},fill=white,inner sep=1pt]{[Swap]} |- (act5.west);
+% 1-Click Swap Alternative POI (Lane 2) - Level with dec2
+\node[aibox] (act_swap) at (6.5, -8.6) {\textbf{Swap Backup Alternative}\\[0.02cm]{\tiny 1-click replace with pre-fetched POI}};
+\draw[actarrow] (dec2.east) -- node[above=0.03cm,font=\tiny\bfseries\color{primaryblue},fill=white,inner sep=1.2pt]{[Swap / Downvote]} (act_swap.west);
+\draw[actarrow] (act_swap.north) |- node[below right=0.02cm,pos=0.75,font=\tiny\bfseries\color{accentteal},fill=white,inner sep=1pt]{Updated Stop} ($(act5.east)+(0,-0.12)$);
 
 % 8. Persist & Exports (Lane 2)
-\node[aibox] (act6) at (6.5, -7.55) {\textbf{Persist Plan \& Exports}\\[0.02cm]{\tiny Save \texttt{plan\_stops} to DB; PDF \& .ics}};
-\draw[actarrow] (dec2.east) -| node[above=0.03cm,pos=0.3,font=\tiny\bfseries\color{accentteal},fill=white,inner sep=1.2pt]{[Lock Plan]} (act6.north);
+\node[aibox] (act6) at (6.5, -10.1) {\textbf{Persist Plan \& Exports}\\[0.02cm]{\tiny Save \texttt{plan\_stops} to DB; PDF \& .ics}};
+\draw[actarrow] (dec2.south) |- node[above=0.03cm,pos=0.65,font=\tiny\bfseries\color{accentteal},fill=white,inner sep=1.2pt]{[All Approved / Host Locks]} (act6.west);
 
-% 9. Live Itinerary Sync (Lane 1)
-\node[userbox] (act7) at (0, -8.45) {\textbf{Live Itinerary \& Map Sync}\\[0.02cm]{\tiny Mapbox GL route render; on-trip edits}};
+% 9. Live Itinerary Navigation (Lane 1)
+\node[userbox] (act7) at (0, -11.2) {\textbf{Live Itinerary \& Navigation}\\[0.02cm]{\tiny Synchronized Mapbox map \& live tracking}};
 \draw[actarrow] (act6.south) |- (act7.east);
 
-\node[circle, draw=primaryblue, line width=1pt, minimum size=4.5mm, double, double distance=1pt, below=0.18cm of act7] (end) {};
+% End Node
+\node[circle, draw=primaryblue, line width=1pt, minimum size=4.5mm, double, double distance=1pt, below=0.25cm of act7] (end) {};
 \node[circle, fill=primaryblue, minimum size=2.2mm] at (end) {};
-\draw[actarrow] (act7.south) -- (end.north);
+\draw[actarrow] (act7.south) -- node[right=0.08cm,font=\tiny\bfseries\color{darkcharcoal}]{[Trip Concluded]} (end.north);
+
+% Dynamic On-the-Go Adaptation Request (Living Itinerary Loop)
+\draw[actarrow, dashed, color=accentteal] (act7.west) -- (-2.6, -11.2) node[above=0.02cm,pos=0.45,font=\tiny\bfseries\color{accentteal},fill=white,inner sep=1pt]{[On-Trip Edit]} |- (act5.west);
 
 \end{tikzpicture}
 }
