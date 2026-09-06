@@ -313,17 +313,17 @@ TripMate AI uses an asynchronous, decoupled architecture connecting the React SP
 \centering
 \resizebox{\textwidth}{!}{
 \begin{tikzpicture}[
-  layerbox/.style={rectangle, draw=primaryblue!90, fill=subtlegray, rounded corners=2.5mm, line width=1.0pt, minimum width=4.4cm, minimum height=2.0cm, align=left, font=\footnotesize},
-  topbox/.style={rectangle, draw=primaryblue, fill=primaryblue!8!white, rounded corners=2.5mm, line width=1.1pt, minimum width=16.6cm, minimum height=0.95cm, align=center, font=\footnotesize},
-  widebox/.style={rectangle, draw=primaryblue!90, fill=subtlegray, rounded corners=2.5mm, line width=1.0pt, minimum width=7.6cm, minimum height=2.3cm, align=left, font=\footnotesize},
+  layerbox/.style={rectangle, draw=primaryblue!90, fill=subtlegray, rounded corners=2.5mm, line width=1.0pt, minimum width=4.5cm, minimum height=2.1cm, align=left, font=\footnotesize},
+  topbox/.style={rectangle, draw=primaryblue, fill=primaryblue!8!white, rounded corners=2.5mm, line width=1.1pt, minimum width=19.6cm, minimum height=0.95cm, align=center, font=\footnotesize},
+  widebox/.style={rectangle, draw=primaryblue!90, fill=subtlegray, rounded corners=2.5mm, line width=1.0pt, minimum width=8.2cm, minimum height=2.4cm, align=left, font=\footnotesize},
   flowarrow/.style={-{Latex[length=2.8mm,width=1.8mm]}, line width=1.15pt, color=primaryblue!90},
   biarrow/.style={{Latex[length=2.8mm,width=1.8mm]}-{Latex[length=2.8mm,width=1.8mm]}, line width=1.15pt, color=primaryblue!90}
 ]
 
-% Top: Frontend SPA Banner (Full Width 16.6cm)
-\node[topbox] (fe) at (0, 4.5) {
+% Top: Frontend SPA Banner (Full Width 19.6cm)
+\node[topbox] (fe) at (0, 5.0) {
 \textbf{\large 1. Web Frontend (React 18 SPA)}\\[0.03cm]
-\parbox{16.2cm}{\centering \scriptsize
+\parbox{19.0cm}{\centering \scriptsize
 \textbf{Live Room Chat} \quad$\vert$\quad
 \textbf{Interactive Timeline \& Granular Stop Voting} \quad$\vert$\quad
 \textbf{Mapbox GL Route Canvas}
@@ -331,27 +331,27 @@ TripMate AI uses an asynchronous, decoupled architecture connecting the React SP
 };
 
 % Middle Row: Gateway (Left), Redis 7 (Center), AI Agent (Right)
-\node[layerbox] (be) at (-5.9, 1.95) {
+\node[layerbox] (be) at (-7.2, 2.0) {
 \textbf{\normalsize 2. Backend Gateway (FastAPI)}\\[0.03cm]
-\parbox{4.1cm}{\raggedright \scriptsize
+\parbox{4.2cm}{\raggedright \scriptsize
 $\bullet$ \textbf{WebSocket Server:} Room live broadcast\\
 $\bullet$ \textbf{REST Routers:} Auth (JWT), Rooms, Roles\\
 $\bullet$ \textbf{OpenTelemetry:} Distributed hop tracing
 }
 };
 
-\node[layerbox, minimum width=3.6cm] (redis) at (0, 1.95) {
+\node[layerbox, minimum width=3.7cm] (redis) at (0, 2.0) {
 \textbf{\normalsize 3. Redis 7 Infrastructure}\\[0.03cm]
-\parbox{3.3cm}{\raggedright \scriptsize
+\parbox{3.4cm}{\raggedright \scriptsize
 $\bullet$ \textbf{Task Queue:} Redis Streams (\texttt{XADD})\\
 $\bullet$ \textbf{Multi-Instance Sync:} Pub/Sub for WS\\
 $\bullet$ \textbf{In-Memory Cache:} POIs \& TTL store
 }
 };
 
-\node[layerbox] (ai) at (5.9, 1.95) {
+\node[layerbox] (ai) at (7.2, 2.0) {
 \textbf{\normalsize 4. AI Agent (LangGraph)}\\[0.03cm]
-\parbox{4.1cm}{\raggedright \scriptsize
+\parbox{4.2cm}{\raggedright \scriptsize
 $\bullet$ \textbf{Unified Engine:} Single DeepSeek-V4\\
 $\bullet$ \textbf{Two-Phase States:} Macro \& Micro curation\\
 $\bullet$ \textbf{Model Abstraction:} Fallback GPT-4o/Claude
@@ -359,44 +359,44 @@ $\bullet$ \textbf{Model Abstraction:} Fallback GPT-4o/Claude
 };
 
 % Bottom Row: Database (Left) and External Travel APIs (Right)
-\node[widebox] (db) at (-4.3, -1.75) {
+\node[widebox] (db) at (-5.3, -2.4) {
 \textbf{\normalsize 5. Database \& Persistence (PostgreSQL 16)}\\[0.04cm]
-\parbox{7.2cm}{\raggedright \scriptsize
+\parbox{7.8cm}{\raggedright \scriptsize
 $\bullet$ \textbf{Strict Schema Isolation:} \texttt{core}, \texttt{checkpoints}, \texttt{rag\_vectors}\\
 $\bullet$ \textbf{ACID Persistence:} \texttt{plan\_stops} voting locking \quad$\vert$\quad \texttt{AsyncPostgresSaver}\\
 $\bullet$ \textbf{High-Scale Ready:} Dedicated read replicas for vector RAG search
 }
 };
 
-\node[widebox] (ext) at (4.3, -1.75) {
+\node[widebox] (ext) at (5.3, -2.4) {
 \textbf{\normalsize 6. External Travel APIs \& Resilience}\\[0.04cm]
-\parbox{7.2cm}{\raggedright \scriptsize
+\parbox{7.8cm}{\raggedright \scriptsize
 $\bullet$ \textbf{PyBreaker Resilience:} Circuit breaker, retries \& fast fallback\\
 $\bullet$ \textbf{Lodging \& Dining:} Google Places API, Agoda, Booking.com\\
 $\bullet$ \textbf{Tours \& Transit:} Klook, 12Go Asia, OpenWeather API
 }
 };
 
-% Connectors: Bold, Clear, Distinct Separated Paths!
+% Connectors: Bold, Clear, Long Paths with Ample Text Clearances!
 % (1) Frontend <-> Gateway
-\draw[biarrow] (be.north) -- (be.north |- fe.south) node[midway, left=0.15cm, font=\scriptsize\bfseries, align=right]{\textbf{(1)} WebSockets / REST\\{\tiny(Bidirectional Live Sync)}};
+\draw[biarrow] (be.north) -- (be.north |- fe.south) node[midway, left=0.18cm, font=\scriptsize\bfseries, align=right]{\textbf{(1)} WebSockets / REST\\{\tiny(Bidirectional Live Sync)}};
 
 % (2) Task Queue: Gateway -> Redis -> AI Agent (Upper Parallel Arrows)
-\draw[flowarrow] ($(be.east)+(0, 0.35)$) -- ($(redis.west)+(0, 0.35)$) node[midway, above=0.03cm, font=\scriptsize\bfseries, text=primaryblue]{\textbf{(2)} Streams};
-\draw[flowarrow] ($(redis.east)+(0, 0.35)$) -- ($(ai.west)+(0, 0.35)$) node[midway, above=0.03cm, font=\scriptsize\bfseries, text=primaryblue]{\textbf{(2)} Pull};
+\draw[flowarrow] ($(be.east)+(0, 0.40)$) -- ($(redis.west)+(0, 0.40)$) node[midway, above=0.04cm, font=\scriptsize\bfseries, text=primaryblue]{\textbf{(2)} Streams};
+\draw[flowarrow] ($(redis.east)+(0, 0.40)$) -- ($(ai.west)+(0, 0.40)$) node[midway, above=0.04cm, font=\scriptsize\bfseries, text=primaryblue]{\textbf{(2)} Pull};
 
 % (6) Multi-Instance Broadcast: AI Agent -> Redis -> Gateway (Lower Parallel Arrows)
-\draw[flowarrow, color=accentteal] ($(ai.west)-(0, 0.35)$) -- ($(redis.east)-(0, 0.35)$) node[midway, below=0.03cm, font=\scriptsize\bfseries, text=accentteal]{\textbf{(6)} Event};
-\draw[flowarrow, color=accentteal] ($(redis.west)-(0, 0.35)$) -- ($(be.east)-(0, 0.35)$) node[midway, below=0.03cm, font=\scriptsize\bfseries, text=accentteal]{\textbf{(6)} Pub/Sub};
+\draw[flowarrow, color=accentteal] ($(ai.west)-(0, 0.40)$) -- ($(redis.east)-(0, 0.40)$) node[midway, below=0.04cm, font=\scriptsize\bfseries, text=accentteal]{\textbf{(6)} Event};
+\draw[flowarrow, color=accentteal] ($(redis.west)-(0, 0.40)$) -- ($(be.east)-(0, 0.40)$) node[midway, below=0.04cm, font=\scriptsize\bfseries, text=accentteal]{\textbf{(6)} Pub/Sub};
 
 % (3) Gateway -> Database (core schema)
-\draw[flowarrow] (be.south) -- (be.south |- db.north) node[midway, left=0.15cm, font=\scriptsize\bfseries, align=right]{\textbf{(3)} Transactional Persistence\\{\tiny(Chat, Auth, Rooms, Votes)}};
+\draw[flowarrow] (be.south) -- (be.south |- db.north) node[midway, left=0.18cm, font=\scriptsize\bfseries, align=right]{\textbf{(3)} Transactional Persistence\\{\tiny(Chat, Auth, Rooms, Votes)}};
 
 % (4) AI Agent <-> External APIs (PyBreaker)
-\draw[biarrow] (ai.south) -- (ai.south |- ext.north) node[midway, right=0.15cm, font=\scriptsize\bfseries, align=left]{\textbf{(4)} Resilient Tool Queries\\{\tiny(PyBreaker Circuit Breaker)}};
+\draw[biarrow] (ai.south) -- (ai.south |- ext.north) node[midway, right=0.18cm, font=\scriptsize\bfseries, align=left]{\textbf{(4)} Resilient Tool Queries\\{\tiny(PyBreaker Circuit Breaker)}};
 
 % (5) AI Agent <-> Database (DAL across clear central diagonal corridor)
-\draw[biarrow] (ai.south west) -- (db.north east) node[midway, font=\scriptsize\bfseries, fill=white, draw=primaryblue!80, rounded corners=1.2mm, inner sep=2.5pt, align=center]{\textbf{(5)} Data Access Layer (DAL)\\{\tiny(Checkpoints \& \texttt{plan\_stops})}};
+\draw[biarrow] (ai.south west) -- (db.north east) node[midway, font=\scriptsize\bfseries, fill=white, draw=primaryblue!80, rounded corners=1.2mm, inner sep=2.8pt, align=center]{\textbf{(5)} Data Access Layer (DAL)\\{\tiny(Checkpoints \& \texttt{plan\_stops})}};
 
 \end{tikzpicture}
 }
