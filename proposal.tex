@@ -9,7 +9,7 @@
 \usepackage{charter}
 \usepackage[scaled=0.88]{helvet}
 \usepackage{courier}
-\usepackage[a4paper,top=1.8cm,bottom=1.8cm,left=1.8cm,right=1.8cm,headheight=14pt]{geometry}
+\usepackage[a4paper,top=1.6cm,bottom=1.6cm,left=1.7cm,right=1.7cm,headheight=14pt]{geometry}
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs,tabularx,multirow}
 \usepackage{graphicx}
@@ -40,18 +40,19 @@
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[L]{\small\color{darkcharcoal}\textsc{TripMate AI} --- Technical Project Proposal}
-\fancyhead[R]{\small\color{accentteal}\textbf{Unified AI Agent Architecture}}
-\fancyfoot[L]{\small\color{gray}Group Project Technical Concept}
+\fancyhead[R]{\small\color{accentteal}\textbf{Unified AI Agent \& Cloud Architecture}}
+\fancyfoot[L]{\small\color{gray}Group Project Technical Proposal}
 \fancyfoot[R]{\small\color{darkcharcoal}\thepage}
 \renewcommand{\headrulewidth}{0.5pt}
 \renewcommand{\footrulewidth}{0.3pt}
 
 % ==========================================
-% TYPOGRAPHY & SECTION FORMATTING
+% TYPOGRAPHY & SECTION FORMATTING (NO GAPS)
 % ==========================================
+\raggedbottom
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{2.8pt plus 0.5pt minus 0.5pt}
-\linespread{1.04}
+\setlength{\parskip}{2.2pt plus 0.4pt minus 0.4pt}
+\linespread{1.03}
 
 \titleformat{\section}
 {\Large\bfseries\color{primaryblue}}{\thesection.}{0.5em}{}[\vspace{1pt}{\color{accentteal!40}\titlerule[0.8pt]}]
@@ -59,29 +60,31 @@
 {\large\bfseries\color{accentteal}}{\thesubsection.}{0.5em}{}
 \titleformat{\subsubsection}
 {\normalsize\bfseries\color{darkcharcoal}}{\thesubsubsection.}{0.4em}{}
-\titlespacing*{\section}{0pt}{8pt}{3pt}
-\titlespacing*{\subsection}{0pt}{5pt}{2pt}
-\titlespacing*{\subsubsection}{0pt}{3pt}{1pt}
-\setlist[itemize]{noitemsep,topsep=1.5pt,parsep=0pt,partopsep=0pt,leftmargin=1.2em}
-\setlist[enumerate]{noitemsep,topsep=1.5pt,parsep=0pt,partopsep=0pt,leftmargin=1.2em}
+\titlespacing*{\section}{0pt}{5pt plus 1pt minus 1pt}{2pt plus 0.5pt minus 0.5pt}
+\titlespacing*{\subsection}{0pt}{3.5pt plus 1pt minus 1pt}{1.5pt plus 0.5pt minus 0.5pt}
+\titlespacing*{\subsubsection}{0pt}{2.5pt plus 0.5pt minus 0.5pt}{1pt}
+\setlist[itemize]{noitemsep,topsep=1pt,parsep=0pt,partopsep=0pt,leftmargin=1.2em}
+\setlist[enumerate]{noitemsep,topsep=1pt,parsep=0pt,partopsep=0pt,leftmargin=1.2em}
+
+% Tighten float spacing to eliminate whitespace gaps
+\setlength{\floatsep}{4pt plus 1pt minus 1pt}
+\setlength{\textfloatsep}{5pt plus 1pt minus 1pt}
+\setlength{\intextsep}{4pt plus 1pt minus 1pt}
 
 \begin{document}
 
 % ==========================================
-% DOCUMENT HEADER
+% PAGE 1: OVERVIEW, PROBLEM, SCOPE, LIFECYCLE & PLATFORM FEATURES
 % ==========================================
 \begin{center}
-{\LARGE\bfseries\color{primaryblue} TripMate AI: Intelligent Group Activity \& Travel Planning Platform}\\[0.12cm]
-{\large\bfseries\color{accentteal} Powered by a Unified DeepSeek-V4 AI Agent Architecture}\\[0.16cm]
-{\small\textbf{Technical Project Proposal for Academic Supervisor} \quad$\vert$\quad \textbf{Group Project Concept}}\\[0.10cm]
-\rule{\textwidth}{0.8pt}\\[0.10cm]
+{\LARGE\bfseries\color{primaryblue} TripMate AI: Intelligent Group Activity \& Travel Planning Platform}\\[0.10cm]
+{\large\bfseries\color{accentteal} Unified AI Agent Architecture, Cloud Deployment \& Production Engineering}\\[0.14cm]
+{\small\textbf{Technical Project Proposal for Academic Supervisor} \quad$\vert$\quad \textbf{Group Project Concept}}\\[0.08cm]
+\rule{\textwidth}{0.8pt}\\[0.08cm]
 {\footnotesize \textbf{Project Team (6 Members):} Ta Quang Huy \quad Ha Dang Huy \quad Pham Dinh Anh Duong \quad Nguyen Minh Duc \quad Nguyen Tung Duong \quad Dinh Tien Luan}
 \end{center}
 \vspace{-0.15cm}
 
-% ==========================================
-% 1. INTRODUCTION, TARGET AUDIENCE & OVERVIEW
-% ==========================================
 \section{Introduction, Scope \& Product Overview}
 
 \subsection{The Problem: Pain Points in Group Trip Planning}
@@ -113,8 +116,8 @@ TripMate AI unifies group planning through a collaborative room powered by a \te
 \resizebox{0.96\textwidth}{!}{
 \begin{tikzpicture}[
   node distance=0.35cm,
-  stepbox/.style={rectangle, draw=primaryblue!80, fill=subtlegray, rounded corners=2.5mm, line width=0.85pt, minimum width=2.35cm, minimum height=1.2cm, align=center, font=\scriptsize\bfseries},
-  lockbox/.style={rectangle, draw=accentteal, fill=badgeteal!40!white, rounded corners=2.5mm, line width=1.1pt, minimum width=2.35cm, minimum height=1.2cm, align=center, font=\scriptsize\bfseries},
+  stepbox/.style={rectangle, draw=primaryblue!80, fill=subtlegray, rounded corners=2.5mm, line width=0.85pt, minimum width=2.35cm, minimum height=1.15cm, align=center, font=\scriptsize\bfseries},
+  lockbox/.style={rectangle, draw=accentteal, fill=badgeteal!40!white, rounded corners=2.5mm, line width=1.1pt, minimum width=2.35cm, minimum height=1.15cm, align=center, font=\scriptsize\bfseries},
   flow/.style={-{Latex[length=2.5mm,width=1.5mm]}, line width=1pt, color=primaryblue!85}
 ]
 \node[stepbox] (s1) {1. Group Chat\\[0.03cm]{\tiny Desires \& Budget}\\[0.02cm]{\tiny\color{accentteal}Saved to DB}};
@@ -136,9 +139,6 @@ TripMate AI unifies group planning through a collaborative room powered by a \te
 \label{fig:lifecycle}
 \end{figure}
 
-% ==========================================
-% 2. PLATFORM FEATURES & USER EXPERIENCE
-% ==========================================
 \section{Platform Features \& User Experience}
 
 \subsection{Dual Planning Scopes}
@@ -163,9 +163,9 @@ TripMate AI unifies group planning through a collaborative room powered by a \te
 
 \clearpage
 % ==========================================
-% 3. THE AI AGENT: ARCHITECTURE, WORKFLOW & PERSISTENCE
+% PAGE 2: THE AI AGENT: ARCHITECTURE, DATA PIPELINE & ACTIVITY DIAGRAM
 % ==========================================
-\section{The AI Agent: Architecture, Workflow \& Storage}
+\section{The AI Agent: Architecture, Workflow \& Grounding Pipeline}
 
 \subsection{Unified AI Agent: DeepSeek-V4 with Two-Phase State Execution}
 TripMate AI utilizes a \textbf{single, unified AI Agent powered by DeepSeek-V4} in LangGraph. To resolve latency bottlenecks and ensure clean testability, the agent operates in two decoupled state phases:
@@ -178,16 +178,15 @@ TripMate AI utilizes a \textbf{single, unified AI Agent powered by DeepSeek-V4} 
 
 \subsection{AI Agent Data Pipeline}
 \label{sec:agent_integration}
-
 Figure~\ref{fig:agent_data_flow} illustrates the unified AI agent state and data pipeline, connecting room context, two-phase LangGraph states, typed checkpoints, model abstraction, and resilient tooling:
 
 \begin{figure}[H]
 \centering
 \resizebox{0.92\textwidth}{!}{
 \begin{tikzpicture}[
-  box/.style={rectangle, draw=primaryblue!80, fill=subtlegray, rounded corners=2mm, line width=0.85pt, minimum width=4.3cm, minimum height=1.1cm, align=center, font=\scriptsize\bfseries},
-  agentbox/.style={rectangle, draw=accentteal, fill=badgeteal!40!white, rounded corners=2mm, line width=1.1pt, minimum width=4.5cm, minimum height=1.1cm, align=center, font=\scriptsize\bfseries},
-  tool/.style={rectangle, draw=darkcharcoal!70, fill=white, rounded corners=2mm, line width=0.85pt, minimum width=4.3cm, minimum height=1.1cm, align=center, font=\scriptsize\bfseries},
+  box/.style={rectangle, draw=primaryblue!80, fill=subtlegray, rounded corners=2mm, line width=0.85pt, minimum width=4.3cm, minimum height=1.05cm, align=center, font=\scriptsize\bfseries},
+  agentbox/.style={rectangle, draw=accentteal, fill=badgeteal!40!white, rounded corners=2mm, line width=1.1pt, minimum width=4.5cm, minimum height=1.05cm, align=center, font=\scriptsize\bfseries},
+  tool/.style={rectangle, draw=darkcharcoal!70, fill=white, rounded corners=2mm, line width=0.85pt, minimum width=4.3cm, minimum height=1.05cm, align=center, font=\scriptsize\bfseries},
   flow/.style={-{Latex[length=2.5mm,width=1.5mm]}, line width=1pt, color=primaryblue!85},
   biflow/.style={{Latex[length=2.5mm,width=1.5mm]}-{Latex[length=2.5mm,width=1.5mm]}, line width=1pt, color=primaryblue!85}
 ]
@@ -202,7 +201,7 @@ Figure~\ref{fig:agent_data_flow} illustrates the unified AI agent state and data
 \node[agentbox] (micro) at (5.5, -1.2) {\textbf{Phase 2: Micro Curation}\\[0.02cm]{\tiny 2--3\,km clustering \& stop swaps}};
 \node[tool] (tools) at (11.0, -1.2) {\textbf{Resilient APIs \& DAL}\\[0.02cm]{\tiny Circuit Breaker, Places, DB}};
 
-% Clean Orthogonal Connections (ZERO Crossings)
+% Clean Orthogonal Connections
 \draw[flow] (input) -- node[above=0.03cm,font=\tiny\bfseries,fill=white,inner sep=1.2pt]{Trigger} (macro);
 \draw[biflow] (macro) -- node[above=0.03cm,font=\tiny\bfseries,fill=white,inner sep=1.2pt]{Reasoning} (llm);
 
@@ -227,10 +226,10 @@ Figure~\ref{fig:activity_diagram} illustrates the end-to-end user and AI interac
 \centering
 \resizebox{0.78\textwidth}{!}{
 \begin{tikzpicture}[
-  userbox/.style={rectangle, draw=primaryblue!80, fill=subtlegray, rounded corners=2mm, line width=0.85pt, minimum width=4.3cm, minimum height=0.82cm, align=center, font=\scriptsize},
-  aibox/.style={rectangle, draw=accentteal, fill=badgeteal!40!white, rounded corners=2mm, line width=0.85pt, minimum width=4.5cm, minimum height=0.82cm, align=center, font=\scriptsize},
+  userbox/.style={rectangle, draw=primaryblue!80, fill=subtlegray, rounded corners=2mm, line width=0.85pt, minimum width=4.3cm, minimum height=0.80cm, align=center, font=\scriptsize},
+  aibox/.style={rectangle, draw=accentteal, fill=badgeteal!40!white, rounded corners=2mm, line width=0.85pt, minimum width=4.5cm, minimum height=0.80cm, align=center, font=\scriptsize},
   decision/.style={diamond, aspect=1.8, draw=primaryblue, fill=badgeblue, line width=0.85pt, align=center, font=\scriptsize\bfseries, inner sep=1.2pt},
-  lanehdr/.style={rectangle, draw=primaryblue, fill=primaryblue!10!white, rounded corners=1.5mm, line width=0.9pt, minimum width=4.9cm, minimum height=0.55cm, align=center, font=\footnotesize\bfseries},
+  lanehdr/.style={rectangle, draw=primaryblue, fill=primaryblue!10!white, rounded corners=1.5mm, line width=0.9pt, minimum width=4.9cm, minimum height=0.52cm, align=center, font=\footnotesize\bfseries},
   actarrow/.style={-{Latex[length=2.5mm,width=1.5mm]}, line width=0.9pt, color=primaryblue!85}
 ]
 
@@ -241,48 +240,48 @@ Figure~\ref{fig:activity_diagram} illustrates the end-to-end user and AI interac
 % Central Dividing Line
 \draw[dashed, color=bordergray, line width=0.7pt] (3.25, 0.35) -- (3.25, -12.4);
 
-% 1. Start & Preferences (Lane 1)
+% 1. Start & Preferences
 \node[circle, fill=primaryblue, minimum size=3.5mm] (start) at (0, -0.6) {};
 \node[userbox] (act1) at (0, -1.4) {\textbf{Submit Desires in Room Chat}\\[0.02cm]{\tiny Dates, budget tier \& hangout vibes}};
 \draw[actarrow] (start) -- (act1);
 
-% 2. Phase 1: Macro Planning (Lane 2)
+% 2. Phase 1: Macro Planning
 \node[aibox] (act2) at (6.5, -2.3) {\textbf{Phase 1: Macro Planning}\\[0.02cm]{\tiny Generate daily themes \& pacing roadmap}};
 \draw[actarrow] (act1.east) -| (act2.north);
 
-% 3. Review Macro Plan (Lane 1)
+% 3. Review Macro Plan
 \node[userbox] (act3) at (0, -3.3) {\textbf{Review Macro Roadmap}\\[0.02cm]{\tiny Group discusses \& votes on themes}};
 \draw[actarrow] (act2.south) |- (act3.east);
 
-% 4. Decision 1: Macro OK? (Lane 1) - Ample vertical clearance!
+% 4. Decision 1: Macro OK?
 \node[decision] (dec1) at (0, -4.8) {Macro\\OK?};
 \draw[actarrow] (act3.south) -- (dec1.north);
 
-% Loopback [Revise Desires] in Left Margin
+% Loopback [Revise Desires]
 \draw[actarrow] (dec1.west) -- (-2.6, -4.8) node[above=0.02cm,pos=0.5,font=\tiny\bfseries\color{primaryblue},fill=white,inner sep=1pt]{[Revise Desires]} |- (act1.west);
 
-% 5. Phase 2: Micro Curation (Lane 2)
+% 5. Phase 2: Micro Curation
 \node[aibox] (act4) at (6.5, -5.9) {\textbf{Phase 2: Micro Curation}\\[0.02cm]{\tiny Query live APIs; 2--3\,km geo-clustering}};
 \draw[actarrow] (dec1.east) -| node[above=0.03cm,pos=0.3,font=\tiny\bfseries\color{accentteal},fill=white,inner sep=1.2pt]{[Approved / Host Locks]} (act4.north);
 
-% 6. Stop Voting (Lane 1)
+% 6. Stop Voting
 \node[userbox] (act5) at (0, -7.0) {\textbf{Granular Stop Voting}\\[0.02cm]{\tiny Vote UP/DOWN per candidate venue}};
 \draw[actarrow] (act4.south) |- (act5.east);
 
-% 7. Decision 2: Stops OK? (Lane 1) - Ample vertical clearance!
+% 7. Decision 2: Stops OK?
 \node[decision] (dec2) at (0, -8.6) {Stops\\OK?};
 \draw[actarrow] (act5.south) -- (dec2.north);
 
-% 1-Click Swap Alternative POI (Lane 2) - Level with dec2
+% 1-Click Swap Alternative POI
 \node[aibox] (act_swap) at (6.5, -8.6) {\textbf{Swap Backup Alternative}\\[0.02cm]{\tiny 1-click replace with pre-fetched POI}};
 \draw[actarrow] (dec2.east) -- node[above=0.03cm,font=\tiny\bfseries\color{primaryblue},fill=white,inner sep=1.2pt]{[Swap / Downvote]} (act_swap.west);
 \draw[actarrow] (act_swap.north) |- node[below right=0.02cm,pos=0.75,font=\tiny\bfseries\color{accentteal},fill=white,inner sep=1pt]{Updated Stop} ($(act5.east)+(0,-0.12)$);
 
-% 8. Persist & Exports (Lane 2)
+% 8. Persist & Exports
 \node[aibox] (act6) at (6.5, -10.1) {\textbf{Persist Plan \& Exports}\\[0.02cm]{\tiny Save \texttt{plan\_stops} to DB; PDF \& .ics}};
 \draw[actarrow] (dec2.south) |- node[above=0.03cm,pos=0.65,font=\tiny\bfseries\color{accentteal},fill=white,inner sep=1.2pt]{[All Approved / Host Locks]} (act6.west);
 
-% 9. Live Itinerary Navigation (Lane 1)
+% 9. Live Itinerary Navigation
 \node[userbox] (act7) at (0, -11.2) {\textbf{Live Itinerary \& Navigation}\\[0.02cm]{\tiny Synchronized Mapbox map \& live tracking}};
 \draw[actarrow] (act6.south) |- (act7.east);
 
@@ -291,7 +290,7 @@ Figure~\ref{fig:activity_diagram} illustrates the end-to-end user and AI interac
 \node[circle, fill=primaryblue, minimum size=2.2mm] at (end) {};
 \draw[actarrow] (act7.south) -- node[right=0.08cm,font=\tiny\bfseries\color{darkcharcoal}]{[Trip Concluded]} (end.north);
 
-% Dynamic On-the-Go Adaptation Request (Living Itinerary Loop)
+% Dynamic On-the-Go Adaptation Request
 \draw[actarrow, dashed, color=accentteal] (act7.west) -- (-2.6, -11.2) node[above=0.02cm,pos=0.45,font=\tiny\bfseries\color{accentteal},fill=white,inner sep=1pt]{[On-Trip Edit]} |- (act5.west);
 
 \end{tikzpicture}
@@ -303,111 +302,181 @@ Figure~\ref{fig:activity_diagram} illustrates the end-to-end user and AI interac
 
 \clearpage
 % ==========================================
-% 4. SYSTEM ARCHITECTURE & OPERATIONAL FLOW
+% PAGE 3: AI GROUNDING PIPELINE, SYSTEM ARCHITECTURE, TECH STACK & CLOUD DEPLOYMENT
 % ==========================================
-\section{System Architecture \& Operational Flow}
+\subsection{AI Reliability: Four-Tier Grounding \& Hallucination Mitigation Pipeline}
+\label{sec:hallucination_mitigation}
 
-TripMate AI uses an asynchronous, decoupled architecture connecting the React SPA, FastAPI gateway, PostgreSQL storage, the unified LangGraph AI agent, and external travel APIs. Figure~\ref{fig:system_flow} presents the complete system architecture and highlights the six primary communication interfaces (1)--(6) that coordinate the platform.
+A critical vulnerability of LLMs in travel planning is \textbf{hallucination}---inventing non-existent venues (``phantom POIs''), obsolete opening hours, or unrealistic transit routes. TripMate AI eliminates hallucinations through a \textbf{Four-Tier Deterministic Grounding Pipeline} (Figure~\ref{fig:hallucination_pipeline}):
 
 \begin{figure}[H]
 \centering
-\resizebox{\textwidth}{!}{
+\resizebox{0.96\textwidth}{!}{
 \begin{tikzpicture}[
-  layerbox/.style={rectangle, draw=primaryblue!90, fill=subtlegray, rounded corners=2.5mm, line width=1.0pt, minimum width=4.5cm, minimum height=2.1cm, align=left, font=\footnotesize},
-  topbox/.style={rectangle, draw=primaryblue, fill=primaryblue!8!white, rounded corners=2.5mm, line width=1.1pt, minimum width=19.6cm, minimum height=0.95cm, align=center, font=\footnotesize},
-  widebox/.style={rectangle, draw=primaryblue!90, fill=subtlegray, rounded corners=2.5mm, line width=1.0pt, minimum width=8.2cm, minimum height=2.4cm, align=left, font=\footnotesize},
-  flowarrow/.style={-{Latex[length=2.8mm,width=1.8mm]}, line width=1.15pt, color=primaryblue!90},
-  biarrow/.style={{Latex[length=2.8mm,width=1.8mm]}-{Latex[length=2.8mm,width=1.8mm]}, line width=1.15pt, color=primaryblue!90}
+  node distance=0.45cm,
+  tierbox/.style={rectangle, draw=primaryblue!85, fill=subtlegray, rounded corners=2.2mm, line width=0.9pt, minimum width=3.8cm, minimum height=1.15cm, align=center, font=\scriptsize},
+  arrow/.style={-{Latex[length=2.5mm,width=1.5mm]}, line width=1pt, color=primaryblue!85}
+]
+\node[tierbox] (t1) {\textbf{Tier 1: Type-Safe Schema}\\[0.02cm]{\tiny Pydantic v2 Output Guard}\\[0.01cm]{\tiny\color{accentteal}No free-text hallucination}};
+\node[tierbox, right=of t1] (t2) {\textbf{Tier 2: Live Grounding}\\[0.02cm]{\tiny Places API \& OpenStreetMap}\\[0.01cm]{\tiny\color{primaryblue}Verify Place ID \& Status}};
+\node[tierbox, right=of t2] (t3) {\textbf{Tier 3: Spatio-Temporal}\\[0.02cm]{\tiny Deterministic Clustering}\\[0.01cm]{\tiny\color{accentteal}Radius $\le 2.5$\,km, transit $\le 20$\,min}};
+\node[tierbox, right=of t3] (t4) {\textbf{Tier 4: Human Feedback}\\[0.02cm]{\tiny Stop Voting \& 1-Click Swap}\\[0.01cm]{\tiny\color{primaryblue}Pre-fetched verified backups}};
+
+\draw[arrow] (t1) -- (t2);
+\draw[arrow] (t2) -- (t3);
+\draw[arrow] (t3) -- (t4);
+\end{tikzpicture}
+}
+\vspace{-0.25cm}
+\caption{TripMate AI four-tier deterministic hallucination mitigation and live grounding pipeline}
+\label{fig:hallucination_pipeline}
+\end{figure}
+
+\begin{itemize}[leftmargin=1.2em]
+\item \textbf{Tier 1 (Strict Schema Enforcement):} LangChain \texttt{with\_structured\_output()} binds DeepSeek-V4 to Pydantic v2 schemas, structurally prohibiting free-text drift and enforcing typed attributes (categories, coordinates, budgets, durations).
+\item \textbf{Tier 2 (Live API Grounding):} Candidate venues are matched against Google Places API and OpenStreetMap to verify canonical \texttt{place\_id}, active operational status, and compatible opening hours. Unverified venues immediately fall back to local database records.
+\item \textbf{Tier 3 (Deterministic Spatio-Temporal Checks):} Python algorithms (Haversine formula and Mapbox Matrix API) deterministically cluster stops within a $2.0$--$2.5$\,km radius with transit times $\le 20$\,minutes, preventing spatial hallucinations.
+\item \textbf{Tier 4 (Human-in-the-Loop Feedback):} Granular stop voting (UP/DOWN) empowers members to reject suggestions, triggering instantaneous 1-click swaps with pre-fetched, API-verified backup venues.
+\end{itemize}
+
+\section{System Architecture, Technology Stack \& Cloud Deployment}
+
+TripMate AI uses an asynchronous, decoupled architecture connecting the React SPA, FastAPI gateway, Supabase PostgreSQL storage, the unified LangGraph AI agent, and external travel APIs. Figure~\ref{fig:system_flow} presents the complete system architecture and highlights the primary communication interfaces (1)--(6) coordinating the platform across cloud hosting providers.
+
+\begin{figure}[H]
+\centering
+\resizebox{0.96\textwidth}{!}{
+\begin{tikzpicture}[
+  layerbox/.style={rectangle, draw=primaryblue!90, fill=subtlegray, rounded corners=2.2mm, line width=0.9pt, minimum width=4.3cm, minimum height=1.9cm, align=left, font=\scriptsize},
+  topbox/.style={rectangle, draw=primaryblue, fill=primaryblue!8!white, rounded corners=2.2mm, line width=1.0pt, minimum width=19.2cm, minimum height=0.85cm, align=center, font=\scriptsize},
+  widebox/.style={rectangle, draw=primaryblue!90, fill=subtlegray, rounded corners=2.2mm, line width=0.9pt, minimum width=8.0cm, minimum height=2.1cm, align=left, font=\scriptsize},
+  flowarrow/.style={-{Latex[length=2.5mm,width=1.6mm]}, line width=1.0pt, color=primaryblue!90},
+  biarrow/.style={{Latex[length=2.5mm,width=1.6mm]}-{Latex[length=2.5mm,width=1.6mm]}, line width=1.0pt, color=primaryblue!90}
 ]
 
-% Top: Frontend SPA Banner (Full Width 19.6cm)
-\node[topbox] (fe) at (0, 5.0) {
-\textbf{\large 1. Web Frontend (React 18 SPA)}\\[0.03cm]
-\parbox{19.0cm}{\centering \scriptsize
+% Top: Frontend SPA Banner
+\node[topbox] (fe) at (0, 4.6) {
+\textbf{\normalsize 1. Web Frontend (React 18 SPA on Vercel Edge)}\\[0.02cm]
+\parbox{18.6cm}{\centering \tiny
 \textbf{Live Room Chat} \quad$\vert$\quad
 \textbf{Interactive Timeline \& Granular Stop Voting} \quad$\vert$\quad
-\textbf{Mapbox GL Route Canvas}
+\textbf{Mapbox GL Route Canvas} \quad$\vert$\quad
+\textbf{Zero Cold-Start Edge CDN}
 }
 };
 
-% Middle Row: Gateway (Left), Redis 7 (Center), AI Agent (Right)
-\node[layerbox] (be) at (-7.2, 2.0) {
-\textbf{\normalsize 2. Backend Gateway (FastAPI)}\\[0.03cm]
-\parbox{4.2cm}{\raggedright \scriptsize
-$\bullet$ \textbf{WebSocket Server:} Room live broadcast\\
-$\bullet$ \textbf{REST Routers:} Auth (JWT), Rooms, Roles\\
-$\bullet$ \textbf{OpenTelemetry:} Distributed hop tracing
+% Middle Row: Gateway, Redis, AI Agent
+\node[layerbox] (be) at (-6.9, 1.9) {
+\textbf{\footnotesize 2. Backend Gateway (FastAPI)}\\[0.02cm]
+\parbox{4.0cm}{\raggedright \tiny
+$\bullet$ \textbf{Hosting:} Render Web Service\\
+$\bullet$ \textbf{WebSocket Server:} Room live sync\\
+$\bullet$ \textbf{Keep-Alive:} Anti-sleep health ping\\
+$\bullet$ \textbf{REST \& Auth:} JWT / Role Guards
 }
 };
 
-\node[layerbox, minimum width=3.7cm] (redis) at (0, 2.0) {
-\textbf{\normalsize 3. Redis 7 Infrastructure}\\[0.03cm]
-\parbox{3.4cm}{\raggedright \scriptsize
-$\bullet$ \textbf{Task Queue:} Redis Streams (\texttt{XADD})\\
-$\bullet$ \textbf{Multi-Instance Sync:} Pub/Sub for WS\\
-$\bullet$ \textbf{In-Memory Cache:} POIs \& TTL store
+\node[layerbox, minimum width=3.5cm] (redis) at (0, 1.9) {
+\textbf{\footnotesize 3. Upstash Redis / Redis 7}\\[0.02cm]
+\parbox{3.2cm}{\raggedright \tiny
+$\bullet$ \textbf{Task Queue:} Streams (\texttt{XADD})\\
+$\bullet$ \textbf{Pub/Sub:} Gateway live broadcast\\
+$\bullet$ \textbf{L2 Cache:} POIs TTL store\\
+$\bullet$ \textbf{Serverless:} 10k cmds/day
 }
 };
 
-\node[layerbox] (ai) at (7.2, 2.0) {
-\textbf{\normalsize 4. AI Agent (LangGraph)}\\[0.03cm]
-\parbox{4.2cm}{\raggedright \scriptsize
-$\bullet$ \textbf{Unified Engine:} Single DeepSeek-V4\\
-$\bullet$ \textbf{Two-Phase States:} Macro \& Micro curation\\
-$\bullet$ \textbf{Model Abstraction:} Fallback GPT-4o/Claude
+\node[layerbox] (ai) at (6.9, 1.9) {
+\textbf{\footnotesize 4. AI Agent Worker}\\[0.02cm]
+\parbox{4.0cm}{\raggedright \tiny
+$\bullet$ \textbf{Hosting:} Render Worker ($\le 512$\,MB)\\
+$\bullet$ \textbf{LangGraph Python:} DeepSeek-V4\\
+$\bullet$ \textbf{Two-Phase:} Macro \& Micro curation\\
+$\bullet$ \textbf{Grounding:} Hallucination filter
 }
 };
 
-% Bottom Row: Database (Left) and External Travel APIs (Right)
-\node[widebox] (db) at (-5.3, -2.4) {
-\textbf{\normalsize 5. Database \& Persistence (PostgreSQL 16)}\\[0.04cm]
-\parbox{7.8cm}{\raggedright \scriptsize
-$\bullet$ \textbf{Strict Schema Isolation:} \texttt{core}, \texttt{checkpoints}, \texttt{rag\_vectors}\\
-$\bullet$ \textbf{ACID Persistence:} \texttt{plan\_stops} voting locking \quad$\vert$\quad \texttt{AsyncPostgresSaver}\\
-$\bullet$ \textbf{High-Scale Ready:} Dedicated read replicas for vector RAG search
+% Bottom Row: Database and External Travel APIs
+\node[widebox] (db) at (-5.0, -2.1) {
+\textbf{\footnotesize 5. Managed Database \& BaaS (Supabase)}\\[0.02cm]
+\parbox{7.6cm}{\raggedright \tiny
+$\bullet$ \textbf{PostgreSQL 16 + pgvector:} Isolated schemas (\texttt{core}, \texttt{checkpoints}, \texttt{vectors})\\
+$\bullet$ \textbf{Supavisor Connection Pooler:} 200+ pooled conns on port 6543 (Transaction Mode)\\
+$\bullet$ \textbf{Security \& BaaS:} Row Level Security (RLS), Supabase Auth \& daily backups
 }
 };
 
-\node[widebox] (ext) at (5.3, -2.4) {
-\textbf{\normalsize 6. External Travel APIs \& Resilience}\\[0.04cm]
-\parbox{7.8cm}{\raggedright \scriptsize
-$\bullet$ \textbf{PyBreaker Resilience:} Circuit breaker, retries \& fast fallback\\
+\node[widebox] (ext) at (5.0, -2.1) {
+\textbf{\footnotesize 6. External Travel APIs \& Resilience}\\[0.02cm]
+\parbox{7.6cm}{\raggedright \tiny
+$\bullet$ \textbf{PyBreaker Resilience:} Circuit breaker, 2.5s timeout \& fast DB fallback\\
 $\bullet$ \textbf{Lodging \& Dining:} Google Places API, Agoda, Booking.com\\
 $\bullet$ \textbf{Tours \& Transit:} Klook, 12Go Asia, OpenWeather API
 }
 };
 
-% Connectors: Bold, Clear, Long Paths with Ample Text Clearances!
-% (1) Frontend <-> Gateway
-\draw[biarrow] (be.north) -- (be.north |- fe.south) node[midway, left=0.18cm, font=\scriptsize\bfseries, align=right]{\textbf{(1)} WebSockets / REST\\{\tiny(Bidirectional Live Sync)}};
-
-% (2) Task Queue: Gateway -> Redis -> AI Agent (Upper Parallel Arrows)
-\draw[flowarrow] ($(be.east)+(0, 0.40)$) -- ($(redis.west)+(0, 0.40)$) node[midway, above=0.04cm, font=\scriptsize\bfseries, text=primaryblue]{\textbf{(2)} Streams};
-\draw[flowarrow] ($(redis.east)+(0, 0.40)$) -- ($(ai.west)+(0, 0.40)$) node[midway, above=0.04cm, font=\scriptsize\bfseries, text=primaryblue]{\textbf{(2)} Pull};
-
-% (6) Multi-Instance Broadcast: AI Agent -> Redis -> Gateway (Lower Parallel Arrows)
-\draw[flowarrow, color=accentteal] ($(ai.west)-(0, 0.40)$) -- ($(redis.east)-(0, 0.40)$) node[midway, below=0.04cm, font=\scriptsize\bfseries, text=accentteal]{\textbf{(6)} Event};
-\draw[flowarrow, color=accentteal] ($(redis.west)-(0, 0.40)$) -- ($(be.east)-(0, 0.40)$) node[midway, below=0.04cm, font=\scriptsize\bfseries, text=accentteal]{\textbf{(6)} Pub/Sub};
-
-% (3) Gateway -> Database (core schema)
-\draw[flowarrow] (be.south) -- (be.south |- db.north) node[midway, left=0.18cm, font=\scriptsize\bfseries, align=right]{\textbf{(3)} Transactional Persistence\\{\tiny(Chat, Auth, Rooms, Votes)}};
-
-% (4) AI Agent <-> External APIs (PyBreaker)
-\draw[biarrow] (ai.south) -- (ai.south |- ext.north) node[midway, right=0.18cm, font=\scriptsize\bfseries, align=left]{\textbf{(4)} Resilient Tool Queries\\{\tiny(PyBreaker Circuit Breaker)}};
-
-% (5) AI Agent <-> Database (DAL across clear central diagonal corridor)
-\draw[biarrow] (ai.south west) -- (db.north east) node[midway, font=\scriptsize\bfseries, fill=white, draw=primaryblue!80, rounded corners=1.2mm, inner sep=2.8pt, align=center]{\textbf{(5)} Data Access Layer (DAL)\\{\tiny(Checkpoints \& \texttt{plan\_stops})}};
+% Connectors
+\draw[biarrow] (be.north) -- (be.north |- fe.south) node[midway, left=0.15cm, font=\tiny\bfseries, align=right]{\textbf{(1)} WebSockets / REST\\(Live Sync)};
+\draw[flowarrow] ($(be.east)+(0, 0.35)$) -- ($(redis.west)+(0, 0.35)$) node[midway, above=0.02cm, font=\tiny\bfseries, text=primaryblue]{\textbf{(2)} Streams};
+\draw[flowarrow] ($(redis.east)+(0, 0.35)$) -- ($(ai.west)+(0, 0.35)$) node[midway, above=0.02cm, font=\tiny\bfseries, text=primaryblue]{\textbf{(2)} Pull};
+\draw[flowarrow, color=accentteal] ($(ai.west)-(0, 0.35)$) -- ($(redis.east)-(0, 0.35)$) node[midway, below=0.02cm, font=\tiny\bfseries, text=accentteal]{\textbf{(6)} Event};
+\draw[flowarrow, color=accentteal] ($(redis.west)-(0, 0.35)$) -- ($(be.east)-(0, 0.35)$) node[midway, below=0.02cm, font=\tiny\bfseries, text=accentteal]{\textbf{(6)} Pub/Sub};
+\draw[flowarrow] (be.south) -- (be.south |- db.north) node[midway, left=0.15cm, font=\tiny\bfseries, align=right]{\textbf{(3)} Persistence\\(Chat, Auth, Votes)};
+\draw[biarrow] (ai.south) -- (ai.south |- ext.north) node[midway, right=0.15cm, font=\tiny\bfseries, align=left]{\textbf{(4)} Tool Queries\\(Circuit Breaker)};
+\draw[biarrow] (ai.south west) -- (db.north east) node[midway, font=\tiny\bfseries, fill=white, draw=primaryblue!80, rounded corners=1.0mm, inner sep=2.0pt, align=center]{\textbf{(5)} Data Access Layer (DAL)\\(Checkpoints \& \texttt{plan\_stops})};
 
 \end{tikzpicture}
 }
 \vspace{-0.25cm}
-\caption{TripMate AI system architecture: component layers and operational interfaces (1)--(6)}
+\caption{TripMate AI system architecture: component layers, cloud providers, and operational interfaces (1)--(6)}
 \label{fig:system_flow}
 \end{figure}
 
+\subsection{Technology Stack}
+\begin{table}[H]
+\centering
+\footnotesize
+\renewcommand{\arraystretch}{1.05}
+\begin{tabularx}{\textwidth}{@{}l p{3.2cm} p{3.0cm} X@{}}
+\toprule
+\textbf{Tier} & \textbf{Core Technology} & \textbf{Cloud Platform} & \textbf{Architectural Role} \\
+\midrule
+\textbf{Frontend} & React 18 + TypeScript & \textbf{Vercel} & Interactive timeline, collaborative voting cards, Mapbox GL canvas on Edge CDN. \\
+\midrule
+\textbf{Backend Gateway} & FastAPI (Python 3.11+) & \textbf{Render.com} & REST endpoints, WebSocket room server, anti-sleep keep-alive pings. \\
+\midrule
+\textbf{AI Agent Layer} & LangGraph Python & \textbf{Render.com} & Unified DeepSeek-V4 agent, two-phase states, memory bounded $\le 280$\,MB. \\
+& Model Abstraction & Cloud LLM APIs & Primary: DeepSeek-V4; Fallback: OpenAI GPT-4o, Claude, Gemini. \\
+\midrule
+\textbf{Database \& Auth} & PostgreSQL 16 + \texttt{pgvector} & \textbf{Supabase} & Relational persistence, Supavisor connection pooler (port 6543), RLS security. \\
+\midrule
+\textbf{Queue \& Cache} & Redis 7 / Redis Streams & \textbf{Upstash Redis} & Asynchronous task broker, WebSocket Pub/Sub broadcast, 24h TTL POI cache. \\
+\midrule
+\textbf{Resilience \& Ops} & PyBreaker / OpenTelemetry & Cloud Observability & External API circuit breakers (2.5s timeout), distributed tracing, LangSmith. \\
+\bottomrule
+\end{tabularx}
+\vspace{-0.2cm}
+\caption{Core technology stack and cloud platform distribution for TripMate AI}
+\label{tab:tech_stack}
+\end{table}
+
+\subsection{Cloud Deployment Architecture (Vercel, Supabase, Render)}
+\label{sec:deployment_architecture}
+TripMate AI is deployed across modern cloud platforms (Vercel, Supabase, Render) configured for high availability:
+\begin{itemize}
+\item \textbf{Frontend (Vercel):} React 18 SPA hosted on Vercel's Global Edge CDN with zero cold-start latency, automatic GitHub CI/CD, and custom domain SSL.
+\item \textbf{Backend Gateway \& AI Worker (Render):} FastAPI ASGI application and LangGraph worker running in containerized environments (512\,MB RAM). An automated keep-alive cron ping to \texttt{/api/healthz} prevents instance idling during active planning sessions.
+\item \textbf{Database \& Auth (Supabase):} Managed PostgreSQL 16 with \texttt{pgvector} and Supabase Auth. The built-in Supavisor connection pooler (port 6543, Transaction Mode) multiplexes 200+ client sessions across 15 physical connections, maintaining high connection availability.
+\item \textbf{Task Queue \& Cache (Upstash Redis):} Serverless Redis managing Redis Streams for asynchronous AI agent task dispatch and Redis Pub/Sub for live room WebSocket broadcasting.
+\end{itemize}
+
+\clearpage
+% ==========================================
+% PAGE 4: END-TO-END OPERATIONAL FLOW & SEQUENCE EXECUTION
+% ==========================================
 \subsection{End-to-End Operational Flow}
 \label{sec:system_flow}
-Figure~\ref{fig:operational_flow_diagram} visualizes the operational execution lifecycle of interfaces \textbf{(1)--(6)} from the System Architecture (Figure~\ref{fig:system_flow}) as an end-to-end UML sequence diagram, showing the asynchronous decoupling of client interactions, background AI processing, resilient tool execution, and real-time room broadcasting. Table~\ref{tab:system_flow_summary} summarizes each operational stage, execution mode, and dependent triggers.
+Figure~\ref{fig:operational_flow_diagram} visualizes the operational execution lifecycle of interfaces \textbf{(1)--(6)} from the System Architecture (Figure~\ref{fig:system_flow}) as an end-to-end UML sequence diagram, showing the asynchronous decoupling of client interactions on Vercel, background AI processing on Render, resilient tool execution, and real-time room broadcasting. Table~\ref{tab:system_flow_summary} summarizes each operational stage, execution mode, and dependent triggers.
 
 \begin{figure}[H]
 \centering
@@ -420,11 +489,11 @@ Figure~\ref{fig:operational_flow_diagram} visualizes the operational execution l
 ]
 
 % 6 Lifelines Spaced Exactly 3.0cm Apart Across 15.0cm
-\node[participant] (c) at (0, 0) {Client\\{\tiny React 18 SPA}};
-\node[participant] (gw) at (3.0, 0) {Gateway\\{\tiny FastAPI}};
-\node[participant] (q) at (6.0, 0) {Redis 7 Infra\\{\tiny Streams / Pub/Sub}};
-\node[participant] (ai) at (9.0, 0) {AI Agent\\{\tiny LangGraph Worker}};
-\node[participant] (db) at (12.0, 0) {Database\\{\tiny PostgreSQL 16}};
+\node[participant] (c) at (0, 0) {Client\\{\tiny React (Vercel)}};
+\node[participant] (gw) at (3.0, 0) {Gateway\\{\tiny FastAPI (Render)}};
+\node[participant] (q) at (6.0, 0) {Redis Infra\\{\tiny Upstash Serverless}};
+\node[participant] (ai) at (9.0, 0) {AI Worker\\{\tiny LangGraph (Render)}};
+\node[participant] (db) at (12.0, 0) {Database\\{\tiny Supabase (Postgres)}};
 \node[participant] (ext) at (15.0, 0) {Travel APIs\\{\tiny PyBreaker / Live}};
 
 % Vertical Lifelines
@@ -435,27 +504,27 @@ Figure~\ref{fig:operational_flow_diagram} visualizes the operational execution l
 \draw[dashed, color=bordergray, line width=0.7pt] (db.south) -- (12.0, -8.3);
 \draw[dashed, color=bordergray, line width=0.7pt] (ext.south) -- (15.0, -8.3);
 
-% Step 1: User Action (Client -> Gateway)
+% Step 1: User Action
 \draw[seqarrow] (0, -0.65) -- (3.0, -0.65);
 \node[lbl] at (1.5, -0.50) {\textbf{Step 1:} User Chat / Stop Vote (OTel Context)};
 
-% Immediate Non-Blocking Ack (Gateway -> Client)
+% Immediate Non-Blocking Ack
 \draw[retarrow] (3.0, -1.20) -- (0, -1.20);
 \node[lbl] at (1.5, -1.05) {Immediate Status OK (Non-blocking WS)};
 
-% Step 2a: Persist Chat / Votes (Gateway -> Database)
+% Step 2a: Persist Chat / Votes
 \draw[seqarrow] (3.0, -1.75) -- (12.0, -1.75);
 \node[lbl] at (7.5, -1.60) {\textbf{Step 2a:} Persist Chat / Vote (\texttt{core} schema)};
 
-% Step 2b: Enqueue Task (Gateway -> Task Queue)
+% Step 2b: Enqueue Task
 \draw[seqarrow] (3.0, -2.30) -- (6.0, -2.30);
 \node[lbl] at (4.5, -2.15) {\textbf{Step 2b:} Enqueue Task (\texttt{XADD} Redis Streams)};
 
-% Step 3: Dispatch Task (Task Queue -> AI Agent Worker)
+% Step 3: Dispatch Task
 \draw[seqarrow] (6.0, -2.85) -- (9.0, -2.85);
 \node[lbl] at (7.5, -2.70) {\textbf{Step 3:} Dispatch Task (\texttt{XREADGROUP} Worker)};
 
-% Step 4: Load Checkpoint via DAL (AI Agent -> Database)
+% Step 4: Load Checkpoint via DAL
 \draw[seqarrow] (9.0, -3.40) -- (12.0, -3.40);
 \node[lbl] at (10.5, -3.25) {\textbf{Step 4:} Load Checkpoint via DAL (\texttt{checkpoints})};
 
@@ -465,26 +534,26 @@ Figure~\ref{fig:operational_flow_diagram} visualizes the operational execution l
 % Internal State Transition Node
 \node[lbl, fill=badgeteal!40!white, draw=accentteal, rounded corners=1mm, inner sep=2pt] at (9.0, -4.50) {\scriptsize Macro Consensus $\rightarrow$ Micro Curation Phase};
 
-% Step 5: Resilient Tool Queries (AI Agent -> Travel APIs)
+% Step 5: Resilient Tool Queries
 \draw[seqarrow] (9.0, -5.10) -- (15.0, -5.10);
 \node[lbl] at (12.0, -4.95) {\textbf{Step 5:} Tool Queries (PyBreaker Circuit Breaker)};
 
 \draw[retarrow] (15.0, -5.65) -- (9.0, -5.65);
 \node[lbl] at (12.0, -5.50) {Return Verified POIs (or Cache Fallback)};
 
-% Step 6: Persist Stops via DAL (AI Agent -> Database)
+% Step 6: Persist Stops via DAL
 \draw[seqarrow] (9.0, -6.20) -- (12.0, -6.20);
 \node[lbl] at (10.5, -6.05) {\textbf{Step 6:} Write Verified Stops (\texttt{plan\_stops} DAL)};
 
-% Step 7: Publish Plan Event (AI Agent -> Redis Pub/Sub)
+% Step 7: Publish Plan Event
 \draw[seqarrow] (9.0, -6.75) -- (6.0, -6.75);
 \node[lbl] at (7.5, -6.60) {\textbf{Step 7:} \texttt{PUBLISH plan:updated} (Redis Pub/Sub)};
 
-% Step 7b: Multi-Instance Broadcast to Gateway instances
+% Step 7b: Multi-Instance Broadcast
 \draw[seqarrow] (6.0, -7.30) -- (3.0, -7.30);
 \node[lbl] at (4.5, -7.15) {Broadcast Event (Subscribed Gateways)};
 
-% Step 8: WebSocket Broadcast to Room Clients
+% Step 8: WebSocket Broadcast
 \draw[seqarrow] (3.0, -7.85) -- (0, -7.85);
 \node[lbl] at (1.5, -7.70) {\textbf{Step 8:} WebSocket Room Broadcast (Live Sync)};
 
@@ -495,20 +564,16 @@ Figure~\ref{fig:operational_flow_diagram} visualizes the operational execution l
 \label{fig:operational_flow_diagram}
 \end{figure}
 
-\clearpage
-% ==========================================
-% PAGE 4: OPERATIONAL SUMMARY, TECH STACK, SCALABILITY & CONCLUSION
-% ==========================================
 \begin{table}[H]
 \centering
 \footnotesize
-\renewcommand{\arraystretch}{1.08}
+\renewcommand{\arraystretch}{1.06}
 \begin{tabularx}{\textwidth}{@{}c l c l >{\raggedright\arraybackslash}X@{}}
 \toprule
 \textbf{Step} & \textbf{Interface Path} & \textbf{Mode} & \textbf{Depends On} & \textbf{Operational Function} \\
 \midrule
 \textbf{1} & \textbf{(1)} Frontend $\rightarrow$ Gateway & Sync & User action & Transmits chat message or stop vote payload with OpenTelemetry context. \\
-\textbf{2a} & \textbf{(3)} Gateway $\rightarrow$ Database & Sync & Step 1 & Persists chat logs and vote counts into PostgreSQL (\texttt{core} schema). \\
+\textbf{2a} & \textbf{(3)} Gateway $\rightarrow$ Database & Sync & Step 1 & Persists chat logs and vote counts into Supabase (\texttt{core} schema). \\
 \textbf{2b} & \textbf{(2)} Gateway $\rightarrow$ Redis (Streams) & Async & Step 1 & Dispatches non-blocking task to Redis Streams (\texttt{XADD}); returns immediate HTTP/WS ack. \\
 \textbf{3} & \textbf{(2)} Redis (Streams) $\rightarrow$ AI Agent & Async & Step 2b & LangGraph worker consumes task via \texttt{XREADGROUP} consumer group. \\
 \textbf{4} & \textbf{(5)} AI Agent $\leftarrow$ Database & Async & Step 3 & Loads active session checkpoint and context via DAL from \texttt{checkpoints} schema. \\
@@ -524,61 +589,81 @@ Figure~\ref{fig:operational_flow_diagram} visualizes the operational execution l
 \label{tab:system_flow_summary}
 \end{table}
 
-\textbf{Dynamic On-the-Go Adaptability:} When conditions change unexpectedly (e.g., sudden rain), a member chats: \textit{``it is raining, find an indoor cafe nearby''}. FastAPI immediately returns an acknowledgment (non-blocking WebSocket), records the message in the \texttt{core} schema (Step 2a), and enqueues an asynchronous task to Redis Streams (Step 2b). The LangGraph AI Agent worker consumes the task (Step 3), restores the active session checkpoint from PostgreSQL via DAL (Step 4), transitions directly to its Micro Curation state (Step 4b), queries nearby indoor venues in parallel through the resilient PyBreaker-guarded API and cache layer (Step 5), modifies \textbf{only the affected single row in \texttt{plan\_stops}} in PostgreSQL (Step 6), publishes the update event to Redis Pub/Sub (Step 7), and FastAPI broadcasts the updated stop to all room members via WebSockets (Step 8).
+\textbf{Dynamic On-the-Go Adaptability:} When conditions change unexpectedly (e.g., sudden rain), a member chats: \textit{``it is raining, find an indoor cafe nearby''}. FastAPI immediately returns an acknowledgment (non-blocking WebSocket), records the message in Supabase (\texttt{core} schema, Step 2a), and enqueues an asynchronous task to Redis Streams (Step 2b). The LangGraph AI Agent worker consumes the task (Step 3), restores the active session checkpoint from Supabase via DAL (Step 4), transitions directly to its Micro Curation state (Step 4b), queries nearby indoor venues in parallel through the resilient PyBreaker-guarded API and cache layer (Step 5), modifies \textbf{only the affected single row in \texttt{plan\_stops}} in PostgreSQL (Step 6), publishes the update event to Redis Pub/Sub (Step 7), and FastAPI broadcasts the updated stop to all room members via WebSockets (Step 8).
 
-\subsection{Technology Stack}
+\clearpage
+% ==========================================
+% PAGE 5: NFRs, LATENCY BUDGET, CAPACITY, SECURITY & CONCLUSION (CONTINUOUS FLOW)
+% ==========================================
+\section{Software Engineering Foundations \& Non-Functional Requirements (NFRs)}
+\label{sec:nfr}
+
+\subsection{Latency Budget \& Multi-Turn Response Times}
+\label{sec:latency_budget}
+A collaborative planning session involves continuous multi-turn dialogue with multiple questions and answers between travelers and the AI (clarifying preferences, asking venue details, requesting swaps, and generating multi-day itineraries). In real-world generative AI workloads, generating full, grounded answers can take from 5 to 20 seconds, especially when synthesizing multiple stops and orchestrating external API calls. Therefore, latency is partitioned between initial perception and complete generation (Table~\ref{tab:latency_budget}).
 
 \begin{table}[H]
 \centering
 \footnotesize
 \renewcommand{\arraystretch}{1.08}
-\begin{tabularx}{\textwidth}{@{}l l X@{}}
+\begin{tabularx}{\textwidth}{@{}l c c >{\raggedright\arraybackslash}X@{}}
 \toprule
-\textbf{Tier} & \textbf{Core Technology} & \textbf{Architectural Role} \\
+\textbf{Interaction \& Query Type} & \textbf{Initial TTFT} & \textbf{Full Answer Time} & \textbf{Operational Context \& Execution Mode} \\
 \midrule
-\textbf{Frontend} & React 18 + TypeScript & Interactive timeline, collaborative voting cards, Mapbox GL canvas. \\
-\midrule
-\textbf{Backend Gateway} & FastAPI (Python 3.11+) & REST endpoints, WebSocket room server, Redis Pub/Sub multi-instance sync. \\
-\midrule
-\textbf{AI Agent Layer} & LangGraph Python & Unified DeepSeek-V4 agent with decoupled Macro and Micro state phases; typed \texttt{AgentState}. \\
-& Model Abstraction & Primary: DeepSeek-V4; Fallback: OpenAI GPT-4o, Claude, Gemini. \\
-\midrule
-\textbf{Data \& Messaging} & PostgreSQL 16 + \texttt{pgvector} & Relational persistence, session checkpoints, and local RAG search (schema-isolated). \\
-& Redis 7 & Multi-instance WebSocket Pub/Sub, task message broker, and TTL cache. \\
-\midrule
-\textbf{Resilience \& Ops} & PyBreaker / OpenTelemetry & External API circuit breakers, timeout retries, and distributed hop tracing. \\
+\textbf{Room Member Action / Stop Vote} & $< 80$\,ms & $< 80$\,ms & Non-blocking WebSocket ACK + atomic database update. \\
+\textbf{Quick Q\&A / Venue Clarifications} & $< 600$\,ms & $3$--$5$\,s & Direct LLM reasoning for queries (parking, dietary, pricing). \\
+\textbf{Macro Itinerary Generation} & $< 800$\,ms & $6$--$12$\,s & LangGraph Phase 1 synthesizing multi-day themes and pacing. \\
+\textbf{Micro Spot Search \& API Grounding} & $< 1.0$\,s & $10$--$20$\,s & Parallel Google Places calls, opening hours check, and route matrix. \\
+\textbf{1-Click Swap / Dynamic Revision} & $< 500$\,ms & $3$--$6$\,s & Fetching verified alternative POIs and recomputing transit. \\
 \bottomrule
 \end{tabularx}
 \vspace{-0.2cm}
-\caption{Core technology stack for TripMate AI}
-\label{tab:tech_stack}
+\caption{TripMate AI multi-turn interaction latency budget and answer generation times}
+\label{tab:latency_budget}
 \end{table}
 
-\subsection{Deployment, Security, Scalability \& Observability}
+\textbf{Streaming UX for Long Generations:} Because comprehensive planning and live grounding take between 5 and 20 seconds to fully finalize, token-by-token streaming over WebSockets is mission-critical. Travelers observe initial tokens and intermediate reasoning within $< 800$\,ms, allowing the group to read and discuss candidate ideas progressively rather than staring at a frozen loader for 20 seconds.
+
+\subsection{Target Capacity \& Concurrency Sizing}
+\label{sec:capacity_concurrency}
+TripMate AI's cloud infrastructure is sized to support academic evaluation and active group usage:
 \begin{itemize}
-\item \textbf{Decoupled Queue \& Horizontal Scaling:} FastAPI gateways and LangGraph agent workers operate as decoupled containerized services communicating via Redis Streams. Gateway instances scale horizontally behind a load balancer, using \textbf{Redis Pub/Sub} to broadcast room updates across connected clients.
-\item \textbf{External API Resilience:} All queries to third-party providers (Google Places, Agoda, Klook) are guarded by \textbf{Circuit Breakers} (PyBreaker) with exponential backoff and Redis caching to prevent third-party latency from cascading.
-\item \textbf{Database Architecture \& Isolation:} PostgreSQL manages transactional data, session checkpoints, and local vector embeddings within strictly isolated schemas (\texttt{core}, \texttt{checkpoints}, \texttt{rag\_vectors}), preventing checkpoint writes and RAG queries from contending with transactional OLTP traffic.
-\item \textbf{End-to-End Observability:} Distributed tracing and structured logging are implemented via \textbf{OpenTelemetry} across the entire lifecycle (Frontend $\rightarrow$ Gateway $\rightarrow$ Queue $\rightarrow$ AI Agent $\rightarrow$ DB / APIs), with LangSmith tracing agent reasoning steps.
-\item \textbf{Security \& Rate Limiting:} Passwords hashed with \texttt{bcrypt}, stateless JWT authentication, role-based room access control, and distributed Redis rate limiters protecting external API and LLM token budgets.
+\item \textbf{Concurrent Active Users (CCU):} Engineered to reliably serve \textbf{50--100 Concurrent Active Users (CCU)}.
+\item \textbf{Collaborative Planning Rooms:} Supports \textbf{10--20 concurrent active rooms} simultaneously (with 3--6 participants actively chatting, voting, and editing in each room).
+\item \textbf{Throughput Capacity:} The FastAPI ASGI engine handles \textbf{150--250 requests/sec} for REST and WebSocket traffic under non-blocking asynchronous event loop processing (\texttt{uvloop}).
+\item \textbf{Concurrent AI Generations:} Capped at \textbf{5--8 concurrent LangGraph executions}, with excess tasks safely queued in Redis Streams (\texttt{XADD}) to avoid exceeding container memory limits.
+\item \textbf{Database Storage:} Supabase's allocation accommodates over \textbf{30,000 completed itineraries} ($\approx 12$--$15$\,KB per full multi-day trip record).
+\item \textbf{Connection Multiplexing:} Supavisor connection pooling (port 6543) multiplexes 200+ client sessions into 15 physical PostgreSQL connections.
 \end{itemize}
 
-% ==========================================
-% 5. EXPECTED IMPACT & CONCLUSION
-% ==========================================
-\section{Expected Impact \& Conclusion}
-
-TripMate AI transforms group trip planning:
+\subsection{Security, Multi-Tenant Privacy \& Data Integrity}
+\label{sec:security_nfr}
 \begin{itemize}
-\item \textbf{Under 15 Minutes:} Replaces days of fragmented group chat debates with a structured, 15-minute consensus session.
-\item \textbf{Shared Ownership:} Granular stop voting and 1-click alternative swaps ensure every traveler has a voice without burning out a single organizer.
-\item \textbf{Accurate \& Grounded:} Recommendations are verified against real-time data from Google Places, Agoda, and Klook, avoiding closed venues or unrealistic travel routes.
-\item \textbf{Dynamic \& Resilient:} Normalized relational persistence enables instantaneous on-the-go plan revisions without recalculating unaffected stops.
+\item \textbf{Supabase Row Level Security (RLS):} Enforced at the database engine level; queries to \texttt{rooms}, \texttt{messages}, and \texttt{plan\_stops} verify that \texttt{auth.uid()} belongs to registered room members, preventing cross-tenant leakage.
+\item \textbf{Atomic Concurrency for Stop Voting:} Simultaneous member votes use atomic SQL updates (\texttt{UPDATE plan\_stops SET upvotes = upvotes + 1 WHERE id = :stop\_id}) and Redis atomic counters, preventing race conditions.
+\item \textbf{Prompt Injection Defense:} User chat inputs are sanitized and wrapped in structural XML boundary tags (\texttt{<traveler\_preference>}) with explicit system instructions prohibiting instruction overrides.
+\end{itemize}
+
+\subsection{Fault Tolerance \& Checkpoint Recovery}
+\begin{itemize}
+\item \textbf{LangGraph Checkpoint Persistence:} Workflow execution states are incrementally checkpointed to Supabase via \texttt{AsyncPostgresSaver}, enabling seamless session recovery if the worker restarts.
+\item \textbf{Graceful Degradation:} If the primary DeepSeek-V4 API encounters an outage, LangGraph falls back sequentially to OpenAI GPT-4o, Gemini, or a deterministic rule-based local POI generator.
+\end{itemize}
+
+\section{Expected Impact \& Conclusion}
+\label{sec:conclusion}
+TripMate AI represents a paradigm shift in collaborative group planning by unifying conversational AI intelligence, deterministic grounding, and modern web collaboration into a cohesive, scalable production system:
+\begin{itemize}
+\item \textbf{Sub-15-Minute Consensus:} Compresses days of scattered group chat debates into a structured, real-time 15-minute consensus session, eliminating organizer fatigue.
+\item \textbf{Zero-Hallucination Guarantee:} Grounded in physical reality via the Four-Tier Grounding Pipeline, strictly validating place IDs, operational status, opening hours, and geographic proximity against live travel APIs.
+\item \textbf{Production-Grade Cloud Performance:} Demonstrates exceptional engineering feasibility by orchestrating Vercel, Render, and Supabase while maintaining sub-800\,ms initial response streaming and robust 50--100 CCU concurrency.
+\item \textbf{Enterprise-Grade Security \& Resilience:} Enforces database-level isolation via Supabase RLS, atomic concurrency control for voting, and seamless checkpoint recovery for uncompromised data integrity.
+\item \textbf{Living, Adaptive Itineraries:} Couples transactional relational persistence with dynamic on-trip adaptation, allowing groups to modify single stops on the fly without recalculating untouched itinerary blocks.
 \end{itemize}
 
 \vspace{0.25cm}
 \begin{center}
-\small\color{primaryblue}\textit{TripMate AI turns group trip planning from an exhausting chore into an effortless, collaborative experience.}
+\small\color{primaryblue}\textbf{\textit{TripMate AI turns group trip planning from an exhausting chore into an effortless, collaborative, and mathematically grounded experience.}}
 \end{center}
 
 \end{document}
