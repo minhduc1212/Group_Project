@@ -304,10 +304,10 @@ Figure~\ref{fig:activity_diagram} illustrates the end-to-end user and AI interac
 % ==========================================
 % PAGE 3: AI GROUNDING PIPELINE, SYSTEM ARCHITECTURE, TECH STACK & CLOUD DEPLOYMENT
 % ==========================================
-\subsection{AI Reliability: Four-Tier Grounding \& Hallucination Mitigation Pipeline}
+\subsection{AI Reliability: Four-Tier Grounding Pipeline}
 \label{sec:hallucination_mitigation}
 
-A critical vulnerability of LLMs in travel planning is \textbf{hallucination}---inventing non-existent venues (``phantom POIs''), obsolete opening hours, or unrealistic transit routes. TripMate AI eliminates hallucinations through a \textbf{Four-Tier Deterministic Grounding Pipeline} (Figure~\ref{fig:hallucination_pipeline}):
+To eliminate AI hallucinations (inventing fake places, closed venues, or unrealistic routes), TripMate AI verifies every recommendation through four simple steps (Figure~\ref{fig:hallucination_pipeline}):
 
 \begin{figure}[H]
 \centering
@@ -317,10 +317,10 @@ A critical vulnerability of LLMs in travel planning is \textbf{hallucination}---
   tierbox/.style={rectangle, draw=primaryblue!85, fill=subtlegray, rounded corners=2.2mm, line width=0.9pt, minimum width=3.8cm, minimum height=1.15cm, align=center, font=\scriptsize},
   arrow/.style={-{Latex[length=2.5mm,width=1.5mm]}, line width=1pt, color=primaryblue!85}
 ]
-\node[tierbox] (t1) {\textbf{Tier 1: Type-Safe Schema}\\[0.02cm]{\tiny Pydantic v2 Output Guard}\\[0.01cm]{\tiny\color{accentteal}No free-text hallucination}};
-\node[tierbox, right=of t1] (t2) {\textbf{Tier 2: Live Grounding}\\[0.02cm]{\tiny Places API \& OpenStreetMap}\\[0.01cm]{\tiny\color{primaryblue}Verify Place ID \& Status}};
-\node[tierbox, right=of t2] (t3) {\textbf{Tier 3: Spatio-Temporal}\\[0.02cm]{\tiny Deterministic Clustering}\\[0.01cm]{\tiny\color{accentteal}Radius $\le 2.5$\,km, transit $\le 20$\,min}};
-\node[tierbox, right=of t3] (t4) {\textbf{Tier 4: Human Feedback}\\[0.02cm]{\tiny Stop Voting \& 1-Click Swap}\\[0.01cm]{\tiny\color{primaryblue}Pre-fetched verified backups}};
+\node[tierbox] (t1) {\textbf{Tier 1: Strict Schema}\\[0.02cm]{\tiny Fixed Pydantic Schema}\\[0.01cm]{\tiny\color{accentteal}No rambling free text}};
+\node[tierbox, right=of t1] (t2) {\textbf{Tier 2: Live Map Check}\\[0.02cm]{\tiny Google Places \& OpenStreetMap}\\[0.01cm]{\tiny\color{primaryblue}Verify Place ID \& open status}};
+\node[tierbox, right=of t2] (t3) {\textbf{Tier 3: Distance Guard}\\[0.02cm]{\tiny Smart Geo-Clustering}\\[0.01cm]{\tiny\color{accentteal}Radius $\le 2.5$\,km, transit $\le 20$\,min}};
+\node[tierbox, right=of t3] (t4) {\textbf{Tier 4: Member Votes}\\[0.02cm]{\tiny Thumbs UP/DOWN \& 1-Click Swap}\\[0.01cm]{\tiny\color{primaryblue}Instant verified backups}};
 
 \draw[arrow] (t1) -- (t2);
 \draw[arrow] (t2) -- (t3);
@@ -328,15 +328,15 @@ A critical vulnerability of LLMs in travel planning is \textbf{hallucination}---
 \end{tikzpicture}
 }
 \vspace{-0.25cm}
-\caption{TripMate AI four-tier deterministic hallucination mitigation and live grounding pipeline}
+\caption{TripMate AI four-tier live grounding and hallucination prevention pipeline}
 \label{fig:hallucination_pipeline}
 \end{figure}
 
 \begin{itemize}[leftmargin=1.2em]
-\item \textbf{Tier 1 (Strict Schema Enforcement):} LangChain \texttt{with\_structured\_output()} binds DeepSeek-V4 to Pydantic v2 schemas, structurally prohibiting free-text drift and enforcing typed attributes (categories, coordinates, budgets, durations).
-\item \textbf{Tier 2 (Live API Grounding):} Candidate venues are matched against Google Places API and OpenStreetMap to verify canonical \texttt{place\_id}, active operational status, and compatible opening hours. Unverified venues immediately fall back to local database records.
-\item \textbf{Tier 3 (Deterministic Spatio-Temporal Checks):} Python algorithms (Haversine formula and Mapbox Matrix API) deterministically cluster stops within a $2.0$--$2.5$\,km radius with transit times $\le 20$\,minutes, preventing spatial hallucinations.
-\item \textbf{Tier 4 (Human-in-the-Loop Feedback):} Granular stop voting (UP/DOWN) empowers members to reject suggestions, triggering instantaneous 1-click swaps with pre-fetched, API-verified backup venues.
+\item \textbf{Tier 1 (Strict Schema):} Restricts AI output to a fixed Pydantic format (name, category, duration, budget tier), preventing rambling or missing fields.
+\item \textbf{Tier 2 (Live Map Check):} Validates each venue via Google Places API and OpenStreetMap to ensure it actually exists, is open, and has correct hours.
+\item \textbf{Tier 3 (Distance Guard):} Uses Haversine distance and Mapbox to cluster half-day stops within $2.0$--$2.5$\,km ($\le 20$\,min transit), avoiding zigzag travel.
+\item \textbf{Tier 4 (Voting \& Backup Swap):} Members vote thumbs UP/DOWN on each stop; downvoted venues are instantly replaced with pre-verified backups in 1 click.
 \end{itemize}
 
 \section{System Architecture, Technology Stack \& Cloud Deployment}
@@ -595,59 +595,93 @@ Figure~\ref{fig:operational_flow_diagram} visualizes the operational execution l
 % ==========================================
 % PAGE 5: NFRs, LATENCY BUDGET, CAPACITY, SECURITY & CONCLUSION (CONTINUOUS FLOW)
 % ==========================================
-\section{Software Engineering Foundations \& Non-Functional Requirements (NFRs)}
+\section{System Targets, Evaluation \& Engineering Foundations}
 \label{sec:nfr}
 
-\subsection{Latency Budget \& Multi-Turn Response Times}
+\subsection{Core System Targets: Latency, Capacity, Evaluation \& Planet-Scale Scaling}
+\label{sec:system_targets}
 \label{sec:latency_budget}
-A collaborative planning session involves continuous multi-turn dialogue with multiple questions and answers between travelers and the AI (clarifying preferences, asking venue details, requesting swaps, and generating multi-day itineraries). In real-world generative AI workloads, generating full, grounded answers can take from 5 to 20 seconds, especially when synthesizing multiple stops and orchestrating external API calls. Therefore, latency is partitioned between initial perception and complete generation (Table~\ref{tab:latency_budget}).
+\label{sec:capacity_concurrency}
+
+TripMate AI defines four concrete, measurable performance targets:
+
+\begin{itemize}[leftmargin=1.2em]
+\item \textbf{Latency Targets:}
+  \begin{itemize}[leftmargin=1.0em]
+  \item \textit{User Actions:} $< 80$\,ms WebSocket ACK for chat messages and votes.
+  \item \textit{Initial AI Response (TTFT):} $< 800$\,ms token streaming so users see answers immediately instead of waiting on a blank screen.
+  \item \textit{Full Answer Times:} $6$--$12$\,s for macro roadmaps; $10$--$20$\,s for micro venue grounding; $3$--$6$\,s for 1-click swaps (Table~\ref{tab:latency_budget}).
+  \end{itemize}
+\item \textbf{Capacity Targets:}
+  \begin{itemize}[leftmargin=1.0em]
+  \item \textit{Concurrency:} 50--100 Concurrent Active Users (CCU) across 10--20 active rooms (3--6 users/room).
+  \item \textit{Throughput:} 150--250 req/s on FastAPI gateway; 5--8 concurrent AI jobs with Redis queue buffer.
+  \item \textit{Storage \& Connections:} 30,000+ saved trips in PostgreSQL; 200+ user sessions multiplexed into 15 database connections via Supavisor pooler.
+  \end{itemize}
+\item \textbf{Evaluation Targets (Success Criteria):}
+  \begin{itemize}[leftmargin=1.0em]
+  \item \textit{AI Accuracy:} $\ge 98\%$ venues verified on Google Places ($0\%$ fake places); $\ge 95\%$ adherence to budget and distance constraints ($\le 2.5$\,km).
+  \item \textit{Consensus Speed:} Reduce group decision time from 2--3 days down to $< 15$ minutes; $\ge 85\%$ initial stop approval.
+  \item \textit{System Health:} $\ge 99.5\%$ uptime; $< 100$\,ms multi-user WebSocket synchronization delay.
+  \end{itemize}
+\item \textbf{Planet-Scale Scalability Targets:}
+  \begin{itemize}[leftmargin=1.0em]
+  \item Designed to scale globally without architectural rewrites: Vercel Global Edge CDN for sub-100\,ms frontend delivery worldwide, stateless FastAPI and LangGraph workers on Render that scale horizontally, Redis Streams for queue buffering, and Supavisor connection pooling for database scalability.
+  \end{itemize}
+\end{itemize}
 
 \begin{table}[H]
 \centering
 \footnotesize
-\renewcommand{\arraystretch}{1.08}
+\renewcommand{\arraystretch}{1.06}
 \begin{tabularx}{\textwidth}{@{}l c c >{\raggedright\arraybackslash}X@{}}
 \toprule
-\textbf{Interaction \& Query Type} & \textbf{Initial TTFT} & \textbf{Full Answer Time} & \textbf{Operational Context \& Execution Mode} \\
+\textbf{Interaction Type} & \textbf{TTFT} & \textbf{Full Time} & \textbf{Operational Context} \\
 \midrule
-\textbf{Room Member Action / Stop Vote} & $< 80$\,ms & $< 80$\,ms & Non-blocking WebSocket ACK + atomic database update. \\
-\textbf{Quick Q\&A / Venue Clarifications} & $< 600$\,ms & $3$--$5$\,s & Direct LLM reasoning for queries (parking, dietary, pricing). \\
-\textbf{Macro Itinerary Generation} & $< 800$\,ms & $6$--$12$\,s & LangGraph Phase 1 synthesizing multi-day themes and pacing. \\
-\textbf{Micro Spot Search \& API Grounding} & $< 1.0$\,s & $10$--$20$\,s & Parallel Google Places calls, opening hours check, and route matrix. \\
-\textbf{1-Click Swap / Dynamic Revision} & $< 500$\,ms & $3$--$6$\,s & Fetching verified alternative POIs and recomputing transit. \\
+\textbf{Member Action / Vote} & $< 80$\,ms & $< 80$\,ms & Instant WebSocket ACK with atomic database update. \\
+\textbf{Quick Clarification / Q\&A} & $< 600$\,ms & $3$--$5$\,s & Direct LLM response for dietary, parking, or hours queries. \\
+\textbf{Macro Itinerary Drafting} & $< 800$\,ms & $6$--$12$\,s & LangGraph Phase 1 themes and multi-day pacing roadmap. \\
+\textbf{Micro Spot Grounding} & $< 1.0$\,s & $10$--$20$\,s & Parallel Google Places checks and route matrix calculation. \\
+\textbf{1-Click Swap / Revision} & $< 500$\,ms & $3$--$6$\,s & Instant replacement with pre-verified backup venue. \\
 \bottomrule
 \end{tabularx}
 \vspace{-0.2cm}
-\caption{TripMate AI multi-turn interaction latency budget and answer generation times}
+\caption{TripMate AI multi-turn interaction latency budget and response times}
 \label{tab:latency_budget}
 \end{table}
 
-\textbf{Streaming UX for Long Generations:} Because comprehensive planning and live grounding take between 5 and 20 seconds to fully finalize, token-by-token streaming over WebSockets is mission-critical. Travelers observe initial tokens and intermediate reasoning within $< 800$\,ms, allowing the group to read and discuss candidate ideas progressively rather than staring at a frozen loader for 20 seconds.
+\subsection{Evaluation Methodology: Verifying Agent \& System Effectiveness}
+\label{sec:evaluation}
 
-\subsection{Target Capacity \& Concurrency Sizing}
-\label{sec:capacity_concurrency}
-TripMate AI's cloud infrastructure is sized to support academic evaluation and active group usage:
-\begin{itemize}
-\item \textbf{Concurrent Active Users (CCU):} Engineered to reliably serve \textbf{50--100 Concurrent Active Users (CCU)}.
-\item \textbf{Collaborative Planning Rooms:} Supports \textbf{10--20 concurrent active rooms} simultaneously (with 3--6 participants actively chatting, voting, and editing in each room).
-\item \textbf{Throughput Capacity:} The FastAPI ASGI engine handles \textbf{150--250 requests/sec} for REST and WebSocket traffic under non-blocking asynchronous event loop processing (\texttt{uvloop}).
-\item \textbf{Concurrent AI Generations:} Capped at \textbf{5--8 concurrent LangGraph executions}, with excess tasks safely queued in Redis Streams (\texttt{XADD}) to avoid exceeding container memory limits.
-\item \textbf{Database Storage:} Supabase's allocation accommodates over \textbf{30,000 completed itineraries} ($\approx 12$--$15$\,KB per full multi-day trip record).
-\item \textbf{Connection Multiplexing:} Supavisor connection pooling (port 6543) multiplexes 200+ client sessions into 15 physical PostgreSQL connections.
+To empirically verify performance, TripMate AI evaluates both the AI Agent and the cloud System against concrete benchmarks:
+
+\subsubsection{AI Agent Evaluation (Planning Quality \& Accuracy)}
+\begin{itemize}[leftmargin=1.2em]
+\item \textbf{Grounding \& Hallucination Test:} 100 automated test prompts across multiple cities check every venue against Google Places API.
+\textbf{Metric:} Verification Rate $= (\text{Verified POIs with Place ID} / \text{Total POIs}) \ge 98\%$; $0\%$ fake POIs.
+\item \textbf{Constraint Satisfaction Test:} Scripts verify that generated stops match budget limits, dietary preferences, and spatial clustering ($\le 2.5$\,km radius, $\le 20$\,min transit).
+\textbf{Metric:} $\ge 95\%$ constraint pass rate.
+\item \textbf{User Acceptance \& Speed Test:} Pilot trials with 10 real user groups (3--6 members) track voting telemetry and time to plan completion.
+\textbf{Metric:} $\ge 85\%$ first-recommendation approval; consensus reached in $< 15$ minutes.
 \end{itemize}
 
-\subsection{Security, Multi-Tenant Privacy \& Data Integrity}
+\subsubsection{System Performance Evaluation (Infrastructure \& Reliability)}
+\begin{itemize}[leftmargin=1.2em]
+\item \textbf{Latency \& Tracing Test:} OpenTelemetry and LangSmith track end-to-end timing across Gateway $\rightarrow$ Queue $\rightarrow$ Agent $\rightarrow$ DB $\rightarrow$ WebSocket.
+\textbf{Metric:} TTFT $< 800$\,ms, action ACK $< 80$\,ms, room sync $< 100$\,ms.
+\item \textbf{Load \& Concurrency Stress Test:} Locust/k6 simulates 50--100 CCU in 10--20 rooms chatting, voting, and generating itineraries simultaneously.
+\textbf{Metric:} Sustained 150--250 req/s, error rate $< 0.5\%$, worker memory $\le 512$\,MB.
+\item \textbf{Fault Tolerance Test:} Chaos testing introduces 5s API delays and simulates primary LLM API outages.
+\textbf{Metric:} PyBreaker trips in 2.5s to return cached POIs; seamless fallback to secondary LLMs (GPT-4o/Gemini) without session drop.
+\end{itemize}
+
+\subsection{Security, Multi-Tenant Privacy \& Reliability}
 \label{sec:security_nfr}
-\begin{itemize}
-\item \textbf{Supabase Row Level Security (RLS):} Enforced at the database engine level; queries to \texttt{rooms}, \texttt{messages}, and \texttt{plan\_stops} verify that \texttt{auth.uid()} belongs to registered room members, preventing cross-tenant leakage.
-\item \textbf{Atomic Concurrency for Stop Voting:} Simultaneous member votes use atomic SQL updates (\texttt{UPDATE plan\_stops SET upvotes = upvotes + 1 WHERE id = :stop\_id}) and Redis atomic counters, preventing race conditions.
-\item \textbf{Prompt Injection Defense:} User chat inputs are sanitized and wrapped in structural XML boundary tags (\texttt{<traveler\_preference>}) with explicit system instructions prohibiting instruction overrides.
-\end{itemize}
-
-\subsection{Fault Tolerance \& Checkpoint Recovery}
-\begin{itemize}
-\item \textbf{LangGraph Checkpoint Persistence:} Workflow execution states are incrementally checkpointed to Supabase via \texttt{AsyncPostgresSaver}, enabling seamless session recovery if the worker restarts.
-\item \textbf{Graceful Degradation:} If the primary DeepSeek-V4 API encounters an outage, LangGraph falls back sequentially to OpenAI GPT-4o, Gemini, or a deterministic rule-based local POI generator.
+\begin{itemize}[leftmargin=1.2em]
+\item \textbf{Data Privacy (Supabase RLS):} Database-level policies ensure users only access data in their own planning rooms.
+\item \textbf{Atomic Voting:} Atomic SQL updates and Redis counters prevent race conditions when multiple members vote simultaneously.
+\item \textbf{Input Sanitization:} Chat inputs are sanitized before LLM processing to prevent prompt injection attempts.
+\item \textbf{Session Recovery:} LangGraph execution checkpoints are saved in PostgreSQL, enabling instant recovery if a container restarts.
 \end{itemize}
 
 \section{Expected Impact \& Conclusion}
